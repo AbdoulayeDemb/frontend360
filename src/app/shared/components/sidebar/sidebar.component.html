@@ -1,0 +1,56 @@
+<aside class="sidebar d-flex flex-column justify-content-between p-3">
+    <div>
+        <!-- Logo Branding -->
+        <div class="logo-wrapper text-center my-4">
+            <img src="assets/images/logo-alert360.png" alt="Alert'360" class="img-fluid sidebar-logo">
+        </div>
+
+        <!-- Navigation Links -->
+        <nav class="nav flex-column gap-2 mt-4">
+            <a routerLink="/admin/dashboard" routerLinkActive="active"
+                class="nav-item-custom d-flex align-items-center px-3 py-3 rounded-3 text-decoration-none">
+                <i class="bi bi-house-door-fill fs-5 me-3"></i>
+                <span>Tableau de bord</span>
+            </a>
+
+            <a routerLink="/admin/structures" routerLinkActive="active"
+                class="nav-item-custom d-flex align-items-center px-3 py-3 rounded-3 text-decoration-none">
+                <i class="bi bi-grid-1x2-fill fs-5 me-3"></i>
+                <span>Gestions des Structures</span>
+            </a>
+
+            <a routerLink="/admin/abus" routerLinkActive="active"
+                class="nav-item-custom d-flex align-items-center px-3 py-3 rounded-3 text-decoration-none">
+                <i class="bi bi-exclamation-octagon-fill fs-5 me-3"></i>
+                <span>Gestions des Abus</span>
+            </a>
+
+            <a routerLink="/admin/actualites" routerLinkActive="active"
+                class="nav-item-custom d-flex align-items-center px-3 py-3 rounded-3 text-decoration-none">
+                <i class="bi bi-megaphone-fill fs-5 me-3"></i>
+                <span>Gestions des Actualités</span>
+            </a>
+
+            <a routerLink="/admin/utilisateurs" routerLinkActive="active"
+                class="nav-item-custom d-flex align-items-center px-3 py-3 rounded-3 text-decoration-none">
+                <i class="bi bi-people-fill fs-5 me-3"></i>
+                <span>Gestions des Utilisateurs</span>
+            </a>
+
+            <a routerLink="/admin/signalements" routerLinkActive="active"
+                class="nav-item-custom d-flex align-items-center px-3 py-3 rounded-3 text-decoration-none">
+                <i class="bi bi-broadcast-pin fs-5 me-3"></i>
+                <span>Gestions des Signalements</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Déconnexion -->
+    <div class="mb-3 px-2">
+        <button (click)="onLogout()"
+            class="btn logout-btn w-100 d-flex align-items-center justify-content-start px-3 py-3 rounded-3 border-0 text-white">
+            <i class="bi bi-box-arrow-right fs-5 me-3"></i>
+            <span class="fw-semibold">Déconnexion</span>
+        </button>
+    </div>
+</aside>

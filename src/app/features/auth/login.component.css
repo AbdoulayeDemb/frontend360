@@ -1,0 +1,145 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:host {
+    display: block;
+    width: 100vw;
+    height: 100vh;
+    overflow-x: hidden;
+    font-family: 'Inter', sans-serif;
+}
+
+.login-container {
+    min-height: 100vh;
+    height: 100vh;
+}
+
+/* Colonne Gauche Bleu Sombre (#072B61) */
+.left-banner {
+    background-color: #072B61;
+    height: 100vh;
+}
+
+.logo-img {
+    max-width: 320px;
+    width: 80%;
+    height: auto;
+}
+
+/* Formulaire Droite */
+.form-wrapper {
+    max-width: 440px;
+}
+
+.title {
+    color: #072B61;
+    font-size: 1.85rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+
+.subtitle {
+    color: #072B61;
+    font-size: 1.35rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+}
+
+/* Conteneurs d'input personnalisés */
+.input-group-custom {
+    border: 1.5px solid #D0D5DD;
+    border-radius: 8px;
+    background-color: #FFFFFF;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input-group-custom:focus-within {
+    border-color: #3B82F6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.form-control-custom {
+    font-size: 0.95rem;
+    font-family: 'Inter', sans-serif;
+    color: #1D2939;
+    outline: none;
+    border: none;
+    background: transparent;
+    box-shadow: none !important;
+}
+
+.form-control-custom::placeholder {
+    color: #98A2B3;
+    font-weight: 500;
+}
+
+/* Checkbox personnalisée bleue (#3B82F6) */
+.custom-checkbox {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #3B82F6;
+    border-radius: 4px;
+    outline: none;
+    cursor: pointer;
+    position: relative;
+    background-color: #FFFFFF;
+    margin: 0;
+}
+
+.custom-checkbox:checked {
+    background-color: #3B82F6;
+}
+
+.custom-checkbox:checked::after {
+    content: '✓';
+    position: absolute;
+    color: #FFFFFF;
+    font-size: 13px;
+    font-weight: bold;
+    top: -2px;
+    left: 3px;
+}
+
+.custom-check-label {
+    color: #3B82F6;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+}
+
+.forgot-password-link {
+    color: #3B82F6;
+    font-size: 0.95rem;
+}
+
+.forgot-password-link:hover {
+    text-decoration: underline !important;
+}
+
+/* Bouton bleu foncé (#072B61) */
+.btn-primary-custom {
+    background-color: #072B61;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    transition: background-color 0.2s ease;
+}
+
+.btn-primary-custom:hover {
+    background-color: #0a3a82;
+}
+
+.btn-primary-custom:disabled {
+    background-color: #2c4c7c;
+    cursor: not-allowed;
+}
+
+.fs-12 {
+    font-size: 12px;
+}
+
+.fs-14 {
+    font-size: 14px;
+}

@@ -1,0 +1,263 @@
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Signalements</h1>
+    <p class="page-subtitle">
+      Gérez et suivez tous les signalements citoyens
+    </p>
+  </div>
+
+  <div class="header-actions">
+    <button class="btn btn-primary">
+      <i class="bi bi-file-earmark-plus"></i>
+      Nouveau signalement
+    </button>
+  </div>
+</div>
+
+
+<div class="card">
+
+  <div class="card-header border-b-0 pb-0">
+
+    <div class="filters-bar">
+
+      <!-- Recherche -->
+      <div class="search-input-wrapper list-search">
+
+        <i class="bi bi-search"></i>
+
+        <input type="text" placeholder="Rechercher un signalement..." class="search-input" [value]="searchTerm"
+          (input)="onSearch($event)">
+
+      </div>
+
+
+      <div class="filter-actions">
+
+        <!-- Statut -->
+        <select class="form-select" [value]="selectedStatut" (change)="onStatutChange($event)">
+
+          <option value="">
+            Tous les statuts
+          </option>
+
+          <option value="DECLARE">
+            Déclaré
+          </option>
+
+          <option value="EN_COURS">
+            En cours
+          </option>
+
+          <option value="RESOLU">
+            Résolu
+          </option>
+
+          <option value="REJETE">
+            Rejeté
+          </option>
+
+        </select>
+
+
+        <!-- Urgence -->
+        <select class="form-select" [value]="selectedUrgence" (change)="onUrgenceChange($event)">
+
+          <option value="">
+            Toutes les urgences
+          </option>
+
+          <option value="FAIBLE">
+            Faible
+          </option>
+
+          <option value="MOYENNE">
+            Moyenne
+          </option>
+
+          <option value="ELEVEE">
+            Élevée
+          </option>
+
+          <option value="CRITIQUE">
+            Critique
+          </option>
+
+        </select>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <div class="card-body p-0 mt-3">
+
+    <!-- Chargement -->
+    @if (isLoading) {
+
+    <div class="p-4 text-center text-secondary">
+
+      <i class="bi bi-arrow-repeat"></i>
+
+      Chargement des signalements...
+
+    </div>
+
+    }
+
+
+    <!-- Erreur -->
+    @else if (errorMessage) {
+
+    <div class="p-4 text-center">
+
+      <p class="text-danger">
+        {{ errorMessage }}
+      </p>
+
+      <button class="btn btn-secondary btn-sm" (click)="loadSignalements()">
+        Réessayer
+      </button>
+
+    </div>
+
+    }
+
+
+    <!-- Tableau -->
+    @else {
+
+    <table class="table">
+
+      <thead>
+
+        <tr>
+          <th>ID</th>
+          <th>Catégorie</th>
+          <th>Citoyen</th>
+          <th>Structure</th>
+          <th>Date</th>
+          <th>Urgence</th>
+          <th>Statut</th>
+          <th class="text-right">Actions</th>
+        </tr>
+
+      </thead>
+
+
+      <tbody>
+
+        @for (
+        sig of filteredSignalements;
+        track sig.idSignalement
+        ) {
+
+        <tr>
+
+          <!-- Tracking -->
+          <td class="font-medium text-primary">
+            {{ sig.codeTrackingUnique }}
+          </td>
+
+
+          <!-- Catégorie -->
+          <td class="font-medium">
+            {{ sig.nomCategorie || 'Non catégorisée' }}
+          </td>
+
+
+          <!-- Citoyen -->
+          <td class="text-secondary">
+            {{ getCitoyenName(sig) }}
+          </td>
+
+
+          <!-- Structure -->
+          <td class="text-secondary">
+            {{ getStructureName(sig) }}
+          </td>
+
+
+          <!-- Date -->
+          <td class="text-secondary">
+            {{ formatDate(sig.dateHeureAlerte) }}
+          </td>
+
+
+          <!-- Urgence -->
+          <td>
+
+            <span class="badge badge-outline" [class]="getUrgenceClass(sig.typeUrgence)">
+              {{ getUrgenceLabel(sig.typeUrgence) }}
+            </span>
+
+          </td>
+
+
+          <!-- Statut -->
+          <td>
+
+            <span class="badge" [class]="getStatutClass(sig.statut)">
+              {{ getStatutLabel(sig.statut) }}
+            </span>
+
+          </td>
+
+
+          <!-- Actions -->
+          <td class="text-right">
+
+            <button class="btn btn-secondary btn-sm action-icon" title="Voir le détail"
+              (click)="voirDetail(sig.idSignalement)">
+              <i class="bi bi-eye"></i>
+            </button>
+
+          </td>
+
+        </tr>
+
+        }
+
+
+        <!-- Aucun résultat -->
+        @if (filteredSignalements.length === 0) {
+
+        <tr>
+
+          <td colspan="8" class="text-center text-secondary p-4">
+
+            Aucun signalement trouvé.
+
+          </td>
+
+        </tr>
+
+        }
+
+      </tbody>
+
+    </table>
+
+    }
+
+  </div>
+
+
+  <!-- Footer -->
+  <div class="card-footer pagination-footer">
+
+    <span class="text-secondary text-sm">
+
+      Affichage de
+      {{ filteredSignalements.length }}
+      signalement(s)
+      sur
+      {{ signalements.length }}
+
+    </span>
+
+  </div>
+
+</div>

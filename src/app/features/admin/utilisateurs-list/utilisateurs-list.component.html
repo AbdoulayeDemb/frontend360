@@ -1,0 +1,304 @@
+<div class="page-header">
+
+    <div>
+        <h1 class="page-title">Utilisateurs</h1>
+
+        <p class="page-subtitle">
+            Gérez les comptes citoyens, administrateurs et agents de structure
+        </p>
+    </div>
+
+    <div class="header-actions">
+
+        <button class="btn btn-primary" (click)="ajouterUtilisateur()">
+
+            <i class="bi bi-person-plus"></i>
+            Ajouter un utilisateur
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<div class="card">
+
+    <div class="card-header border-b-0 pb-0">
+
+        <div class="filters-bar">
+
+            <!-- Recherche -->
+            <div class="search-input-wrapper list-search">
+
+                <i class="bi bi-search"></i>
+
+                <input type="text" placeholder="Rechercher un utilisateur..." class="search-input" [value]="searchTerm"
+                    (input)="onSearch($event)">
+
+            </div>
+
+
+            <div class="filter-actions">
+
+                <!-- Filtre par rôle -->
+                <select class="form-select" [value]="selectedRole" (change)="onRoleChange($event)">
+
+                    <option value="">
+                        Tous les rôles
+                    </option>
+
+                    <option value="CITOYEN">
+                        Citoyens
+                    </option>
+
+                    <option value="ADMIN">
+                        Administrateurs
+                    </option>
+
+                    <option value="STRUCTURE">
+                        Agents de structure
+                    </option>
+
+                </select>
+
+
+                <!-- Filtre par statut -->
+                <select class="form-select" [value]="selectedStatut" (change)="onStatutChange($event)">
+
+                    <option value="">
+                        Tous les statuts
+                    </option>
+
+                    <option value="ACTIF">
+                        Actifs
+                    </option>
+
+                    <option value="INACTIF">
+                        Inactifs
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="card-body p-0 mt-3">
+
+        <!-- Chargement -->
+        @if (isLoading) {
+
+        <div class="p-4 text-center text-secondary">
+
+            <i class="bi bi-arrow-repeat"></i>
+
+            Chargement des utilisateurs...
+
+        </div>
+
+        }
+
+        <!-- Erreur -->
+        @else if (errorMessage) {
+
+        <div class="p-4 text-center">
+
+            <p class="text-danger">
+                {{ errorMessage }}
+            </p>
+
+            <button class="btn btn-secondary btn-sm" (click)="loadUtilisateurs()">
+
+                Réessayer
+
+            </button>
+
+        </div>
+
+        }
+
+        <!-- Tableau -->
+        @else {
+
+        <div class="table-responsive">
+
+            <table class="table">
+
+                <thead>
+
+                    <tr>
+                        <th>Utilisateur</th>
+                        <th>Téléphone</th>
+                        <th>Email</th>
+                        <th>Rôle</th>
+                        <th>Structure</th>
+                        <th>Date création</th>
+                        <th>Statut</th>
+                        <th class="text-right">Actions</th>
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    @for (
+                    user of filteredUtilisateurs;
+                    track user.idUtilisateur
+                    ) {
+
+                    <tr>
+
+                        <!-- Nom -->
+                        <td class="font-medium">
+
+                            {{ getNomComplet(user) }}
+
+                            @if (user.estResponsable) {
+                            <div class="text-secondary text-sm">
+                                Responsable
+                            </div>
+                            }
+
+                        </td>
+
+
+                        <!-- Téléphone -->
+                        <td class="text-secondary">
+                            {{ user.telephone }}
+                        </td>
+
+
+                        <!-- Email -->
+                        <td class="text-secondary">
+                            {{ user.email || '-' }}
+                        </td>
+
+
+                        <!-- Rôle -->
+                        <td>
+
+                            <span class="badge" [class]="getRoleClass(user.role)">
+
+                                {{ getRoleLabel(user.role) }}
+
+                            </span>
+
+                        </td>
+
+
+                        <!-- Structure -->
+                        <td class="text-secondary">
+                            {{ getStructureName(user) }}
+                        </td>
+
+
+                        <!-- Date -->
+                        <td class="text-secondary">
+                            {{ formatDate(user.dateCreation) }}
+                        </td>
+
+
+                        <!-- Statut -->
+                        <td>
+
+                            <span class="badge" [class]="getStatutClass(user.estActif)">
+
+                                {{ getStatutLabel(user.estActif) }}
+
+                            </span>
+
+                        </td>
+
+
+                        <!-- Actions -->
+                        <td class="text-right">
+
+                            <div class="d-flex justify-content-end gap-2">
+
+                                <!-- Modifier -->
+                                <button class="btn btn-secondary btn-sm action-icon" title="Modifier"
+                                    (click)="modifierUtilisateur(user.idUtilisateur)">
+
+                                    <i class="bi bi-pencil"></i>
+
+                                </button>
+
+
+                                <!-- Activer / Désactiver -->
+                                <button class="btn btn-secondary btn-sm action-icon"
+                                    [title]="user.estActif ? 'Désactiver' : 'Activer'"
+                                    [disabled]="isUpdatingStatusId === user.idUtilisateur"
+                                    (click)="changerStatutUtilisateur(user)">
+
+                                    @if (isUpdatingStatusId === user.idUtilisateur) {
+
+                                    <i class="bi bi-arrow-repeat"></i>
+
+                                    } @else if (user.estActif) {
+
+                                    <i class="bi bi-person-x text-danger"></i>
+
+                                    } @else {
+
+                                    <i class="bi bi-person-check text-success"></i>
+
+                                    }
+
+                                </button>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                    }
+
+
+                    <!-- Aucun résultat -->
+                    @if (filteredUtilisateurs.length === 0) {
+
+                    <tr>
+
+                        <td colspan="8" class="text-center text-secondary p-4">
+
+                            Aucun utilisateur trouvé.
+
+                        </td>
+
+                    </tr>
+
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        }
+
+    </div>
+
+
+    <!-- Footer -->
+    <div class="card-footer pagination-footer">
+
+        <span class="text-secondary text-sm">
+
+            Affichage de
+            {{ filteredUtilisateurs.length }}
+            utilisateur(s)
+            sur
+            {{ utilisateurs.length }}
+
+        </span>
+
+    </div>
+
+</div>
