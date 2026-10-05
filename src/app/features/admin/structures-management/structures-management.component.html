@@ -1,0 +1,200 @@
+<div class="page-container">
+
+    <div class="page-header">
+
+        <div>
+            <h1>Structures</h1>
+
+            <p>
+                Gérez les structures compétentes d'Alert360
+            </p>
+        </div>
+
+        <button type="button" class="btn-primary" (click)="ajouterStructure()">
+            + Ajouter une structure
+        </button>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="filters-bar">
+
+            <div class="search-wrapper">
+
+                <span class="search-icon">⌕</span>
+
+                <input type="text" placeholder="Rechercher une structure..." [value]="searchTerm"
+                    (input)="onSearch($event)" />
+
+            </div>
+
+
+            <select [value]="selectedType" (change)="onTypeChange($event)">
+
+                <option value="">
+                    Tous les types
+                </option>
+
+                <option [value]="EnumTypeStructure.MAIRIE">
+                    Mairie
+                </option>
+
+                <option [value]="EnumTypeStructure.EDM_SA">
+                    EDM-SA
+                </option>
+
+                <option [value]="EnumTypeStructure.SAPEURS_POMPIERS">
+                    Sapeurs-pompiers
+                </option>
+
+                <option [value]="EnumTypeStructure.SOMAGEP">
+                    SOMAGEP
+                </option>
+
+                <option [value]="EnumTypeStructure.GIE">
+                    GIE
+                </option>
+
+                <option [value]="EnumTypeStructure.POLICE">
+                    Police
+                </option>
+
+            </select>
+
+        </div>
+
+
+        @if (isLoading) {
+
+        <div class="loading-state">
+            Chargement des structures...
+        </div>
+
+        }
+
+
+        @if (!isLoading && errorMessage) {
+
+        <div class="error-state">
+            {{ errorMessage }}
+        </div>
+
+        }
+
+
+        @if (!isLoading && !errorMessage) {
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Structure</th>
+                        <th>Type</th>
+                        <th>Quartier</th>
+                        <th>Téléphone urgence</th>
+                        <th>Agents</th>
+                        <th>Signalements actifs</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @for (
+                    structure of filteredStructures;
+                    track structure.idStructure
+                    ) {
+
+                    <tr>
+
+                        <td>
+                            <div class="structure-name">
+                                {{ structure.nomStructure }}
+                            </div>
+                        </td>
+
+                        <td>
+
+                            <span class="badge" [class]="getTypeClass(structure.typeStructure)">
+                                {{ getTypeLabel(structure.typeStructure) }}
+                            </span>
+
+                        </td>
+
+                        <td>
+                            {{ structure.quartier || '-' }}
+                        </td>
+
+                        <td>
+                            {{ structure.telephoneUrgence || '-' }}
+                        </td>
+
+                        <td>
+                            {{ getNombreAgents(structure) }}
+                        </td>
+
+                        <td>
+                            {{ getNombreSignalementsActifs(structure) }}
+                        </td>
+
+                        <td>
+
+                            <div class="actions">
+
+                                <button type="button" class="btn-action" title="Modifier"
+                                    (click)="modifierStructure(structure.idStructure)">
+                                    ✏️
+                                </button>
+
+                                <button type="button" class="btn-action danger" title="Supprimer"
+                                    (click)="supprimerStructure(structure)">
+                                    🗑️
+                                </button>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                    }
+
+                    @if (filteredStructures.length === 0) {
+
+                    <tr>
+
+                        <td colspan="7" class="empty-state">
+                            Aucune structure trouvée.
+                        </td>
+
+                    </tr>
+
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        <div class="table-footer">
+
+            <span>
+                {{ filteredStructures.length }}
+                structure(s)
+                sur
+                {{ structures.length }}
+            </span>
+
+        </div>
+
+        }
+
+    </div>
+
+</div>
