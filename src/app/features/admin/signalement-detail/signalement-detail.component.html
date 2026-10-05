@@ -1,0 +1,473 @@
+<!-- Chargement -->
+<div *ngIf="isLoading" class="card">
+  <div class="card-body text-center">
+    <p class="text-muted">Chargement du signalement...</p>
+  </div>
+</div>
+
+<!-- Erreur -->
+<div *ngIf="!isLoading && errorMessage" class="card">
+  <div class="card-body text-center">
+    <p class="text-danger">{{ errorMessage }}</p>
+
+    <a routerLink="/admin/signalements" class="btn btn-secondary mt-3">
+      Retour aux signalements
+    </a>
+  </div>
+</div>
+
+<!-- Détail -->
+<div *ngIf="!isLoading && sig">
+
+  <div class="page-header">
+
+    <div class="header-left">
+
+      <a routerLink="/admin/signalements" class="btn btn-secondary back-btn">
+        <i class="bi bi-arrow-left"></i>
+      </a>
+
+      <div>
+
+        <div class="title-row">
+
+          <h1 class="page-title">
+            {{ sig.codeTrackingUnique }}
+            - {{ sig.nomCategorie || 'Catégorie inconnue' }}
+          </h1>
+
+          <span class="badge" [ngClass]="getStatutClass(sig.statut)">
+            {{ getStatutLabel(sig.statut) }}
+          </span>
+
+        </div>
+
+        <p class="page-subtitle">
+          Déclaré le {{ formatDate(sig.dateHeureAlerte) }}
+        </p>
+
+      </div>
+
+    </div>
+
+    <div class="header-actions">
+
+      <button class="btn btn-secondary text-danger border-danger">
+        Rejeter
+      </button>
+
+      <button class="btn btn-primary">
+        Marquer comme Résolu
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <div class="detail-grid">
+
+    <!-- ===================================================== -->
+    <!-- COLONNE PRINCIPALE -->
+    <!-- ===================================================== -->
+
+    <div class="main-column">
+
+      <!-- Détails -->
+      <div class="card mb-4">
+
+        <div class="card-header">
+          <h3 class="card-title">
+            Détails du problème
+          </h3>
+        </div>
+
+        <div class="card-body">
+
+          <div class="detail-group">
+
+            <label class="detail-label">
+              Description
+            </label>
+
+            <p class="detail-value text-lg">
+              {{ sig.description || 'Aucune description fournie.' }}
+            </p>
+
+          </div>
+
+
+          <div class="detail-group">
+
+            <label class="detail-label">
+              Urgence évaluée
+            </label>
+
+            <span class="badge badge-outline" [ngClass]="getUrgenceClass(sig.typeUrgence)">
+              {{ getUrgenceLabel(sig.typeUrgence) }}
+            </span>
+
+          </div>
+
+
+          <div class="detail-group">
+
+            <label class="detail-label">
+              Preuve visuelle (Photo/Vidéo)
+            </label>
+
+            <div *ngIf="sig.photoAvantUrl" class="proof-container">
+
+              <img [src]="sig.photoAvantUrl" alt="Photo du signalement" class="proof-image">
+
+            </div>
+
+            <div *ngIf="!sig.photoAvantUrl" class="proof-placeholder">
+              <i class="bi bi-image text-muted"></i>
+
+              <span class="text-muted">
+                Aucune photo fournie
+              </span>
+            </div>
+
+          </div>
+
+
+          <div class="detail-group" *ngIf="sig.audioUrl">
+
+            <label class="detail-label">
+              Preuve audio
+            </label>
+
+            <audio controls [src]="sig.audioUrl" class="w-100">
+              Votre navigateur ne supporte pas la lecture audio.
+            </audio>
+
+          </div>
+
+
+          <div class="detail-group" *ngIf="sig.repereVisuel">
+
+            <label class="detail-label">
+              Repère visuel
+            </label>
+
+            <p class="detail-value">
+              {{ sig.repereVisuel }}
+            </p>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- Historique -->
+      <div class="card">
+
+        <div class="card-header">
+          <h3 class="card-title">
+            Historique de traitement
+          </h3>
+        </div>
+
+        <div class="card-body">
+
+          <div class="activity-timeline">
+
+            <!-- Création -->
+            <div class="timeline-item">
+
+              <div class="timeline-marker bg-primary-light text-primary">
+                <i class="bi bi-plus-circle"></i>
+              </div>
+
+              <div class="timeline-content">
+
+                <p class="timeline-text">
+                  Signalement créé par le citoyen
+                  <strong>
+                    {{ sig.citoyenNomComplet || 'Citoyen inconnu' }}
+                  </strong>.
+                </p>
+
+                <span class="timeline-date">
+                  {{ formatDate(sig.dateHeureAlerte) }}
+                </span>
+
+              </div>
+
+            </div>
+
+
+            <!-- Assignation structure -->
+            <div class="timeline-item" *ngIf="sig.nomStructureAssignee">
+
+              <div class="timeline-marker bg-warning">
+                <i class="bi bi-building"></i>
+              </div>
+
+              <div class="timeline-content">
+
+                <p class="timeline-text">
+                  Signalement assigné à
+                  <strong>
+                    {{ sig.nomStructureAssignee }}
+                  </strong>.
+                </p>
+
+                <span class="timeline-date">
+                  Structure compétente
+                </span>
+
+              </div>
+
+            </div>
+
+
+            <!-- Statut en cours -->
+            <div class="timeline-item" *ngIf="sig.statut === EnumStatut.EN_COURS">
+
+              <div class="timeline-marker bg-info">
+                <i class="bi bi-arrow-repeat"></i>
+              </div>
+
+              <div class="timeline-content">
+
+                <p class="timeline-text">
+                  Le traitement du signalement est
+                  <strong>en cours</strong>.
+                </p>
+
+                <span class="timeline-date">
+                  Statut actuel
+                </span>
+
+              </div>
+
+            </div>
+
+
+            <!-- Résolu -->
+            <div class="timeline-item" *ngIf="sig.statut === EnumStatut.RESOLU">
+
+              <div class="timeline-marker bg-success">
+                <i class="bi bi-check-circle"></i>
+              </div>
+
+              <div class="timeline-content">
+
+                <p class="timeline-text">
+                  Le signalement a été
+                  <strong>résolu</strong>.
+                </p>
+
+                <span class="timeline-date">
+                  Statut actuel
+                </span>
+
+              </div>
+
+            </div>
+
+
+            <!-- Rejeté -->
+            <div class="timeline-item" *ngIf="sig.statut === EnumStatut.REJETE">
+
+              <div class="timeline-marker bg-danger">
+                <i class="bi bi-x-circle"></i>
+              </div>
+
+              <div class="timeline-content">
+
+                <p class="timeline-text">
+                  Le signalement a été
+                  <strong>rejeté</strong>.
+                </p>
+
+                <span class="timeline-date">
+                  Statut actuel
+                </span>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- COLONNE LATÉRALE -->
+    <!-- ===================================================== -->
+
+    <div class="side-column">
+
+      <!-- Localisation -->
+      <div class="card mb-4">
+
+        <div class="card-header">
+          <h3 class="card-title">
+            Localisation
+          </h3>
+        </div>
+
+        <div class="card-body p-0">
+
+          <div class="map-placeholder">
+
+            <i class="bi bi-geo-alt-fill text-accent"></i>
+
+            <span>
+              {{ sig.latitude }},
+              {{ sig.longitude }}
+            </span>
+
+          </div>
+
+          <div class="p-4 border-t">
+
+            <label class="detail-label">
+              Coordonnées GPS
+            </label>
+
+            <p class="detail-value mb-0">
+              Latitude :
+              {{ sig.latitude }}
+              <br>
+
+              Longitude :
+              {{ sig.longitude }}
+            </p>
+
+          </div>
+
+          <div class="p-4 border-t" *ngIf="sig.repereVisuel">
+
+            <label class="detail-label">
+              Adresse / Repère
+            </label>
+
+            <p class="detail-value mb-0">
+              {{ sig.repereVisuel }}
+            </p>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- Citoyen -->
+      <div class="card mb-4">
+
+        <div class="card-header">
+          <h3 class="card-title">
+            Citoyen déclarant
+          </h3>
+        </div>
+
+        <div class="card-body">
+
+          <div class="user-info-block">
+
+            <div class="user-avatar-large">
+
+              {{ (sig.citoyenNomComplet || 'C')[0] }}
+
+            </div>
+
+            <div>
+
+              <div class="font-medium text-primary">
+
+                {{ sig.citoyenNomComplet || 'Citoyen inconnu' }}
+
+              </div>
+
+              <div class="text-secondary text-sm">
+
+                ID citoyen :
+                {{ sig.idCitoyen }}
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- Assignation -->
+      <div class="card">
+
+        <div class="card-header">
+
+          <h3 class="card-title">
+            Assignation
+          </h3>
+
+        </div>
+
+        <div class="card-body">
+
+          <div class="detail-group mb-3">
+
+            <label class="detail-label">
+              Structure compétente
+            </label>
+
+            <div class="font-medium">
+
+              {{ sig.nomStructureAssignee || 'Non assignée' }}
+
+            </div>
+
+          </div>
+
+
+          <div class="detail-group">
+
+            <label class="detail-label">
+              Agent sur le terrain
+            </label>
+
+            <div class="font-medium">
+
+              <span *ngIf="sig.agentAssigne">
+                {{ sig.agentAssigne.prenom }}
+                {{ sig.agentAssigne.nom }}
+              </span>
+
+              <span *ngIf="!sig.agentAssigne" class="text-muted">
+                Aucun agent assigné
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <button class="btn btn-secondary w-100 mt-4">
+            Réassigner
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

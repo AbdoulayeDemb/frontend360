@@ -1,0 +1,49 @@
+<header class="topbar">
+
+  <div class="topbar-search">
+
+    <div class="search-input-wrapper">
+
+      <i class="bi bi-search"></i>
+
+      <input type="text" placeholder="Rechercher (signalements, citoyens...)" class="search-input" [value]="searchTerm"
+        (input)="onSearch($event)">
+
+      <button *ngIf="searchTerm" type="button" class="search-clear" aria-label="Effacer la recherche"
+        (click)="clearSearch()">
+        <i class="bi bi-x"></i>
+      </button>
+
+    </div>
+
+  </div>
+
+  <div class="topbar-actions">
+
+    <button type="button" class="action-btn" aria-label="Notifications">
+      <i class="bi bi-bell-fill"></i>
+      <span class="notification-badge">3</span>
+    </button>
+
+    <div class="user-profile">
+
+      <div class="user-avatar">
+        {{ initials }}
+      </div>
+
+      <div class="user-info">
+
+        <span class="user-name">
+          {{ fullName }}
+        </span>
+
+        <span class="user-role">
+          {{ roleLabel }}
+        </span>
+      </div>
+
+    </div>
+
+  </div>
+
+</header>

@@ -1,0 +1,88 @@
+<div class="container-fluid p-0 login-container">
+    <div class="row g-0 h-100">
+
+        <!-- Colonne Gauche -->
+        <div class="col-lg-6 left-banner d-none d-lg-flex flex-column align-items-center justify-content-center p-5">
+            <img src="assets/images/logo-alert360.png" alt="Alert'360 Logo" class="logo-img img-fluid">
+        </div>
+
+        <!-- Colonne Droite -->
+        <div class="col-lg-6 col-12 d-flex align-items-center justify-content-center bg-white p-4 p-md-5">
+            <div class="form-wrapper w-100">
+
+                <h1 class="title mb-1">Connexion agent</h1>
+                <h2 class="subtitle mb-4 pb-2">Accéder à votre espace de gestion</h2>
+
+                <!-- Message d'erreur API -->
+                <div *ngIf="errorMessage" class="alert alert-danger py-2 px-3 mb-3 fs-14 rounded-3">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ errorMessage }}
+                </div>
+
+                <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+
+                    <!-- Téléphone -->
+                    <div class="mb-4">
+                        <label for="telephone" class="form-label fw-semibold text-dark fs-14 mb-2">
+                            Téléphone <span class="text-danger">*</span>
+                        </label>
+                        <div class="input-group-custom d-flex align-items-center px-3 py-2">
+                            <i class="bi bi-telephone text-dark me-3 fs-5"></i>
+                            <input type="tel" id="telephone" formControlName="telephone"
+                                class="form-control-custom w-100" placeholder="Entrez votre numéro de téléphone"
+                                [class.is-invalid]="isFieldInvalid('telephone')">
+                        </div>
+                        <div *ngIf="isFieldInvalid('telephone')" class="text-danger fs-12 mt-1 ms-1">
+                            Veuillez entrer un numéro de téléphone valide.
+                        </div>
+                    </div>
+
+                    <!-- Mot de passe -->
+                    <div class="mb-4">
+                        <label for="motDePasse" class="form-label fw-semibold text-dark fs-14 mb-2">
+                            Mot de passe <span class="text-danger">*</span>
+                        </label>
+                        <div class="input-group-custom d-flex align-items-center px-3 py-2">
+                            <i class="bi bi-lock-fill text-dark me-3 fs-5"></i>
+                            <input [type]="showPassword ? 'text' : 'password'" id="motDePasse"
+                                formControlName="motDePasse" class="form-control-custom w-100"
+                                placeholder="Entrez votre mot de passe"
+                                [class.is-invalid]="isFieldInvalid('motDePasse')">
+                            <button type="button" class="btn border-0 p-0 text-muted shadow-none"
+                                (click)="togglePasswordVisibility()" tabindex="-1">
+                                <i class="bi" [ngClass]="showPassword ? 'bi-eye-fill' : 'bi-eye-slash-fill'"></i>
+                            </button>
+                        </div>
+                        <div *ngIf="isFieldInvalid('motDePasse')" class="text-danger fs-12 mt-1 ms-1">
+                            Le mot de passe est obligatoire.
+                        </div>
+                    </div>
+
+                    <!-- Options -->
+                    <div class="d-flex align-items-center justify-content-between mb-4 pb-2">
+                        <div class="form-check d-flex align-items-center p-0">
+                            <input type="checkbox" id="seSouvenirDeMoi" formControlName="seSouvenirDeMoi"
+                                class="custom-checkbox me-2">
+                            <label for="seSouvenirDeMoi" class="custom-check-label mb-0">
+                                se souvenir de moi
+                            </label>
+                        </div>
+                        <a href="javascript:void(0)" class="forgot-password-link text-decoration-none fw-semibold">
+                            Mot de passe oublié ?
+                        </a>
+                    </div>
+
+                    <!-- Bouton Soumettre -->
+                    <button type="submit" class="btn btn-primary-custom w-100 py-3 text-white" [disabled]="isLoading">
+                        <span *ngIf="!isLoading">Se connecter</span>
+                        <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status"
+                            aria-hidden="true"></span>
+                        <span *ngIf="isLoading">Connexion en cours...</span>
+                    </button>
+
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+</div>
