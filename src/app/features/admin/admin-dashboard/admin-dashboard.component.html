@@ -2,9 +2,11 @@
      HEADER
      ========================================================= -->
 
-<div class="dashboard-header">
+<header class="dashboard-header">
 
-  <div>
+  <div class="header-content">
+    <span class="eyebrow">Vue d'ensemble</span>
+
     <h1 class="page-title">
       Tableau de bord
     </h1>
@@ -18,33 +20,43 @@
 
     <button type="button" class="btn btn-secondary">
       <i class="bi bi-calendar3"></i>
-      Cette semaine
+      <span>Cette semaine</span>
     </button>
 
     <button type="button" class="btn btn-primary">
       <i class="bi bi-file-earmark-arrow-down"></i>
-      Exporter
+      <span>Exporter</span>
     </button>
 
   </div>
 
-</div>
+</header>
 
 
 <!-- =========================================================
      CHARGEMENT
      ========================================================= -->
 
-<div *ngIf="isLoading" class="card loading-card">
-  <div class="card-body text-center">
+<div *ngIf="isLoading" class="card state-card loading-card">
 
-    <i class="bi bi-arrow-repeat loading-icon"></i>
+  <div class="card-body">
 
-    <p class="text-muted">
-      Chargement du tableau de bord...
-    </p>
+    <div class="state-content">
+      <i class="bi bi-arrow-repeat loading-icon"></i>
+
+      <div>
+        <p class="state-title">
+          Chargement des données
+        </p>
+
+        <p class="state-description">
+          Préparation de votre tableau de bord...
+        </p>
+      </div>
+    </div>
 
   </div>
+
 </div>
 
 
@@ -52,20 +64,36 @@
      ERREUR
      ========================================================= -->
 
-<div *ngIf="!isLoading && errorMessage" class="card error-card">
-  <div class="card-body text-center">
+<div *ngIf="!isLoading && errorMessage" class="card state-card error-card">
 
-    <i class="bi bi-exclamation-triangle text-danger"></i>
+  <div class="card-body">
 
-    <p class="text-danger">
-      {{ errorMessage }}
-    </p>
+    <div class="state-content">
 
-    <button type="button" class="btn btn-primary" (click)="loadDashboard()">
+      <div class="state-icon error-state-icon">
+        <i class="bi bi-exclamation-triangle"></i>
+      </div>
+
+      <div class="state-text">
+
+        <p class="state-title">
+          Impossible de charger les données
+        </p>
+
+        <p class="state-description text-danger">
+          {{ errorMessage }}
+        </p>
+
+      </div>
+
+    </div>
+
+    <button type="button" class="btn btn-primary state-action" (click)="loadDashboard()">
       Réessayer
     </button>
 
   </div>
+
 </div>
 
 
@@ -73,107 +101,111 @@
      CONTENU DU DASHBOARD
      ========================================================= -->
 
-<div *ngIf="!isLoading && !errorMessage">
+<div *ngIf="!isLoading && !errorMessage" class="dashboard-wrapper">
 
 
   <!-- =======================================================
        STATISTIQUES
        ======================================================= -->
 
-  <div class="stats-grid">
+  <section class="stats-grid" aria-label="Statistiques">
 
     <!-- Total -->
-    <div class="stat-card">
 
-      <div class="stat-icon bg-primary-light">
-        <i class="bi bi-folder2-open text-primary"></i>
+    <article class="stat-card">
+
+      <div class="stat-icon bg-navy-light">
+        <img src="assets/icons/signalements.png" alt="" class="stat-custom-icon">
       </div>
 
       <div class="stat-content">
 
-        <div class="stat-value">
-          {{ stats.total }}
-        </div>
-
-        <div class="stat-label">
+        <span class="stat-label">
           Total signalements
-        </div>
+        </span>
+
+        <strong class="stat-value">
+          {{ stats.total }}
+        </strong>
 
       </div>
 
-    </div>
+    </article>
 
 
     <!-- Déclarés -->
-    <div class="stat-card">
 
-      <div class="stat-icon bg-warning-light">
-        <i class="bi bi-hourglass-split text-warning"></i>
+    <article class="stat-card">
+
+      <div class="stat-icon bg-blue-light">
+        <img src="assets/icons/declare.png" alt="" class="stats-custom-icon">
       </div>
 
       <div class="stat-content">
 
-        <div class="stat-value">
-          {{ stats.declares }}
-        </div>
-
-        <div class="stat-label">
+        <span class="stat-label">
           Déclarés
-        </div>
+        </span>
+
+        <strong class="stat-value">
+          {{ stats.declares }}
+        </strong>
 
       </div>
 
-    </div>
+    </article>
 
 
     <!-- En cours -->
-    <div class="stat-card">
 
-      <div class="stat-icon bg-info-light">
-        <i class="bi bi-arrow-repeat text-info"></i>
+    <article class="stat-card">
+
+      <div class="stat-icon bg-orange-light">
+        <img src="assets/icons/Inprogress.png" alt="" class="stats2-custom-icon">
       </div>
 
       <div class="stat-content">
 
-        <div class="stat-value">
-          {{ stats.enCours }}
-        </div>
-
-        <div class="stat-label">
+        <span class="stat-label">
           En cours
-        </div>
+        </span>
+
+        <strong class="stat-value">
+          {{ stats.enCours }}
+        </strong>
 
       </div>
 
-    </div>
+    </article>
 
 
     <!-- Résolus -->
-    <div class="stat-card">
 
-      <div class="stat-icon bg-success-light">
-        <i class="bi bi-check-circle text-success"></i>
+    <article class="stat-card">
+
+      <div class="stat-icon bg-green-light">
+        <img src="assets/icons/sucess.png" alt="" class="stats3-custom-icon">
       </div>
 
       <div class="stat-content">
 
-        <div class="stat-value">
-          {{ stats.resolus }}
-        </div>
-
-        <div class="stat-label">
+        <span class="stat-label">
           Résolus
-        </div>
+        </span>
+
+        <strong class="stat-value">
+          {{ stats.resolus }}
+        </strong>
 
       </div>
 
-    </div>
+    </article>
 
-  </div>
+  </section>
 
 
   <!-- =======================================================
-       CONTENU
+       CONTENU PRINCIPAL
        ======================================================= -->
 
   <div class="dashboard-content">
@@ -183,38 +215,53 @@
          SIGNALEMENTS RÉCENTS
          ===================================================== -->
 
-    <div class="main-section">
+    <section class="main-section">
 
       <div class="card">
 
         <div class="card-header">
 
-          <h3 class="card-title">
-            Derniers signalements
-          </h3>
+          <div>
+            <span class="section-eyebrow">
+              Suivi
+            </span>
+
+            <h2 class="card-title">
+              Derniers signalements
+            </h2>
+          </div>
 
           <button type="button" class="btn-link" (click)="voirTousLesSignalements()">
             Voir tout
+            <i class="bi bi-arrow-right"></i>
           </button>
 
         </div>
 
 
-        <div class="card-body p-0">
+        <div class="card-body table-container">
 
           <!-- Aucun signalement -->
+
           <div *ngIf="recentSignalements.length === 0" class="empty-state">
 
-            <i class="bi bi-inbox"></i>
+            <div class="empty-state-icon">
+              <i class="bi bi-inbox"></i>
+            </div>
 
-            <p>
-              Aucun signalement disponible.
+            <p class="empty-state-title">
+              Aucun signalement
+            </p>
+
+            <p class="empty-state-description">
+              Aucun signalement récent n'est disponible.
             </p>
 
           </div>
 
 
           <!-- Tableau -->
+
           <div *ngIf="recentSignalements.length > 0" class="table-responsive">
 
             <table class="table">
@@ -243,38 +290,43 @@
                 <tr class="clickable-row" (click)="voirDetail(sig.idSignalement)">
 
                   <!-- ID -->
-                  <td class="font-medium">
 
-                    {{ sig.codeTrackingUnique }}
-
+                  <td>
+                    <span class="tracking-code">
+                      {{ sig.codeTrackingUnique }}
+                    </span>
                   </td>
 
 
                   <!-- Catégorie -->
+
                   <td>
-
-                    {{ sig.nomCategorie || 'Non catégorisée' }}
-
+                    <span class="table-primary-text">
+                      {{ sig.nomCategorie || 'Non catégorisée' }}
+                    </span>
                   </td>
 
 
                   <!-- Citoyen -->
-                  <td class="text-secondary">
 
-                    {{ sig.citoyenNomComplet || 'Citoyen inconnu' }}
-
+                  <td>
+                    <span class="table-secondary-text">
+                      {{ sig.citoyenNomComplet || 'Citoyen inconnu' }}
+                    </span>
                   </td>
 
 
                   <!-- Date -->
-                  <td class="text-secondary">
 
-                    {{ formatDateRelative(sig.dateHeureAlerte) }}
-
+                  <td>
+                    <span class="table-secondary-text">
+                      {{ formatDateRelative(sig.dateHeureAlerte) }}
+                    </span>
                   </td>
 
 
                   <!-- Urgence -->
+
                   <td>
 
                     <span class="badge badge-outline" [ngClass]="getUrgenceClass(sig.typeUrgence)">
@@ -285,6 +337,7 @@
 
 
                   <!-- Statut -->
+
                   <td>
 
                     <span class="badge" [ngClass]="getStatutClass(sig.statut)">
@@ -307,38 +360,54 @@
 
       </div>
 
-    </div>
+    </section>
 
 
     <!-- =====================================================
          ACTIVITÉ RÉCENTE
          ===================================================== -->
 
-    <div class="side-section">
+    <aside class="side-section">
 
       <div class="card">
 
         <div class="card-header">
 
-          <h3 class="card-title">
-            Activité Récente
-          </h3>
+          <div>
+            <span class="section-eyebrow">
+              Dernières mises à jour
+            </span>
+
+            <h2 class="card-title">
+              Activité récente
+            </h2>
+          </div>
 
         </div>
 
 
         <div class="card-body">
 
+          <!-- Aucune activité -->
+
           <div *ngIf="recentSignalements.length === 0" class="empty-state">
 
-            <i class="bi bi-clock-history"></i>
+            <div class="empty-state-icon">
+              <i class="bi bi-clock-history"></i>
+            </div>
 
-            <p>
-              Aucune activité récente.
+            <p class="empty-state-title">
+              Aucune activité
+            </p>
+
+            <p class="empty-state-description">
+              Les dernières actions apparaîtront ici.
             </p>
 
           </div>
 
+
+          <!-- Timeline -->
 
           <div *ngIf="recentSignalements.length > 0" class="activity-timeline">
 
@@ -349,11 +418,9 @@
 
             <div class="timeline-item clickable-row" (click)="voirDetail(sig.idSignalement)">
 
-              <!-- Marker -->
               <div class="timeline-marker" [ngClass]="getStatutClass(sig.statut)"></div>
 
 
-              <!-- Contenu -->
               <div class="timeline-content">
 
                 <p class="timeline-text">
@@ -362,7 +429,9 @@
                     {{ sig.codeTrackingUnique }}
                   </strong>
 
-                  ·
+                  <span>
+                    ·
+                  </span>
 
                   {{ sig.nomCategorie || 'Signalement' }}
 
@@ -374,12 +443,9 @@
 
                 </p>
 
-
-                <span class="timeline-date">
-
+                <time class="timeline-date">
                   {{ formatDateRelative(sig.dateHeureAlerte) }}
-
-                </span>
+                </time>
 
               </div>
 
@@ -393,7 +459,7 @@
 
       </div>
 
-    </div>
+    </aside>
 
   </div>
 

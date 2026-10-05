@@ -3,8 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import {
-    StructureCompetente,
-    StructureCompetenteResponseDto
+    StructureCompetenteResponseDto,
+    StructureCompetenteRequestDto
 } from '../models/structure-competente.model';
 
 @Injectable({
@@ -17,10 +17,14 @@ export class StructureService {
     constructor(private http: HttpClient) { }
 
     obtenirToutesLesStructures(): Observable<StructureCompetenteResponseDto[]> {
-        return this.http.get<StructureCompetenteResponseDto[]>(this.apiUrl);
+        return this.http.get<StructureCompetenteResponseDto[]>(
+            this.apiUrl
+        );
     }
 
-    obtenirStructureParId(idStructure: number): Observable<StructureCompetenteResponseDto> {
+    obtenirStructureParId(
+        idStructure: number
+    ): Observable<StructureCompetenteResponseDto> {
         return this.http.get<StructureCompetenteResponseDto>(
             `${this.apiUrl}/${idStructure}`
         );
@@ -31,6 +35,33 @@ export class StructureService {
     ): Observable<StructureCompetenteResponseDto[]> {
         return this.http.get<StructureCompetenteResponseDto[]>(
             `${this.apiUrl}/type/${typeStructure}`
+        );
+    }
+
+    creerStructure(
+        dto: StructureCompetenteRequestDto
+    ): Observable<StructureCompetenteResponseDto> {
+        return this.http.post<StructureCompetenteResponseDto>(
+            this.apiUrl,
+            dto
+        );
+    }
+
+    modifierStructure(
+        idStructure: number,
+        dto: StructureCompetenteRequestDto
+    ): Observable<StructureCompetenteResponseDto> {
+        return this.http.put<StructureCompetenteResponseDto>(
+            `${this.apiUrl}/${idStructure}`,
+            dto
+        );
+    }
+
+    supprimerStructure(
+        idStructure: number
+    ): Observable<void> {
+        return this.http.delete<void>(
+            `${this.apiUrl}/${idStructure}`
         );
     }
 }

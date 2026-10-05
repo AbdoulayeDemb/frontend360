@@ -1,0 +1,452 @@
+<div class="page-header">
+
+    <div>
+        <h1 class="page-title">
+            {{ isEditMode ? 'Modifier un utilisateur' : 'Ajouter un utilisateur' }}
+        </h1>
+
+        <p class="page-subtitle">
+            {{
+            isEditMode
+            ? 'Modifiez les informations du compte utilisateur'
+            : 'Créez un nouveau compte utilisateur'
+            }}
+        </p>
+    </div>
+
+    <div class="header-actions">
+
+        <button type="button" class="btn btn-secondary" (click)="retourListe()">
+
+            <i class="bi bi-arrow-left"></i>
+
+            Retour à la liste
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<div class="card">
+
+    <!-- Chargement -->
+
+    @if (isLoading) {
+
+    <div class="loading-container">
+
+        <i class="bi bi-arrow-repeat"></i>
+
+        <span>
+            Chargement de l'utilisateur...
+        </span>
+
+    </div>
+
+    }
+
+    @else {
+
+    <form [formGroup]="utilisateurForm" (ngSubmit)="enregistrer()">
+
+        <div class="card-body">
+
+            <!-- Message d'erreur -->
+
+            @if (errorMessage) {
+
+            <div class="alert alert-danger">
+
+                <i class="bi bi-exclamation-circle"></i>
+
+                <span>
+                    {{ errorMessage }}
+                </span>
+
+            </div>
+
+            }
+
+
+            <!-- Message de succès -->
+
+            @if (successMessage) {
+
+            <div class="alert alert-success">
+
+                <i class="bi bi-check-circle"></i>
+
+                <span>
+                    {{ successMessage }}
+                </span>
+
+            </div>
+
+            }
+
+
+            <!-- =========================
+             INFORMATIONS PERSONNELLES
+        ========================== -->
+
+            <div class="form-section">
+
+                <div class="section-title">
+
+                    <i class="bi bi-person"></i>
+
+                    <div>
+                        <h2>Informations personnelles</h2>
+
+                        <p>
+                            Informations générales du compte
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div class="form-grid">
+
+                    <!-- Nom -->
+
+                    <div class="form-group">
+
+                        <label for="nom">
+                            Nom <span>*</span>
+                        </label>
+
+                        <input id="nom" type="text" class="form-control" formControlName="nom"
+                            placeholder="Ex. COULIBALY" [class.is-invalid]="isInvalid('nom')">
+
+                        @if (isInvalid('nom')) {
+
+                        <small class="error-text">
+                            Le nom est obligatoire.
+                        </small>
+
+                        }
+
+                    </div>
+
+
+                    <!-- Prénom -->
+
+                    <div class="form-group">
+
+                        <label for="prenom">
+                            Prénom <span>*</span>
+                        </label>
+
+                        <input id="prenom" type="text" class="form-control" formControlName="prenom"
+                            placeholder="Ex. Oumar" [class.is-invalid]="isInvalid('prenom')">
+
+                        @if (isInvalid('prenom')) {
+
+                        <small class="error-text">
+                            Le prénom est obligatoire.
+                        </small>
+
+                        }
+
+                    </div>
+
+
+                    <!-- Téléphone -->
+
+                    <div class="form-group">
+
+                        <label for="telephone">
+                            Téléphone <span>*</span>
+                        </label>
+
+                        <input id="telephone" type="text" class="form-control" formControlName="telephone"
+                            placeholder="Ex. 76000010" [class.is-invalid]="isInvalid('telephone')">
+
+                        @if (isInvalid('telephone')) {
+
+                        <small class="error-text">
+                            Le téléphone est obligatoire.
+                        </small>
+
+                        }
+
+                    </div>
+
+
+                    <!-- Email -->
+
+                    <div class="form-group">
+
+                        <label for="email">
+                            Email
+                        </label>
+
+                        <input id="email" type="email" class="form-control" formControlName="email"
+                            placeholder="Ex. utilisateur@example.com" [class.is-invalid]="isInvalid('email')">
+
+                        @if (isInvalid('email')) {
+
+                        <small class="error-text">
+                            L'adresse email n'est pas valide.
+                        </small>
+
+                        }
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =========================
+             COMPTE
+        ========================== -->
+
+            <div class="form-section">
+
+                <div class="section-title">
+
+                    <i class="bi bi-shield-lock"></i>
+
+                    <div>
+                        <h2>Compte</h2>
+
+                        <p>
+                            Rôle et accès de l'utilisateur
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div class="form-grid">
+
+
+                    <!-- Rôle -->
+
+                    <div class="form-group">
+
+                        <label for="role">
+                            Rôle <span>*</span>
+                        </label>
+
+                        <select id="role" class="form-control" formControlName="role">
+
+                            @for (role of roles; track role.value) {
+
+                            <option [value]="role.value">
+                                {{ role.label }}
+                            </option>
+
+                            }
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- Mot de passe -->
+
+                    @if (!isEditMode) {
+
+                    <div class="form-group">
+
+                        <label for="motDePasse">
+                            Mot de passe <span>*</span>
+                        </label>
+
+                        <input id="motDePasse" type="password" class="form-control" formControlName="motDePasse"
+                            placeholder="Minimum 6 caractères" [class.is-invalid]="isInvalid('motDePasse')">
+
+                        @if (isInvalid('motDePasse')) {
+
+                        <small class="error-text">
+                            Le mot de passe doit contenir au moins 6 caractères.
+                        </small>
+
+                        }
+
+                    </div>
+
+                    }
+
+                </div>
+
+            </div>
+
+
+            <!-- =========================
+             INFORMATIONS STRUCTURE
+        ========================== -->
+
+            @if (utilisateurForm.get('role')?.value === 'STRUCTURE') {
+
+            <div class="form-section structure-section">
+
+                <div class="section-title">
+
+                    <i class="bi bi-building"></i>
+
+                    <div>
+                        <h2>Informations de la structure</h2>
+
+                        <p>
+                            Informations professionnelles de l'agent
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div class="form-grid">
+
+
+                    <!-- Matricule -->
+
+                    <div class="form-group">
+
+                        <label for="matriculeAgent">
+                            Matricule agent <span>*</span>
+                        </label>
+
+                        <input id="matriculeAgent" type="text" class="form-control" formControlName="matriculeAgent"
+                            placeholder="Ex. AG-010" [class.is-invalid]="isInvalid('matriculeAgent')">
+
+                        @if (isInvalid('matriculeAgent')) {
+
+                        <small class="error-text">
+                            Le matricule est obligatoire.
+                        </small>
+
+                        }
+
+                    </div>
+
+
+                    <!-- Structure -->
+
+                    <div class="form-group">
+
+                        <label for="idStructure">
+                            Structure <span>*</span>
+                        </label>
+
+                        <select id="idStructure" class="form-control" formControlName="idStructure"
+                            [class.is-invalid]="isInvalid('idStructure')">
+
+                            <option [ngValue]="null">
+                                Sélectionnez une structure
+                            </option>
+
+                            @for (
+                            structure of structures;
+                            track structure.idStructure
+                            ) {
+
+                            <option [ngValue]="structure.idStructure">
+
+                                {{ structure.nomStructure }}
+
+                                @if (structure.quartier) {
+                                — {{ structure.quartier }}
+                                }
+
+                            </option>
+
+                            }
+
+                        </select>
+
+                        @if (isInvalid('idStructure')) {
+
+                        <small class="error-text">
+                            La structure est obligatoire.
+                        </small>
+
+                        }
+
+                        @if (structures.length === 0) {
+
+                        <small class="helper-text">
+                            Aucune structure disponible.
+                        </small>
+
+                        }
+
+                    </div>
+
+
+                    <!-- Responsable -->
+
+                    <div class="form-group checkbox-group">
+
+                        <label class="checkbox-label">
+
+                            <input type="checkbox" formControlName="estResponsable">
+
+                            <span>
+                                Cet agent est responsable de sa structure
+                            </span>
+
+                        </label>
+
+                        <small class="helper-text">
+                            Un responsable peut être identifié comme référent
+                            de sa structure.
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            }
+
+
+        </div>
+
+
+        <!-- =========================
+           FOOTER
+      ========================== -->
+
+        <div class="card-footer form-footer">
+
+            <button type="button" class="btn btn-secondary" [disabled]="isSubmitting" (click)="retourListe()">
+
+                Annuler
+
+            </button>
+
+
+            <button type="submit" class="btn btn-primary" [disabled]="isSubmitting">
+
+                @if (isSubmitting) {
+
+                <i class="bi bi-arrow-repeat"></i>
+
+                Enregistrement...
+
+                } @else {
+
+                <i class="bi" [class.bi-check-lg]="isEditMode" [class.bi-person-plus]="!isEditMode">
+                </i>
+
+                {{ isEditMode ? 'Enregistrer les modifications' : 'Créer le compte' }}
+
+                }
+
+            </button>
+
+        </div>
+
+    </form>
+
+    }
+
+</div>
