@@ -127,23 +127,17 @@ export class LoginComponent implements OnInit {
 
                         if (user.estResponsable === true) {
 
-                            /*
-                             * Pour l'instant, aucune route
-                             * /structure n'existe dans app.routes.ts.
-                             *
-                             * On ne redirige donc pas encore
-                             * vers cette interface.
-                             */
-                            this.errorMessage =
-                                "L'interface responsable de structure n'est pas encore configurée.";
+                            this.router.navigate([
+                                '/structure/dashboard'
+                            ]);
 
                         } else {
 
                             this.errorMessage =
                                 "Accès refusé. Le portail web est réservé aux responsables de structure.";
-                        }
 
-                        this.authService.logout();
+                            this.authService.logout();
+                        }
 
                         break;
 

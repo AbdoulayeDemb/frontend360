@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output, inject } from '@angular/core';
+import { Component, EventEmitter, HostBinding, Input, OnInit, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { AuthService } from '../../../core/services/auth.service';
@@ -19,6 +19,14 @@ export class AdminTopbarComponent implements OnInit {
 
   @Output()
   searchChange = new EventEmitter<string>();
+
+  @Input()
+  structureMode = false;
+
+  @HostBinding('class.structure-mode')
+  get isStructureMode(): boolean {
+    return this.structureMode;
+  }
 
   currentUser: Utilisateur | null = null;
 

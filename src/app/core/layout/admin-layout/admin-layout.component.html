@@ -1,11 +1,11 @@
-<div class="admin-layout">
+<div class="admin-layout" [class.structure-layout]="isStructure">
 
   <app-admin-sidebar class="admin-sidebar">
   </app-admin-sidebar>
 
   <div class="admin-main">
 
-    <app-admin-topbar (searchChange)="onGlobalSearch($event)">
+    <app-admin-topbar [structureMode]="isStructure" (searchChange)="onGlobalSearch($event)">
     </app-admin-topbar>
 
     <div class="admin-content">

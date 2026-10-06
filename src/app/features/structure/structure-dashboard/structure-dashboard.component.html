@@ -1,0 +1,99 @@
+<section class="structure-dashboard">
+	<header class="dashboard-heading">
+		<div>
+			<p class="eyebrow">Espace structure</p>
+			<h1>Tableau de bord</h1>
+			<p class="subtitle">Vue d’ensemble des signalements et de l’activité de {{ getStructureName() }}.</p>
+		</div>
+		<div class="heading-meta">
+			<span class="responsible"><i class="bi bi-building" aria-hidden="true"></i>{{ getStructureName() }}</span>
+			<span><i class="bi bi-calendar3" aria-hidden="true"></i>{{ todayLabel }}</span>
+		</div>
+	</header>
+
+	<div *ngIf="isLoading" class="state-panel" role="status">
+		<span class="spinner" aria-hidden="true"></span> Chargement de vos signalements...
+	</div>
+
+	<div *ngIf="!isLoading && errorMessage" class="state-panel state-error" role="alert">
+		<i class="bi bi-exclamation-circle" aria-hidden="true"></i>
+		<span>{{ errorMessage }}</span>
+		<button type="button" class="text-button" (click)="loadDashboard()">Réessayer</button>
+	</div>
+
+	<ng-container *ngIf="!isLoading && !errorMessage">
+		<section class="stats-grid" aria-label="Indicateurs de la structure">
+			<article class="stat-card">
+				<span class="stat-icon icon-blue"><i class="bi bi-exclamation-triangle" aria-hidden="true"></i></span>
+				<div><span class="stat-label">Total des signalements</span><strong>{{ stats.total }}</strong></div>
+				<span class="stat-footnote">Pris en charge par votre structure</span>
+			</article>
+			<article class="stat-card">
+				<span class="stat-icon icon-red"><i class="bi bi-broadcast-pin" aria-hidden="true"></i></span>
+				<div><span class="stat-label">Urgents à traiter</span><strong>{{ stats.urgents }}</strong></div>
+				<span class="stat-footnote">Urgence élevée ou critique, non résolus</span>
+			</article>
+			<article class="stat-card">
+				<span class="stat-icon icon-green"><i class="bi bi-check-circle" aria-hidden="true"></i></span>
+				<div><span class="stat-label">Résolus</span><strong>{{ stats.resolus }}</strong></div>
+				<span class="stat-footnote">Signalements clôturés</span>
+			</article>
+		</section>
+
+		<section class="dashboard-panels">
+			<article class="panel map-panel">
+				<div class="panel-heading">
+					<div><h2>Carte des signalements</h2><p>Localisation des signalements reçus</p></div>
+					<a routerLink="/structure/signalements" class="panel-link">Voir la liste <i class="bi bi-arrow-up-right" aria-hidden="true"></i></a>
+				</div>
+				<div class="map-surface">
+					<iframe class="map-frame" [src]="mapUrl" title="Carte des signalements attribués à votre structure" loading="lazy"></iframe>
+					<span *ngFor="let signalement of recentSignalements"
+						class="map-pin" [class.pin-urgent]="signalement.typeUrgence === 'CRITIQUE' || signalement.typeUrgence === 'ELEVEE'"
+						[style.left.%]="mapCoordinate(signalement, 'x')" [style.top.%]="mapCoordinate(signalement, 'y')"
+						[attr.aria-label]="signalement.codeTrackingUnique + ', ' + getUrgencyLabel(signalement.typeUrgence)">
+						<i class="bi bi-geo-alt-fill" aria-hidden="true"></i>
+					</span>
+					<div class="map-caption"><i class="bi bi-geo-alt-fill" aria-hidden="true"></i> {{ recentSignalements.length }} signalement(s) récent(s)</div>
+				</div>
+			</article>
+
+			<article class="panel categories-panel">
+				<div class="panel-heading">
+					<div><h2>Répartition par catégorie</h2><p>Sur l’ensemble de vos signalements</p></div>
+				</div>
+				<div *ngIf="categories.length; else noCategories" class="category-content">
+					<div class="donut-chart" [style.background]="chartBackground" role="img" aria-label="Répartition des signalements par catégorie">
+						<span><strong>{{ stats.total }}</strong><small>Total</small></span>
+					</div>
+					<ul class="category-legend">
+						<li *ngFor="let category of categories">
+							<span class="legend-dot" [style.backgroundColor]="category.color"></span>
+							<span class="legend-name">{{ category.name }}</span>
+							<strong>{{ category.percentage }}%</strong>
+						</li>
+					</ul>
+				</div>
+				<ng-template #noCategories><p class="empty-message">Aucun signalement pour le moment.</p></ng-template>
+			</article>
+		</section>
+
+		<section class="panel recent-panel">
+			<div class="panel-heading">
+				<div><h2>Signalements récents</h2><p>Les dernières alertes attribuées à votre structure</p></div>
+				<a routerLink="/structure/signalements" class="panel-link">Tous les signalements <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+			</div>
+			<div *ngIf="recentSignalements.length; else noRecent" class="recent-list">
+				<button type="button" class="recent-row" *ngFor="let signalement of recentSignalements" (click)="openSignalement(signalement.idSignalement)">
+					<span class="recent-category-icon"><i class="bi bi-cone-striped" aria-hidden="true"></i></span>
+					<span class="recent-description"><strong>{{ signalement.nomCategorie || 'Autres' }}</strong><small>{{ signalement.codeTrackingUnique }} · {{ signalement.repereVisuel || 'Localisation non précisée' }}</small></span>
+					<span class="urgency-label" [class.urgent]="signalement.typeUrgence === 'CRITIQUE' || signalement.typeUrgence === 'ELEVEE'">{{ getUrgencyLabel(signalement.typeUrgence) }}</span>
+					<span class="status-pill" [ngClass]="getStatusClass(signalement.statut)">{{ getStatusLabel(signalement.statut) }}</span>
+					<time>{{ formatDate(signalement.dateHeureAlerte) }}</time>
+					<i class="bi bi-chevron-right row-chevron" aria-hidden="true"></i>
+				</button>
+			</div>
+			<ng-template #noRecent><p class="empty-message">Aucun signalement attribué à votre structure.</p></ng-template>
+		</section>
+	</ng-container>
+</section>

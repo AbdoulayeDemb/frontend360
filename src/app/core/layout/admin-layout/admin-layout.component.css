@@ -28,3 +28,13 @@
   padding: 24px;
   overflow-y: auto;
 }
+
+@media (max-width: 760px) {
+  .admin-layout.structure-layout .admin-sidebar {
+    width: 68px;
+  }
+
+  .admin-layout.structure-layout .admin-content {
+    padding: 14px;
+  }
+}

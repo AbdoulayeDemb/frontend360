@@ -5,6 +5,7 @@ import { AdminSidebarComponent } from '../admin-sidebar/admin-sidebar.component'
 import { AdminTopbarComponent } from '../admin-topbar/admin-topbar.component';
 
 import { AdminSearchService } from '../../../core/services/admin-search.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-admin-layout',
@@ -21,6 +22,13 @@ export class AdminLayoutComponent {
 
   private readonly adminSearchService =
     inject(AdminSearchService);
+
+  private readonly authService =
+    inject(AuthService);
+
+  get isStructure(): boolean {
+    return this.authService.isStructure();
+  }
 
 
   // =========================================================

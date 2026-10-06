@@ -72,3 +72,39 @@
   background-color: rgba(239, 68, 68, 0.1);
   color: #EF4444;
 }
+
+:host(.structure-sidebar) .nav-link.active {
+  background-color: #3982f2;
+  color: white;
+}
+
+@media (max-width: 760px) {
+  :host-context(.structure-layout) .sidebar-header {
+    padding: 16px 6px;
+  }
+
+  :host-context(.structure-layout) .sidebar-logo {
+    max-width: 54px;
+  }
+
+  :host-context(.structure-layout) .nav-item {
+    padding: 0 7px;
+  }
+
+  :host-context(.structure-layout) .nav-link {
+    justify-content: center;
+    padding: 12px 4px;
+  }
+
+  :host-context(.structure-layout) .nav-link span {
+    display: none;
+  }
+
+  :host-context(.structure-layout) .nav-link i {
+    margin: 0;
+  }
+
+  :host-context(.structure-layout) .sidebar-footer {
+    padding: 8px;
+  }
+}

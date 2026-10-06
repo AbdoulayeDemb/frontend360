@@ -1,0 +1,57 @@
+<section class="structure-list">
+  <header class="list-heading">
+    <div>
+      <p class="eyebrow">Espace structure</p>
+      <h1>Liste des signalements</h1>
+      <p class="subtitle">Consultez et gérez les signalements attribués à votre structure.</p>
+    </div>
+    <label class="search-box">
+      <i class="bi bi-search" aria-hidden="true"></i>
+      <input type="search" placeholder="Rechercher un signalement..." [value]="searchTerm" (input)="onSearch($event)">
+    </label>
+  </header>
+
+  <nav class="status-tabs" aria-label="Filtrer par statut">
+    <button type="button" [class.active]="selectedStatut === ''" (click)="setStatut('')">Tous <strong>{{ getStatusCount('') }}</strong></button>
+    <button type="button" [class.active]="selectedStatut === EnumStatut.DECLARE" (click)="setStatut(EnumStatut.DECLARE)">Nouveaux <strong>{{ getStatusCount(EnumStatut.DECLARE) }}</strong></button>
+    <button type="button" [class.active]="selectedStatut === EnumStatut.EN_COURS" (click)="setStatut(EnumStatut.EN_COURS)">En cours <strong>{{ getStatusCount(EnumStatut.EN_COURS) }}</strong></button>
+    <button type="button" [class.active]="selectedStatut === EnumStatut.RESOLU" (click)="setStatut(EnumStatut.RESOLU)">Résolus <strong>{{ getStatusCount(EnumStatut.RESOLU) }}</strong></button>
+  </nav>
+
+  <div *ngIf="isLoading" class="state-message" role="status">Chargement des signalements...</div>
+  <div *ngIf="!isLoading && errorMessage" class="state-message state-error" role="alert">
+    {{ errorMessage }} <button type="button" (click)="loadSignalements()">Réessayer</button>
+  </div>
+
+  <section *ngIf="!isLoading && !errorMessage" class="table-panel">
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>ID</th><th>Photo</th><th>Catégorie</th><th>Description</th><th>Localisation</th><th>Statut</th><th>Date</th><th>Actions</th></tr></thead>
+        <tbody>
+          <tr *ngFor="let signalement of visibleSignalements">
+            <td><button type="button" class="tracking-link" (click)="openSignalement(signalement.idSignalement)">{{ signalement.codeTrackingUnique }}</button></td>
+            <td>
+              <img *ngIf="signalement.photoAvantUrl; else noPhoto" class="report-photo" [src]="signalement.photoAvantUrl" alt="Photo du signalement">
+              <ng-template #noPhoto><span class="photo-placeholder"><i class="bi bi-image" aria-hidden="true"></i></span></ng-template>
+            </td>
+            <td>{{ signalement.nomCategorie || 'Autres' }}</td>
+            <td class="description-cell" [title]="signalement.description">{{ signalement.description || 'Aucune description' }}</td>
+            <td class="location-cell" [title]="signalement.repereVisuel || ''">{{ signalement.repereVisuel || (signalement.latitude + ', ' + signalement.longitude) }}</td>
+            <td><span class="status-pill" [ngClass]="statusClass(signalement.statut)">{{ statusLabel(signalement.statut) }}</span></td>
+            <td class="date-cell">{{ formatDate(signalement.dateHeureAlerte) }}</td>
+            <td><button type="button" class="icon-button" title="Voir le détail" aria-label="Voir le détail" (click)="openSignalement(signalement.idSignalement)"><i class="bi bi-eye" aria-hidden="true"></i></button></td>
+          </tr>
+          <tr *ngIf="visibleSignalements.length === 0"><td colspan="8" class="empty-row">Aucun signalement trouvé pour ce filtre.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <footer class="table-footer">
+      <span>{{ filteredSignalements.length }} résultat(s) sur {{ signalements.length }}</span>
+      <div class="pagination" aria-label="Pagination">
+        <button type="button" aria-label="Page précédente" [disabled]="currentPage === 1" (click)="changePage(currentPage - 1)"><i class="bi bi-chevron-left" aria-hidden="true"></i></button>
+        <span>Page {{ currentPage }} sur {{ totalPages }}</span>
+        <button type="button" aria-label="Page suivante" [disabled]="currentPage === totalPages" (click)="changePage(currentPage + 1)"><i class="bi bi-chevron-right" aria-hidden="true"></i></button>
+      </div>
+    </footer>
+  </section>
+</section>

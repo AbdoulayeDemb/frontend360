@@ -346,3 +346,7 @@
     left: 13px;
   }
 }
+
+:host(.structure-mode) .topbar {
+  justify-content: flex-end;
+}
