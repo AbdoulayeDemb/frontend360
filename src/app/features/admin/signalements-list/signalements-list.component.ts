@@ -244,20 +244,18 @@ export class SignalementsListComponent implements OnInit {
   /**
    * Classe CSS pour le statut.
    */
-  getStatutClass(
-    statut: EnumStatut
-  ): string {
+  getStatutClass(statut: EnumStatut): string {
 
     switch (statut) {
 
       case EnumStatut.DECLARE:
-        return 'badge-warning';
+        return 'badge-blue';
 
       case EnumStatut.EN_COURS:
-        return 'badge-info';
+        return 'badge-orange';
 
       case EnumStatut.RESOLU:
-        return 'badge-success';
+        return 'badge-green';
 
       case EnumStatut.REJETE:
         return 'badge-danger';

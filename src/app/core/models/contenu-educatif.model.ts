@@ -7,9 +7,9 @@ export interface ContenuEducatif {
     format: EnumFormat;
     mediaUrl: string;
     datePublication: string;
-    idAuteur: number;
+
+    auteurId?: number;
     nomAuteur?: string;
-    prenomAuteur?: string;
 }
 
 export interface ContenuEducatifRequestDto {
@@ -17,7 +17,6 @@ export interface ContenuEducatifRequestDto {
     theme: EnumThematique;
     format: EnumFormat;
     mediaUrl: string;
-    idAuteur: number;
 }
 
 export interface ContenuEducatifResponseDto {
@@ -27,6 +26,7 @@ export interface ContenuEducatifResponseDto {
     format: EnumFormat;
     mediaUrl: string;
     datePublication: string;
-    idAuteur: number;
-    nomCompletAuteur?: string;
+
+    auteurId?: number;
+    nomAuteur?: string;
 }

@@ -1,16 +1,16 @@
-/* ==========================================
-   CONTENEUR DE PAGE
-========================================== */
+/* =========================================================
+   PAGE
+========================================================= */
 
-.page-container {
+.contenu-form-page {
     width: 100%;
     padding: 0;
 }
 
 
-/* ==========================================
+/* =========================================================
    EN-TÊTE
-========================================== */
+========================================================= */
 
 .page-header {
     display: flex;
@@ -24,9 +24,41 @@
     min-width: 0;
 }
 
+.back-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+
+    margin: 0 0 12px;
+    padding: 0;
+
+    border: 0;
+    background: transparent;
+
+    color: #64748B;
+
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+
+    cursor: pointer;
+
+    transition: color 160ms ease;
+}
+
+.back-button i {
+    font-size: 13px;
+}
+
+.back-button:hover {
+    color: #2563EB;
+}
+
 .page-title {
     margin: 0 0 5px;
+
     color: #1E293B;
+
     font-family: 'Poppins', sans-serif;
     font-size: 24px;
     font-weight: 600;
@@ -35,57 +67,117 @@
 
 .page-subtitle {
     margin: 0;
+
     color: #64748B;
+
     font-family: 'Inter', sans-serif;
     font-size: 13px;
     line-height: 1.5;
 }
 
-.header-actions {
+
+/* =========================================================
+   ALERTES
+========================================================= */
+
+.alert {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
+    gap: 9px;
+
+    margin-bottom: 18px;
+    padding: 11px 13px;
+
+    border-radius: 7px;
+
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.alert i {
     flex-shrink: 0;
+    margin-top: 1px;
+    font-size: 14px;
+}
+
+.alert-error {
+    border: 1px solid rgba(239, 68, 68, 0.18);
+    background-color: rgba(239, 68, 68, 0.05);
+    color: #B91C1C;
 }
 
 
-/* ==========================================
-   CARTE DU FORMULAIRE
-========================================== */
+/* =========================================================
+   CHARGEMENT
+========================================================= */
 
-.form-card {
-    overflow: hidden;
+.loading-card {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 220px;
+
     border: 1px solid #E8EDF3;
     border-radius: 10px;
+
     background-color: #FFFFFF;
 }
 
-.form-content {
-    width: 100%;
+.loading-state {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    color: #64748B;
+
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+}
+
+.loading-icon {
+    color: #2563EB;
+    font-size: 15px;
+
+    animation: spin 1s linear infinite;
 }
 
 
-/* ==========================================
+/* =========================================================
+   FORMULAIRE
+========================================================= */
+
+.form-card {
+    width: 100%;
+    overflow: hidden;
+
+    border: 1px solid #E8EDF3;
+    border-radius: 10px;
+
+    background-color: #FFFFFF;
+}
+
+
+/* =========================================================
    SECTIONS
-========================================== */
+========================================================= */
 
 .form-section {
     padding: 26px 28px 30px;
+
     border-bottom: 1px solid #EEF2F6;
 }
 
-.form-section:last-child {
+.form-section:last-of-type {
     border-bottom: none;
 }
-
-
-/* ==========================================
-   TITRE DE SECTION
-========================================== */
 
 .section-heading {
     display: flex;
     align-items: center;
     gap: 11px;
+
     margin-bottom: 22px;
 }
 
@@ -93,6 +185,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+
     flex-shrink: 0;
 
     width: 34px;
@@ -128,13 +221,15 @@
 }
 
 
-/* ==========================================
+/* =========================================================
    GRILLE DU FORMULAIRE
-========================================== */
+========================================================= */
 
 .form-grid {
     display: grid;
+
     grid-template-columns: repeat(2, minmax(0, 1fr));
+
     gap: 20px 22px;
 }
 
@@ -143,13 +238,14 @@
 }
 
 
-/* ==========================================
+/* =========================================================
    CHAMPS
-========================================== */
+========================================================= */
 
 .form-group {
     display: flex;
     flex-direction: column;
+
     min-width: 0;
 }
 
@@ -169,15 +265,11 @@
     color: #DC2626;
 }
 
-
-/* ==========================================
-   INPUTS / SELECTS
-========================================== */
-
 .form-group input,
 .form-group select {
     width: 100%;
     height: 40px;
+
     box-sizing: border-box;
 
     padding: 0 12px;
@@ -220,9 +312,9 @@
 }
 
 
-/* ==========================================
+/* =========================================================
    VALIDATION
-========================================== */
+========================================================= */
 
 .form-group input.invalid,
 .form-group select.invalid {
@@ -248,24 +340,50 @@
 }
 
 
-/* ==========================================
-   ZONE GPS
-========================================== */
+/* =========================================================
+   AIDE
+========================================================= */
 
-.info-box {
+.field-hint {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    margin-top: 7px;
+
+    color: #94A3B8;
+
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    line-height: 1.5;
+}
+
+.field-hint i {
+    color: #94A3B8;
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   INFORMATIONS AUTEUR
+========================================================= */
+
+.author-info {
     display: flex;
     align-items: flex-start;
     gap: 12px;
 
+    margin: 22px 28px;
+
     padding: 14px 16px;
 
-    border: 1px solid rgba(59, 130, 246, 0.16);
+    border: 1px solid rgba(16, 185, 129, 0.16);
     border-radius: 7px;
 
-    background-color: rgba(59, 130, 246, 0.05);
+    background-color: rgba(16, 185, 129, 0.05);
 }
 
-.info-icon {
+.author-icon {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -277,17 +395,17 @@
 
     border-radius: 6px;
 
-    background-color: rgba(59, 130, 246, 0.10);
-    color: #2563EB;
+    background-color: rgba(16, 185, 129, 0.10);
+    color: #10B981;
 
     font-size: 14px;
 }
 
-.info-content {
+.author-content {
     min-width: 0;
 }
 
-.info-content strong {
+.author-content strong {
     display: block;
 
     margin-bottom: 3px;
@@ -299,7 +417,7 @@
     font-weight: 600;
 }
 
-.info-content p {
+.author-content p {
     margin: 0;
 
     color: #64748B;
@@ -310,83 +428,11 @@
 }
 
 
-/* ==========================================
-   ALERTES
-========================================== */
+/* =========================================================
+   ACTIONS
+========================================================= */
 
-.alert {
-    display: flex;
-    align-items: flex-start;
-    gap: 9px;
-
-    margin-bottom: 18px;
-    padding: 11px 13px;
-
-    border-radius: 7px;
-
-    font-family: 'Inter', sans-serif;
-    font-size: 12px;
-    line-height: 1.5;
-}
-
-.alert i {
-    flex-shrink: 0;
-    margin-top: 1px;
-    font-size: 14px;
-}
-
-.alert-error {
-    border: 1px solid rgba(239, 68, 68, 0.18);
-    background-color: rgba(239, 68, 68, 0.05);
-    color: #B91C1C;
-}
-
-.alert-success {
-    border: 1px solid rgba(16, 185, 129, 0.18);
-    background-color: rgba(16, 185, 129, 0.05);
-    color: #047857;
-}
-
-
-/* ==========================================
-   CHARGEMENT
-========================================== */
-
-.loading-card {
-    min-height: 220px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    border: 1px solid #E8EDF3;
-    border-radius: 10px;
-
-    background-color: #FFFFFF;
-}
-
-.loading-state {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-
-    color: #64748B;
-
-    font-family: 'Inter', sans-serif;
-    font-size: 12px;
-}
-
-.loading-icon {
-    color: #2563EB;
-    animation: spin 1s linear infinite;
-}
-
-
-/* ==========================================
-   FOOTER DU FORMULAIRE
-========================================== */
-
-.form-footer {
+.form-actions {
     display: flex;
     align-items: center;
     justify-content: flex-end;
@@ -399,11 +445,6 @@
     background-color: #FAFBFC;
 }
 
-
-/* ==========================================
-   BOUTONS
-========================================== */
-
 .btn {
     display: inline-flex;
     align-items: center;
@@ -411,6 +452,7 @@
     gap: 7px;
 
     min-height: 38px;
+
     padding: 8px 14px;
 
     border: 1px solid transparent;
@@ -442,6 +484,10 @@
     background-color: #2563EB;
 }
 
+.btn-primary:active:not(:disabled) {
+    background-color: #1D4ED8;
+}
+
 .btn-secondary {
     border-color: #E2E8F0;
     background-color: #FFFFFF;
@@ -460,9 +506,9 @@
 }
 
 
-/* ==========================================
+/* =========================================================
    ANIMATION
-========================================== */
+========================================================= */
 
 @keyframes spin {
     to {
@@ -471,9 +517,9 @@
 }
 
 
-/* ==========================================
-   TABLETTE
-========================================== */
+/* =========================================================
+   RESPONSIVE
+========================================================= */
 
 @media (max-width: 800px) {
 
@@ -481,14 +527,6 @@
         align-items: flex-start;
         flex-direction: column;
         gap: 16px;
-    }
-
-    .header-actions {
-        width: 100%;
-    }
-
-    .header-actions .btn {
-        width: 100%;
     }
 
     .form-grid {
@@ -502,10 +540,6 @@
 }
 
 
-/* ==========================================
-   MOBILE
-========================================== */
-
 @media (max-width: 600px) {
 
     .page-title {
@@ -514,6 +548,10 @@
 
     .page-subtitle {
         font-size: 12px;
+    }
+
+    .back-button {
+        margin-bottom: 10px;
     }
 
     .form-section {
@@ -529,19 +567,20 @@
         height: 32px;
     }
 
-    .form-footer {
+    .author-info {
+        margin: 18px 16px;
+        padding: 13px;
+    }
+
+    .form-actions {
         flex-direction: column-reverse;
         align-items: stretch;
 
         padding: 14px 16px;
     }
 
-    .form-footer .btn {
+    .form-actions .btn {
         width: 100%;
-    }
-
-    .info-box {
-        padding: 13px;
     }
 
 }
