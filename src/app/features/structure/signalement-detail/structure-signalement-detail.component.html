@@ -71,7 +71,7 @@
         <button type="button" class="secondary-action" disabled title="La gestion des abus n’est pas encore disponible dans l’API.">
           <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>Marquer comme abus
         </button>
-        <button type="button" class="secondary-action" disabled title="L’assignation d’agents n’est pas encore disponible dans l’espace structure.">
+        <button *ngIf="sig.statut === EnumStatut.DECLARE || sig.statut === EnumStatut.EN_COURS" type="button" class="secondary-action" [routerLink]="['/structure/signalements', sig.idSignalement, 'assigner']">
           <i class="bi bi-person-check" aria-hidden="true"></i>Assigner un agent
         </button>
         <button *ngIf="sig.statut === EnumStatut.DECLARE || sig.statut === EnumStatut.EN_COURS" type="button" class="secondary-action action-refuse" [disabled]="isUpdating" (click)="refuse()">

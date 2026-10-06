@@ -1,0 +1,35 @@
+<section class="structure-page">
+  <header class="page-heading">
+    <div>
+      <p class="eyebrow">Signalements</p>
+      <h1>Abus</h1>
+      <p class="subtitle">Consultation des signalements signalés comme abusifs.</p>
+    </div>
+  </header>
+
+  <div *ngIf="isLoading" class="state-panel" role="status">
+    <span class="spinner" aria-hidden="true"></span>
+    Chargement des signalements...
+  </div>
+
+  <div *ngIf="errorMessage" class="state-panel state-error" role="alert">
+    <i class="bi bi-exclamation-circle" aria-hidden="true"></i>
+    <span>{{ errorMessage }}</span>
+  </div>
+
+  <section *ngIf="!isLoading && !errorMessage" class="info-card">
+    <div class="card-icon">
+      <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
+    </div>
+    <div>
+      <h2>Gestion des abus</h2>
+      <p>
+        L’API actuelle ne permet pas encore de créer ou de consulter une liste distincte des abus.
+        Le bouton de signalement d’abus est disponible dans la fiche détaillée, mais reste désactivé.
+      </p>
+      <p class="card-note">
+        <strong>Signalements rejetés :</strong> {{ signalements.length }}
+      </p>
+    </div>
+  </section>
+</section>

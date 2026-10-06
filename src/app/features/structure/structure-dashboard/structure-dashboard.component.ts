@@ -46,7 +46,7 @@ export class StructureDashboardComponent implements OnInit {
 
 	stats = {
 		total: 0,
-		urgents: 0,
+		declares: 0,
 		resolus: 0
 	};
 
@@ -79,15 +79,8 @@ export class StructureDashboardComponent implements OnInit {
 				this.updateMap(signalements);
 				this.stats = {
 					total: signalements.length,
-					urgents: signalements.filter(signalement =>
-						(signalement.typeUrgence === EnumTypeUrgence.CRITIQUE ||
-							signalement.typeUrgence === EnumTypeUrgence.ELEVEE) &&
-						signalement.statut !== EnumStatut.RESOLU &&
-						signalement.statut !== EnumStatut.REJETE
-					).length,
-					resolus: signalements.filter(
-						signalement => signalement.statut === EnumStatut.RESOLU
-					).length
+					declares: signalements.filter(signalement => signalement.statut === EnumStatut.DECLARE).length,
+					resolus: signalements.filter(signalement => signalement.statut === EnumStatut.RESOLU).length
 				};
 				this.calculateCategories(signalements);
 				this.isLoading = false;

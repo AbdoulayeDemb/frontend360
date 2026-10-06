@@ -17,7 +17,13 @@ import { StructureFormComponent } from './features/admin/structure-form/structur
 import { UtilisateursListComponent } from './features/admin/utilisateurs-list/utilisateurs-list.component';
 import { StructureDashboardComponent } from './features/structure/structure-dashboard/structure-dashboard.component';
 import { StructureSignalementsListComponent } from './features/structure/signalements-list/structure-signalements-list.component';
+import { SignalementsAssignationComponent } from './features/structure/signalements-assignation/signalements-assignation.component';
 import { StructureSignalementDetailComponent } from './features/structure/signalement-detail/structure-signalement-detail.component';
+import { AgentsTerrainComponent } from './features/structure/agents-terrain/agents-terrain.component';
+import { StructureAgentFormComponent } from './features/structure/agents-terrain/structure-agent-form.component';
+import { AbusComponent } from './features/structure/abus/abus.component';
+import { RapportComponent } from './features/structure/rapport/rapport.component';
+import { RapportProfileComponent } from './features/structure/rapport-profile/rapport-profile.component';
 import { EnumRole } from './core/models/enums.model';
 import { roleGuard } from './core/guards/role.guard';
 
@@ -191,7 +197,14 @@ export const routes: Routes = [
     children: [
       { path: 'dashboard', component: StructureDashboardComponent },
       { path: 'signalements', component: StructureSignalementsListComponent },
+      { path: 'signalements/:id/assigner', component: SignalementsAssignationComponent },
       { path: 'signalements/:id', component: StructureSignalementDetailComponent },
+      { path: 'agents/nouveau', component: StructureAgentFormComponent },
+      { path: 'agents', component: AgentsTerrainComponent },
+      { path: 'carte', component: StructureDashboardComponent },
+      { path: 'abus', component: AbusComponent },
+      { path: 'rapport', component: RapportComponent },
+      { path: 'profil', component: RapportProfileComponent },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
   },

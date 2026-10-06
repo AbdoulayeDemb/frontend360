@@ -1,0 +1,73 @@
+<section class="structure-page">
+  <header class="page-heading">
+    <div>
+      <p class="eyebrow">Statistiques</p>
+      <h1>Rapport</h1>
+      <p class="subtitle">Résumé de l’activité de votre structure.</p>
+    </div>
+  </header>
+
+  <div *ngIf="isLoading" class="state-panel" role="status">
+    <span class="spinner" aria-hidden="true"></span>
+    Chargement du rapport...
+  </div>
+
+  <div *ngIf="errorMessage" class="state-panel state-error" role="alert">
+    <i class="bi bi-exclamation-circle" aria-hidden="true"></i>
+    <span>{{ errorMessage }}</span>
+  </div>
+
+  <section *ngIf="!isLoading && !errorMessage" class="report-grid">
+    <article class="report-card primary">
+      <span class="card-icon"><i class="bi bi-clipboard-data" aria-hidden="true"></i></span>
+      <div>
+        <span class="label">Total des signalements</span>
+        <strong>{{ total }}</strong>
+      </div>
+    </article>
+
+    <article class="report-card">
+      <span class="card-icon blue"><i class="bi bi-broadcast-pin" aria-hidden="true"></i></span>
+      <div>
+        <span class="label">Déclarés</span>
+        <strong>{{ declarations }}</strong>
+      </div>
+    </article>
+
+    <article class="report-card">
+      <span class="card-icon orange"><i class="bi bi-hourglass-split" aria-hidden="true"></i></span>
+      <div>
+        <span class="label">En cours</span>
+        <strong>{{ enCours }}</strong>
+      </div>
+    </article>
+
+    <article class="report-card">
+      <span class="card-icon green"><i class="bi bi-check-circle" aria-hidden="true"></i></span>
+      <div>
+        <span class="label">Résolus</span>
+        <strong>{{ resolus }}</strong>
+      </div>
+    </article>
+
+    <article class="report-card">
+      <span class="card-icon red"><i class="bi bi-x-circle" aria-hidden="true"></i></span>
+      <div>
+        <span class="label">Rejetés</span>
+        <strong>{{ rejetes }}</strong>
+      </div>
+    </article>
+  </section>
+
+  <section *ngIf="dernierSignalement" class="latest-card">
+    <div>
+      <p class="eyebrow">Dernier signalement</p>
+      <h2>{{ dernierSignalement.nomCategorie || 'Signalement' }}</h2>
+      <p>{{ dernierSignalement.description || 'Aucune description disponible.' }}</p>
+    </div>
+    <div class="latest-meta">
+      <span><i class="bi bi-calendar3" aria-hidden="true"></i> {{ formatDate(dernierSignalement.dateHeureAlerte) }}</span>
+      <span><i class="bi bi-upc-scan" aria-hidden="true"></i> {{ dernierSignalement.codeTrackingUnique }}</span>
+    </div>
+  </section>
+</section>
