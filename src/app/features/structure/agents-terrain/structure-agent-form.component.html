@@ -1,0 +1,90 @@
+<section class="agent-form-page">
+  <header class="page-heading">
+    <div>
+      <h1>Ajouter un agent de terrain</h1>
+      <p>Créez le profil d’un nouvel agent de votre structure.</p>
+    </div>
+  </header>
+
+  <button type="button" class="back-button" (click)="retourListe()">
+    <i class="bi bi-arrow-left" aria-hidden="true"></i>
+    Retour
+  </button>
+
+  <form class="form-panel" [formGroup]="agentForm" (ngSubmit)="enregistrer()">
+    <div *ngIf="errorMessage" class="form-error" role="alert">
+      <i class="bi bi-exclamation-circle" aria-hidden="true"></i>
+      {{ errorMessage }}
+    </div>
+
+    <section class="form-section">
+      <div class="section-heading">
+        <h2>Informations personnelles</h2>
+        <p>Renseignez les informations nécessaires à l’identification de l’agent.</p>
+      </div>
+
+      <div class="form-grid two-columns">
+        <div class="form-field">
+          <label for="agent-nom">Nom <span>*</span></label>
+          <input id="agent-nom" type="text" formControlName="nom" placeholder="Ex. DIARRA" autocomplete="family-name" [class.invalid]="isInvalid('nom')">
+          <small *ngIf="isInvalid('nom')">Le nom doit contenir au moins 2 caractères.</small>
+        </div>
+
+        <div class="form-field">
+          <label for="agent-prenom">Prénom <span>*</span></label>
+          <input id="agent-prenom" type="text" formControlName="prenom" placeholder="Ex. Seyba" autocomplete="given-name" [class.invalid]="isInvalid('prenom')">
+          <small *ngIf="isInvalid('prenom')">Le prénom doit contenir au moins 2 caractères.</small>
+        </div>
+      </div>
+    </section>
+
+    <section class="form-section">
+      <div class="section-heading">
+        <h2>Coordonnées et accès</h2>
+        <p>Ces informations permettront à l’agent de se connecter à son compte.</p>
+      </div>
+
+      <div class="form-grid three-columns">
+        <div class="form-field">
+          <label for="agent-telephone">Téléphone <span>*</span></label>
+          <input id="agent-telephone" type="tel" formControlName="telephone" placeholder="Ex. 97167407" autocomplete="tel" [class.invalid]="isInvalid('telephone')">
+          <small *ngIf="isInvalid('telephone')">Le téléphone est obligatoire.</small>
+        </div>
+
+        <div class="form-field">
+          <label for="agent-email">Email <span>*</span></label>
+          <input id="agent-email" type="email" formControlName="email" placeholder="agent@alert360.ml" autocomplete="email" [class.invalid]="isInvalid('email')">
+          <small *ngIf="isInvalid('email')">Saisissez une adresse email valide.</small>
+        </div>
+
+        <div class="form-field">
+          <label for="agent-matricule">Matricule <span>*</span></label>
+          <input id="agent-matricule" type="text" formControlName="matriculeAgent" placeholder="Ex. 568ML" [class.invalid]="isInvalid('matriculeAgent')">
+          <small *ngIf="isInvalid('matriculeAgent')">Le matricule est obligatoire.</small>
+        </div>
+
+        <div class="form-field">
+          <label for="agent-password">Mot de passe <span>*</span></label>
+          <input id="agent-password" type="password" formControlName="motDePasse" placeholder="Minimum 6 caractères" autocomplete="new-password" [class.invalid]="isInvalid('motDePasse')">
+          <small *ngIf="isInvalid('motDePasse')">Le mot de passe doit contenir au moins 6 caractères.</small>
+        </div>
+
+        <div class="form-field structure-field">
+          <label>Structure rattachée</label>
+          <div class="structure-value">
+            <i class="bi bi-building" aria-hidden="true"></i>
+            {{ structureName }}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="form-footer">
+      <button type="button" class="cancel-button" (click)="retourListe()" [disabled]="isSubmitting">Annuler</button>
+      <button type="submit" class="submit-button" [disabled]="isSubmitting">
+        <i class="bi" [ngClass]="isSubmitting ? 'bi-arrow-repeat' : 'bi-plus-circle'" aria-hidden="true"></i>
+        {{ isSubmitting ? 'Création...' : 'Ajouter l’agent' }}
+      </button>
+    </footer>
+  </form>
+</section>
