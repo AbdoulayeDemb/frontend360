@@ -5,7 +5,7 @@
 
 /* =========================
    EN-TÊTE
-   ========================= */
+========================= */
 
 .page-header {
     display: flex;
@@ -44,7 +44,7 @@
 
 /* =========================
    CARTE PRINCIPALE
-   ========================= */
+========================= */
 
 .card {
     overflow: hidden;
@@ -53,13 +53,13 @@
     background-color: #FFFFFF;
 }
 
-.structures-card {
+.actualites-card {
     width: 100%;
 }
 
 /* =========================
    FILTRES
-   ========================= */
+========================= */
 
 .card-header {
     width: 100%;
@@ -130,7 +130,7 @@
 }
 
 .filter-select-wrapper select {
-    width: 190px;
+    width: 210px;
     height: 40px;
     padding: 0 34px 0 12px;
     border: 1px solid #DCE3EA;
@@ -157,7 +157,7 @@
 
 /* =========================
    BOUTONS
-   ========================= */
+========================= */
 
 .btn {
     display: inline-flex;
@@ -198,7 +198,7 @@
 
 /* =========================
    TABLEAU
-   ========================= */
+========================= */
 
 .table-section {
     width: 100%;
@@ -211,7 +211,7 @@
 
 table {
     width: 100%;
-    min-width: 980px;
+    min-width: 1050px;
     border-collapse: collapse;
 }
 
@@ -256,38 +256,51 @@ tbody tr:last-child td {
 }
 
 /* =========================
-   STRUCTURE
-   ========================= */
+   CONTENU ACTUALITÉ
+========================= */
 
-.structure-cell {
-    min-width: 180px;
+.actualite-content {
+    width: 100%;
+    max-width: 430px;
 }
 
-.structure-name {
+.actualite-title {
+    margin-bottom: 4px;
+    overflow: hidden;
     color: #1E293B;
     font-family: 'Inter', sans-serif;
     font-size: 12px;
     font-weight: 600;
     line-height: 1.5;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.actualite-preview {
+    display: -webkit-box;
+    overflow: hidden;
+    color: #64748B;
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    line-height: 1.45;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
 }
 
 .text-secondary {
     color: #64748B;
 }
 
-.numeric-cell {
+.author-name {
     color: #334155;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
     font-weight: 500;
-}
-
-.actions-column {
-    width: 100px;
-    text-align: right;
 }
 
 /* =========================
    BADGES
-   ========================= */
+========================= */
 
 .badge {
     display: inline-flex;
@@ -302,51 +315,46 @@ tbody tr:last-child td {
     white-space: nowrap;
 }
 
-/* Mairie */
-
-.badge-info {
-    background-color: rgba(59, 130, 246, 0.10);
-    color: #3B82F6;
-}
-
-/* EDM-SA */
-
-.badge-warning {
-    background-color: rgba(245, 158, 11, 0.10);
-    color: #F59E0B;
-}
-
-/* Sapeurs-pompiers */
-
 .badge-danger {
     background-color: rgba(239, 68, 68, 0.10);
     color: #DC2626;
 }
 
-/* SOMAGEP */
-
-.badge-primary {
-    background-color: rgba(7, 43, 97, 0.10);
-    color: #072B61;
-}
-
-/* GIE */
-
-.badge-success {
+.badge-normal {
     background-color: rgba(16, 185, 129, 0.10);
     color: #10B981;
 }
 
-/* Police */
+/* =========================
+   DATE
+========================= */
 
-.badge-dark {
-    background-color: rgba(71, 85, 105, 0.10);
-    color: #475569;
+.date-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    white-space: nowrap;
+}
+
+.date-cell span {
+    color: #334155;
+    font-size: 12px;
+}
+
+.date-cell small {
+    color: #94A3B8;
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
 }
 
 /* =========================
    ACTIONS
-   ========================= */
+========================= */
+
+.actions-column {
+    width: 100px;
+    text-align: right;
+}
 
 .actions {
     display: flex;
@@ -387,8 +395,8 @@ tbody tr:last-child td {
 }
 
 /* =========================
-   ÉTATS DU TABLEAU
-   ========================= */
+   ÉTATS
+========================= */
 
 .table-state {
     display: flex;
@@ -435,7 +443,7 @@ tbody tr:last-child td {
 
 /* =========================
    ÉTAT VIDE
-   ========================= */
+========================= */
 
 .empty-state {
     padding: 54px 20px !important;
@@ -470,7 +478,7 @@ tbody tr:last-child td {
 
 /* =========================
    FOOTER
-   ========================= */
+========================= */
 
 .table-footer {
     display: flex;
@@ -487,7 +495,7 @@ tbody tr:last-child td {
 
 /* =========================
    ANIMATION
-   ========================= */
+========================= */
 
 @keyframes spin {
     to {
@@ -497,10 +505,9 @@ tbody tr:last-child td {
 
 /* =========================
    RESPONSIVE
-   ========================= */
+========================= */
 
 @media (max-width: 900px) {
-
     .page-header {
         align-items: flex-start;
         flex-direction: column;
@@ -530,7 +537,6 @@ tbody tr:last-child td {
 }
 
 @media (max-width: 600px) {
-
     .page-title {
         font-size: 21px;
     }

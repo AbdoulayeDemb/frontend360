@@ -1,11 +1,18 @@
 import { Routes } from '@angular/router';
+
 import { LoginComponent } from './features/auth/login.component';
+
 import { AdminLayoutComponent } from './core/layout/admin-layout/admin-layout.component';
+
 import { AdminDashboardComponent } from './features/admin/admin-dashboard/admin-dashboard.component';
+
 import { SignalementsListComponent } from './features/admin/signalements-list/signalements-list.component';
+
 import { SignalementDetailComponent } from './features/admin/signalement-detail/signalement-detail.component';
+
 import { StructuresManagementComponent } from './features/admin/structures-management/structures-management.component';
-// AuthGuard will be added later if needed, but for now we focus on structure
+
+import { StructureFormComponent } from './features/admin/structure-form/structure-form.component';
 
 import { UtilisateursListComponent } from './features/admin/utilisateurs-list/utilisateurs-list.component';
 import { StructureDashboardComponent } from './features/structure/structure-dashboard/structure-dashboard.component';
@@ -14,18 +21,166 @@ import { StructureSignalementDetailComponent } from './features/structure/signal
 import { EnumRole } from './core/models/enums.model';
 import { roleGuard } from './core/guards/role.guard';
 
+import { UtilisateurFormComponent } from './features/admin/utilisateur-form/utilisateur-form.component';
+
+import { ActualitesManagementComponent } from './features/admin/actualites-management/actualites-management.component';
+
+import { ActualiteFormComponent } from './features/admin/actualite-form/actualite-form.component';
+
+import { ContenusEducatifsManagementComponent } from './features/admin/contenus-educatifs-management/contenus-educatifs-management.component';
+
+import { ContenuEducatifFormComponent } from './features/admin/contenu-educatif-form/contenu-educatif-form.component';
+
+
 export const routes: Routes = [
-  { path: 'auth/login', component: LoginComponent },
+
+  // =========================
+  // AUTHENTIFICATION
+  // =========================
+
+  {
+    path: 'auth/login',
+    component: LoginComponent
+  },
+
+
+  // =========================
+  // ESPACE ADMIN
+  // =========================
+
   {
     path: 'admin',
     component: AdminLayoutComponent,
+
     children: [
-      { path: 'dashboard', component: AdminDashboardComponent },
-      { path: 'signalements', component: SignalementsListComponent },
-      { path: 'signalements/:id', component: SignalementDetailComponent },
-      { path: 'structures', component: StructuresManagementComponent },
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-      { path: 'utilisateurs', component: UtilisateursListComponent },
+
+      // =========================
+      // DASHBOARD
+      // =========================
+
+      {
+        path: 'dashboard',
+        component: AdminDashboardComponent
+      },
+
+
+      // =========================
+      // SIGNALEMENTS
+      // =========================
+
+      {
+        path: 'signalements',
+        component: SignalementsListComponent
+      },
+
+      {
+        path: 'signalements/:id',
+        component: SignalementDetailComponent
+      },
+
+
+      // =========================
+      // STRUCTURES
+      // =========================
+
+      // Ajouter une structure
+      {
+        path: 'structures/nouveau',
+        component: StructureFormComponent
+      },
+
+      // Modifier une structure
+      {
+        path: 'structures/:id/modifier',
+        component: StructureFormComponent
+      },
+
+      // Liste des structures
+      {
+        path: 'structures',
+        component: StructuresManagementComponent
+      },
+
+
+      // =========================
+      // ACTUALITÉS
+      // =========================
+
+      // Ajouter une actualité
+      {
+        path: 'actualites/nouveau',
+        component: ActualiteFormComponent
+      },
+
+      // Modifier une actualité
+      {
+        path: 'actualites/:id/modifier',
+        component: ActualiteFormComponent
+      },
+
+      // Liste des actualités
+      {
+        path: 'actualites',
+        component: ActualitesManagementComponent
+      },
+
+
+      // =========================
+      // CONTENUS ÉDUCATIFS
+      // =========================
+
+      // Ajouter un contenu éducatif
+      {
+        path: 'contenus-educatifs/nouveau',
+        component: ContenuEducatifFormComponent
+      },
+
+      // Modifier un contenu éducatif
+      {
+        path: 'contenus-educatifs/:id/modifier',
+        component: ContenuEducatifFormComponent
+      },
+
+      // Liste des contenus éducatifs
+      {
+        path: 'contenus-educatifs',
+        component: ContenusEducatifsManagementComponent
+      },
+
+
+      // =========================
+      // UTILISATEURS
+      // =========================
+
+      // Ajouter un utilisateur
+      {
+        path: 'utilisateurs/nouveau',
+        component: UtilisateurFormComponent
+      },
+
+      // Modifier un utilisateur
+      {
+        path: 'utilisateurs/:id/modifier',
+        component: UtilisateurFormComponent
+      },
+
+      // Liste des utilisateurs
+      {
+        path: 'utilisateurs',
+        component: UtilisateursListComponent
+      },
+
+
+      // =========================
+      // ROUTE ADMIN PAR DÉFAUT
+      // =========================
+
+      {
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full'
+      }
+
     ]
   },
   {
@@ -40,6 +195,26 @@ export const routes: Routes = [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
   },
-  { path: '', redirectTo: 'admin/dashboard', pathMatch: 'full' },
-  { path: '**', redirectTo: 'auth/login' }
+
+
+  // =========================
+  // ROUTE RACINE
+  // =========================
+
+  {
+    path: '',
+    redirectTo: 'admin/dashboard',
+    pathMatch: 'full'
+  },
+
+
+  // =========================
+  // ROUTE INCONNUE
+  // =========================
+
+  {
+    path: '**',
+    redirectTo: 'auth/login'
+  }
+
 ];

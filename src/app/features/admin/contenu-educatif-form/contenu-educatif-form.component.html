@@ -1,0 +1,263 @@
+<div class="contenu-form-page">
+
+    <div class="page-header">
+        <div class="page-heading">
+
+            <button type="button" class="back-button" (click)="annuler()">
+
+                <i class="bi bi-arrow-left"></i>
+                <span>Retour aux contenus</span>
+
+            </button>
+
+            <h1 class="page-title">
+                {{ modeEdition
+                ? 'Modifier le contenu éducatif'
+                : 'Nouveau contenu éducatif'
+                }}
+            </h1>
+
+            <p class="page-subtitle">
+                {{ modeEdition
+                ? 'Modifiez les informations du contenu.'
+                : 'Ajoutez un nouveau contenu éducatif.'
+                }}
+            </p>
+
+        </div>
+    </div>
+
+
+    <!-- Erreur globale -->
+    <div *ngIf="erreur" class="alert alert-error">
+
+        <i class="bi bi-exclamation-circle"></i>
+
+        <span>{{ erreur }}</span>
+
+    </div>
+
+
+    <!-- Chargement -->
+    <div *ngIf="chargement" class="loading-card">
+
+        <div class="loading-state">
+
+            <i class="bi bi-arrow-repeat loading-icon"></i>
+
+            <span>
+                Chargement du contenu...
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- Formulaire -->
+    <form *ngIf="!chargement" [formGroup]="contenuForm" (ngSubmit)="enregistrer()" class="form-card">
+
+
+        <!-- Informations générales -->
+        <section class="form-section">
+
+            <div class="section-heading">
+
+                <div class="section-icon">
+                    <i class="bi bi-info-circle"></i>
+                </div>
+
+                <div>
+                    <h2>Informations générales</h2>
+
+                    <p>
+                        Définissez les informations principales du contenu.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="form-grid">
+
+                <!-- Titre -->
+                <div class="form-group full-width">
+
+                    <label for="titre">
+                        Titre
+                        <span class="required">*</span>
+                    </label>
+
+                    <input id="titre" type="text" formControlName="titre"
+                        placeholder="Ex. Les bonnes pratiques de tri des déchets"
+                        [class.invalid]="champInvalide('titre')">
+
+                    <div *ngIf="erreurTitre" class="field-error">
+                        {{ erreurTitre }}
+                    </div>
+
+                </div>
+
+
+                <!-- Thématique -->
+                <div class="form-group">
+
+                    <label for="theme">
+                        Thématique
+                        <span class="required">*</span>
+                    </label>
+
+                    <select id="theme" formControlName="theme" [class.invalid]="champInvalide('theme')">
+
+                        <option value="">
+                            Sélectionner une thématique
+                        </option>
+
+                        <option *ngFor="let theme of themes" [value]="theme">
+
+                            {{ getLibelleTheme(theme) }}
+
+                        </option>
+
+                    </select>
+
+                    <div *ngIf="erreurTheme" class="field-error">
+                        {{ erreurTheme }}
+                    </div>
+
+                </div>
+
+
+                <!-- Format -->
+                <div class="form-group">
+
+                    <label for="format">
+                        Format
+                        <span class="required">*</span>
+                    </label>
+
+                    <select id="format" formControlName="format" [class.invalid]="champInvalide('format')">
+
+                        <option value="">
+                            Sélectionner un format
+                        </option>
+
+                        <option *ngFor="let format of formats" [value]="format">
+
+                            {{ getLibelleFormat(format) }}
+
+                        </option>
+
+                    </select>
+
+                    <div *ngIf="erreurFormat" class="field-error">
+                        {{ erreurFormat }}
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- Média -->
+        <section class="form-section">
+
+            <div class="section-heading">
+
+                <div class="section-icon">
+                    <i class="bi bi-link-45deg"></i>
+                </div>
+
+                <div>
+                    <h2>Média</h2>
+
+                    <p>
+                        Indiquez le lien vers le contenu à publier.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="mediaUrl">
+                    URL du média
+                    <span class="required">*</span>
+                </label>
+
+                <input id="mediaUrl" type="url" formControlName="mediaUrl" placeholder="https://exemple.com/mon-contenu"
+                    [class.invalid]="champInvalide('mediaUrl')">
+
+                <small class="field-hint">
+                    <i class="bi bi-info-circle"></i>
+                    Entrez l'adresse URL de la vidéo, de l'audio ou de l'image.
+                </small>
+
+                <div *ngIf="erreurMediaUrl" class="field-error">
+                    {{ erreurMediaUrl }}
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- Auteur -->
+        <section class="author-info">
+
+            <div class="author-icon">
+                <i class="bi bi-person-check"></i>
+            </div>
+
+            <div class="author-content">
+
+                <strong>Auteur</strong>
+
+                <p>
+                    L'administrateur connecté sera automatiquement enregistré
+                    comme auteur de ce contenu.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- Actions -->
+        <div class="form-actions">
+
+            <button type="button" class="btn btn-secondary" (click)="annuler()" [disabled]="enregistrement">
+
+                Annuler
+
+            </button>
+
+
+            <button type="submit" class="btn btn-primary" [disabled]="enregistrement">
+
+                <i *ngIf="enregistrement" class="bi bi-arrow-repeat loading-icon">
+                </i>
+
+                <i *ngIf="!enregistrement" class="bi bi-check-lg">
+                </i>
+
+                <span>
+                    {{
+                    enregistrement
+                    ? 'Enregistrement...'
+                    : (modeEdition
+                    ? 'Enregistrer les modifications'
+                    : 'Créer le contenu')
+                    }}
+                </span>
+
+            </button>
+
+        </div>
+
+    </form>
+
+</div>

@@ -1,6 +1,6 @@
 <div class="page-header">
 
-    <div>
+    <div class="page-heading">
         <h1 class="page-title">Utilisateurs</h1>
 
         <p class="page-subtitle">
@@ -8,23 +8,19 @@
         </p>
     </div>
 
-    <div class="header-actions">
-
+    <!-- <div class="header-actions">
         <button class="btn btn-primary" (click)="ajouterUtilisateur()">
-
             <i class="bi bi-person-plus"></i>
-            Ajouter un utilisateur
-
+            <span>Ajouter un utilisateur</span>
         </button>
-
-    </div>
+    </div> -->
 
 </div>
 
 
-<div class="card">
+<div class="card users-card">
 
-    <div class="card-header border-b-0 pb-0">
+    <div class="card-header filters-header">
 
         <div class="filters-bar">
 
@@ -43,41 +39,18 @@
 
                 <!-- Filtre par rôle -->
                 <select class="form-select" [value]="selectedRole" (change)="onRoleChange($event)">
-
-                    <option value="">
-                        Tous les rôles
-                    </option>
-
-                    <option value="CITOYEN">
-                        Citoyens
-                    </option>
-
-                    <option value="ADMIN">
-                        Administrateurs
-                    </option>
-
-                    <option value="STRUCTURE">
-                        Agents de structure
-                    </option>
-
+                    <option value="">Tous les rôles</option>
+                    <option value="CITOYEN">Citoyens</option>
+                    <option value="ADMIN">Administrateurs</option>
+                    <option value="STRUCTURE">Agents de structure</option>
                 </select>
 
 
                 <!-- Filtre par statut -->
                 <select class="form-select" [value]="selectedStatut" (change)="onStatutChange($event)">
-
-                    <option value="">
-                        Tous les statuts
-                    </option>
-
-                    <option value="ACTIF">
-                        Actifs
-                    </option>
-
-                    <option value="INACTIF">
-                        Inactifs
-                    </option>
-
+                    <option value="">Tous les statuts</option>
+                    <option value="ACTIF">Actifs</option>
+                    <option value="INACTIF">Inactifs</option>
                 </select>
 
             </div>
@@ -87,17 +60,14 @@
     </div>
 
 
-    <div class="card-body p-0 mt-3">
+    <div class="card-body table-section">
 
         <!-- Chargement -->
         @if (isLoading) {
 
-        <div class="p-4 text-center text-secondary">
-
-            <i class="bi bi-arrow-repeat"></i>
-
-            Chargement des utilisateurs...
-
+        <div class="table-state">
+            <i class="bi bi-arrow-repeat loading-icon"></i>
+            <span>Chargement des utilisateurs...</span>
         </div>
 
         }
@@ -105,16 +75,16 @@
         <!-- Erreur -->
         @else if (errorMessage) {
 
-        <div class="p-4 text-center">
+        <div class="table-state table-state-error">
 
-            <p class="text-danger">
-                {{ errorMessage }}
-            </p>
+            <div class="state-icon">
+                <i class="bi bi-exclamation-circle"></i>
+            </div>
+
+            <p>{{ errorMessage }}</p>
 
             <button class="btn btn-secondary btn-sm" (click)="loadUtilisateurs()">
-
                 Réessayer
-
             </button>
 
         </div>
@@ -129,7 +99,6 @@
             <table class="table">
 
                 <thead>
-
                     <tr>
                         <th>Utilisateur</th>
                         <th>Téléphone</th>
@@ -140,7 +109,6 @@
                         <th>Statut</th>
                         <th class="text-right">Actions</th>
                     </tr>
-
                 </thead>
 
 
@@ -153,15 +121,19 @@
 
                     <tr>
 
-                        <!-- Nom -->
-                        <td class="font-medium">
+                        <!-- Utilisateur -->
+                        <td class="user-cell">
 
-                            {{ getNomComplet(user) }}
+                            <div class="user-name">
+                                {{ getNomComplet(user) }}
+                            </div>
 
                             @if (user.estResponsable) {
-                            <div class="text-secondary text-sm">
+
+                            <div class="user-role-detail">
                                 Responsable
                             </div>
+
                             }
 
                         </td>
@@ -174,7 +146,7 @@
 
 
                         <!-- Email -->
-                        <td class="text-secondary">
+                        <td class="text-secondary email-cell">
                             {{ user.email || '-' }}
                         </td>
 
@@ -183,9 +155,7 @@
                         <td>
 
                             <span class="badge" [class]="getRoleClass(user.role)">
-
                                 {{ getRoleLabel(user.role) }}
-
                             </span>
 
                         </td>
@@ -198,7 +168,7 @@
 
 
                         <!-- Date -->
-                        <td class="text-secondary">
+                        <td class="text-secondary date-cell">
                             {{ formatDate(user.dateCreation) }}
                         </td>
 
@@ -207,9 +177,7 @@
                         <td>
 
                             <span class="badge" [class]="getStatutClass(user.estActif)">
-
                                 {{ getStatutLabel(user.estActif) }}
-
                             </span>
 
                         </td>
@@ -218,34 +186,33 @@
                         <!-- Actions -->
                         <td class="text-right">
 
-                            <div class="d-flex justify-content-end gap-2">
+                            <div class="table-actions">
 
                                 <!-- Modifier -->
-                                <button class="btn btn-secondary btn-sm action-icon" title="Modifier"
+                                <button class="action-button" title="Modifier" aria-label="Modifier l'utilisateur"
                                     (click)="modifierUtilisateur(user.idUtilisateur)">
-
                                     <i class="bi bi-pencil"></i>
-
                                 </button>
 
 
                                 <!-- Activer / Désactiver -->
-                                <button class="btn btn-secondary btn-sm action-icon"
+                                <button class="action-button" [class.action-danger]="user.estActif"
+                                    [class.action-success]="!user.estActif"
                                     [title]="user.estActif ? 'Désactiver' : 'Activer'"
                                     [disabled]="isUpdatingStatusId === user.idUtilisateur"
                                     (click)="changerStatutUtilisateur(user)">
 
                                     @if (isUpdatingStatusId === user.idUtilisateur) {
 
-                                    <i class="bi bi-arrow-repeat"></i>
+                                    <i class="bi bi-arrow-repeat loading-icon"></i>
 
                                     } @else if (user.estActif) {
 
-                                    <i class="bi bi-person-x text-danger"></i>
+                                    <i class="bi bi-person-x"></i>
 
                                     } @else {
 
-                                    <i class="bi bi-person-check text-success"></i>
+                                    <i class="bi bi-person-check"></i>
 
                                     }
 
@@ -265,9 +232,23 @@
 
                     <tr>
 
-                        <td colspan="8" class="text-center text-secondary p-4">
+                        <td colspan="8">
 
-                            Aucun utilisateur trouvé.
+                            <div class="empty-state">
+
+                                <div class="empty-icon">
+                                    <i class="bi bi-people"></i>
+                                </div>
+
+                                <p class="empty-title">
+                                    Aucun utilisateur trouvé
+                                </p>
+
+                                <p class="empty-text">
+                                    Aucun compte ne correspond aux critères de recherche.
+                                </p>
+
+                            </div>
 
                         </td>
 
@@ -290,13 +271,11 @@
     <div class="card-footer pagination-footer">
 
         <span class="text-secondary text-sm">
-
             Affichage de
-            {{ filteredUtilisateurs.length }}
+            <strong>{{ filteredUtilisateurs.length }}</strong>
             utilisateur(s)
             sur
-            {{ utilisateurs.length }}
-
+            <strong>{{ utilisateurs.length }}</strong>
         </span>
 
     </div>

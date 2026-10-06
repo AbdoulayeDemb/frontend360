@@ -1,6 +1,8 @@
 <div class="sidebar-header">
-  <img src="assets/images/logo-alert360.png" alt="Alert360 Logo" class="sidebar-logo">
+  <img src="assets/images/logo-alert360.png" alt="Alert360" class="sidebar-logo">
 </div>
+
+
 <nav class="sidebar-nav">
   @if (isStructure) {
   <ul class="nav-list">
@@ -19,39 +21,73 @@
   </ul>
   } @else {
   <ul class="nav-list">
+
     <li class="nav-item">
       <a routerLink="/admin/dashboard" routerLinkActive="active" class="nav-link">
         <i class="bi bi-grid-1x2-fill"></i>
         <span>Dashboard</span>
       </a>
     </li>
+
+
     <li class="nav-item">
       <a routerLink="/admin/signalements" routerLinkActive="active" class="nav-link">
         <i class="bi bi-exclamation-triangle-fill"></i>
         <span>Signalements</span>
       </a>
     </li>
+
+
+
+
     <li class="nav-item">
       <a routerLink="/admin/utilisateurs" routerLinkActive="active" class="nav-link">
         <i class="bi bi-people-fill"></i>
         <span>Utilisateurs</span>
       </a>
     </li>
+
+
     <li class="nav-item">
       <a routerLink="/admin/structures" routerLinkActive="active" class="nav-link">
         <i class="bi bi-building"></i>
         <span>Structures</span>
       </a>
     </li>
+
+    <li class="nav-item">
+      <a routerLink="/admin/actualites" routerLinkActive="active" class="nav-link">
+        <i class="bi bi-newspaper"></i>
+        <span>Actualités</span>
+      </a>
+    </li>
+
+
+    <li class="nav-item">
+      <a routerLink="/admin/contenus-educatifs" routerLinkActive="active" class="nav-link">
+
+        <i class="bi bi-mortarboard"></i>
+
+        <span>
+          Contenus éducatifs
+        </span>
+
+      </a>
+    </li>
+
+
     <li class="nav-item">
       <a routerLink="/admin/statistiques" routerLinkActive="active" class="nav-link">
         <i class="bi bi-bar-chart-fill"></i>
         <span>Statistiques</span>
       </a>
     </li>
+
   </ul>
   }
 </nav>
+
+
 <div class="sidebar-footer">
   @if (!isStructure) {
   <a routerLink="/admin/parametres" routerLinkActive="active" class="nav-link">
@@ -63,4 +99,5 @@
     <i class="bi bi-box-arrow-right"></i>
     <span>Déconnexion</span>
   </a>
+
 </div>

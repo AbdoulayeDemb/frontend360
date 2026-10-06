@@ -1,39 +1,55 @@
 <!-- Chargement -->
-<div *ngIf="isLoading" class="card">
-  <div class="card-body text-center">
-    <p class="text-muted">Chargement du signalement...</p>
+<div *ngIf="isLoading" class="state-card">
+  <div class="state-content">
+    <i class="bi bi-arrow-repeat loading-icon"></i>
+    <p>Chargement du signalement...</p>
   </div>
 </div>
+
 
 <!-- Erreur -->
-<div *ngIf="!isLoading && errorMessage" class="card">
-  <div class="card-body text-center">
-    <p class="text-danger">{{ errorMessage }}</p>
+<div *ngIf="!isLoading && errorMessage" class="state-card">
+  <div class="state-content">
 
-    <a routerLink="/admin/signalements" class="btn btn-secondary mt-3">
+    <div class="state-icon state-icon-danger">
+      <i class="bi bi-exclamation-circle"></i>
+    </div>
+
+    <p class="state-error">
+      {{ errorMessage }}
+    </p>
+
+    <a routerLink="/admin/signalements" class="btn btn-secondary">
       Retour aux signalements
     </a>
+
   </div>
 </div>
+
 
 <!-- Détail -->
 <div *ngIf="!isLoading && sig">
+
+  <!-- =========================================
+       HEADER
+       ========================================= -->
 
   <div class="page-header">
 
     <div class="header-left">
 
-      <a routerLink="/admin/signalements" class="btn btn-secondary back-btn">
+      <a routerLink="/admin/signalements" class="back-btn" title="Retour aux signalements"
+        aria-label="Retour aux signalements">
         <i class="bi bi-arrow-left"></i>
       </a>
 
-      <div>
+
+      <div class="header-content">
 
         <div class="title-row">
 
           <h1 class="page-title">
             {{ sig.codeTrackingUnique }}
-            - {{ sig.nomCategorie || 'Catégorie inconnue' }}
           </h1>
 
           <span class="badge" [ngClass]="getStatutClass(sig.statut)">
@@ -41,6 +57,10 @@
           </span>
 
         </div>
+
+        <p class="page-category">
+          {{ sig.nomCategorie || 'Catégorie inconnue' }}
+        </p>
 
         <p class="page-subtitle">
           Déclaré le {{ formatDate(sig.dateHeureAlerte) }}
@@ -50,53 +70,56 @@
 
     </div>
 
-    <div class="header-actions">
 
-      <button class="btn btn-secondary text-danger border-danger">
-        Rejeter
-      </button>
-
-      <button class="btn btn-primary">
-        Marquer comme Résolu
-      </button>
-
-    </div>
 
   </div>
 
 
+  <!-- =========================================
+       CONTENU
+       ========================================= -->
+
   <div class="detail-grid">
 
-    <!-- ===================================================== -->
-    <!-- COLONNE PRINCIPALE -->
-    <!-- ===================================================== -->
+
+    <!-- =======================================
+         COLONNE PRINCIPALE
+         ======================================= -->
 
     <div class="main-column">
 
+
       <!-- Détails -->
-      <div class="card mb-4">
+      <div class="card detail-card">
 
         <div class="card-header">
+          <span class="section-eyebrow">
+            Signalement
+          </span>
+
           <h3 class="card-title">
             Détails du problème
           </h3>
         </div>
 
+
         <div class="card-body">
 
+          <!-- Description -->
           <div class="detail-group">
 
             <label class="detail-label">
               Description
             </label>
 
-            <p class="detail-value text-lg">
+            <p class="detail-value description-value">
               {{ sig.description || 'Aucune description fournie.' }}
             </p>
 
           </div>
 
 
+          <!-- Urgence -->
           <div class="detail-group">
 
             <label class="detail-label">
@@ -110,22 +133,21 @@
           </div>
 
 
+          <!-- Preuve visuelle -->
           <div class="detail-group">
 
             <label class="detail-label">
-              Preuve visuelle (Photo/Vidéo)
+              Preuve visuelle
             </label>
 
             <div *ngIf="sig.photoAvantUrl" class="proof-container">
-
               <img [src]="sig.photoAvantUrl" alt="Photo du signalement" class="proof-image">
-
             </div>
 
             <div *ngIf="!sig.photoAvantUrl" class="proof-placeholder">
-              <i class="bi bi-image text-muted"></i>
+              <i class="bi bi-image"></i>
 
-              <span class="text-muted">
+              <span>
                 Aucune photo fournie
               </span>
             </div>
@@ -133,19 +155,23 @@
           </div>
 
 
+          <!-- Audio -->
           <div class="detail-group" *ngIf="sig.audioUrl">
 
             <label class="detail-label">
               Preuve audio
             </label>
 
-            <audio controls [src]="sig.audioUrl" class="w-100">
-              Votre navigateur ne supporte pas la lecture audio.
-            </audio>
+            <div class="audio-container">
+              <audio controls [src]="sig.audioUrl">
+                Votre navigateur ne supporte pas la lecture audio.
+              </audio>
+            </div>
 
           </div>
 
 
+          <!-- Repère -->
           <div class="detail-group" *ngIf="sig.repereVisuel">
 
             <label class="detail-label">
@@ -164,23 +190,29 @@
 
 
       <!-- Historique -->
-      <div class="card">
+      <div class="card detail-card history-card">
 
         <div class="card-header">
+          <span class="section-eyebrow">
+            Suivi
+          </span>
+
           <h3 class="card-title">
             Historique de traitement
           </h3>
         </div>
 
+
         <div class="card-body">
 
           <div class="activity-timeline">
 
+
             <!-- Création -->
             <div class="timeline-item">
 
-              <div class="timeline-marker bg-primary-light text-primary">
-                <i class="bi bi-plus-circle"></i>
+              <div class="timeline-marker timeline-blue">
+                <i class="bi bi-plus"></i>
               </div>
 
               <div class="timeline-content">
@@ -189,7 +221,7 @@
                   Signalement créé par le citoyen
                   <strong>
                     {{ sig.citoyenNomComplet || 'Citoyen inconnu' }}
-                  </strong>.
+                  </strong>
                 </p>
 
                 <span class="timeline-date">
@@ -201,10 +233,10 @@
             </div>
 
 
-            <!-- Assignation structure -->
+            <!-- Assignation -->
             <div class="timeline-item" *ngIf="sig.nomStructureAssignee">
 
-              <div class="timeline-marker bg-warning">
+              <div class="timeline-marker timeline-orange">
                 <i class="bi bi-building"></i>
               </div>
 
@@ -214,7 +246,7 @@
                   Signalement assigné à
                   <strong>
                     {{ sig.nomStructureAssignee }}
-                  </strong>.
+                  </strong>
                 </p>
 
                 <span class="timeline-date">
@@ -226,10 +258,10 @@
             </div>
 
 
-            <!-- Statut en cours -->
+            <!-- En cours -->
             <div class="timeline-item" *ngIf="sig.statut === EnumStatut.EN_COURS">
 
-              <div class="timeline-marker bg-info">
+              <div class="timeline-marker timeline-orange">
                 <i class="bi bi-arrow-repeat"></i>
               </div>
 
@@ -237,7 +269,7 @@
 
                 <p class="timeline-text">
                   Le traitement du signalement est
-                  <strong>en cours</strong>.
+                  <strong>en cours</strong>
                 </p>
 
                 <span class="timeline-date">
@@ -252,15 +284,15 @@
             <!-- Résolu -->
             <div class="timeline-item" *ngIf="sig.statut === EnumStatut.RESOLU">
 
-              <div class="timeline-marker bg-success">
-                <i class="bi bi-check-circle"></i>
+              <div class="timeline-marker timeline-green">
+                <i class="bi bi-check"></i>
               </div>
 
               <div class="timeline-content">
 
                 <p class="timeline-text">
                   Le signalement a été
-                  <strong>résolu</strong>.
+                  <strong>résolu</strong>
                 </p>
 
                 <span class="timeline-date">
@@ -275,15 +307,15 @@
             <!-- Rejeté -->
             <div class="timeline-item" *ngIf="sig.statut === EnumStatut.REJETE">
 
-              <div class="timeline-marker bg-danger">
-                <i class="bi bi-x-circle"></i>
+              <div class="timeline-marker timeline-red">
+                <i class="bi bi-x"></i>
               </div>
 
               <div class="timeline-content">
 
                 <p class="timeline-text">
                   Le signalement a été
-                  <strong>rejeté</strong>.
+                  <strong>rejeté</strong>
                 </p>
 
                 <span class="timeline-date">
@@ -303,26 +335,32 @@
     </div>
 
 
-    <!-- ===================================================== -->
-    <!-- COLONNE LATÉRALE -->
-    <!-- ===================================================== -->
+    <!-- =======================================
+         COLONNE LATÉRALE
+         ======================================= -->
 
     <div class="side-column">
 
+
       <!-- Localisation -->
-      <div class="card mb-4">
+      <div class="card side-card">
 
         <div class="card-header">
+          <span class="section-eyebrow">
+            Position
+          </span>
+
           <h3 class="card-title">
             Localisation
           </h3>
         </div>
 
+
         <div class="card-body p-0">
 
           <div class="map-placeholder">
 
-            <i class="bi bi-geo-alt-fill text-accent"></i>
+            <i class="bi bi-geo-alt-fill"></i>
 
             <span>
               {{ sig.latitude }},
@@ -331,30 +369,29 @@
 
           </div>
 
-          <div class="p-4 border-t">
+
+          <div class="info-block">
 
             <label class="detail-label">
               Coordonnées GPS
             </label>
 
-            <p class="detail-value mb-0">
-              Latitude :
-              {{ sig.latitude }}
+            <p class="detail-value">
+              Latitude : {{ sig.latitude }}
               <br>
-
-              Longitude :
-              {{ sig.longitude }}
+              Longitude : {{ sig.longitude }}
             </p>
 
           </div>
 
-          <div class="p-4 border-t" *ngIf="sig.repereVisuel">
+
+          <div class="info-block" *ngIf="sig.repereVisuel">
 
             <label class="detail-label">
               Adresse / Repère
             </label>
 
-            <p class="detail-value mb-0">
+            <p class="detail-value">
               {{ sig.repereVisuel }}
             </p>
 
@@ -366,37 +403,35 @@
 
 
       <!-- Citoyen -->
-      <div class="card mb-4">
+      <div class="card side-card">
 
         <div class="card-header">
+          <span class="section-eyebrow">
+            Déclarant
+          </span>
+
           <h3 class="card-title">
             Citoyen déclarant
           </h3>
         </div>
+
 
         <div class="card-body">
 
           <div class="user-info-block">
 
             <div class="user-avatar-large">
-
               {{ (sig.citoyenNomComplet || 'C')[0] }}
-
             </div>
 
-            <div>
+            <div class="user-details">
 
-              <div class="font-medium text-primary">
-
+              <div class="user-name">
                 {{ sig.citoyenNomComplet || 'Citoyen inconnu' }}
-
               </div>
 
-              <div class="text-secondary text-sm">
-
-                ID citoyen :
-                {{ sig.idCitoyen }}
-
+              <div class="user-id">
+                ID citoyen : {{ sig.idCitoyen }}
               </div>
 
             </div>
@@ -409,47 +444,48 @@
 
 
       <!-- Assignation -->
-      <div class="card">
+      <div class="card side-card">
 
         <div class="card-header">
+          <span class="section-eyebrow">
+            Traitement
+          </span>
 
           <h3 class="card-title">
             Assignation
           </h3>
-
         </div>
+
 
         <div class="card-body">
 
-          <div class="detail-group mb-3">
+          <div class="detail-group compact">
 
             <label class="detail-label">
               Structure compétente
             </label>
 
-            <div class="font-medium">
-
+            <div class="assignment-value">
               {{ sig.nomStructureAssignee || 'Non assignée' }}
-
             </div>
 
           </div>
 
 
-          <div class="detail-group">
+          <div class="detail-group compact">
 
             <label class="detail-label">
               Agent sur le terrain
             </label>
 
-            <div class="font-medium">
+            <div class="assignment-value">
 
               <span *ngIf="sig.agentAssigne">
                 {{ sig.agentAssigne.prenom }}
                 {{ sig.agentAssigne.nom }}
               </span>
 
-              <span *ngIf="!sig.agentAssigne" class="text-muted">
+              <span *ngIf="!sig.agentAssigne" class="empty-value">
                 Aucun agent assigné
               </span>
 
@@ -458,7 +494,7 @@
           </div>
 
 
-          <button class="btn btn-secondary w-100 mt-4">
+          <button class="btn btn-secondary assign-button">
             Réassigner
           </button>
 

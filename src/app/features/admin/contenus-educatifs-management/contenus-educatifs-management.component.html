@@ -1,0 +1,308 @@
+<div class="contenus-page">
+
+    <!-- EN-TÊTE -->
+    <div class="page-header">
+
+        <div class="page-heading">
+            <h1 class="page-title">Contenus éducatifs</h1>
+
+            <p class="page-subtitle">
+                Gérez les contenus éducatifs destinés aux citoyens.
+            </p>
+        </div>
+
+        <div class="header-actions">
+            <button type="button" class="btn btn-primary" (click)="nouveauContenu()">
+
+                <i class="bi bi-plus-lg"></i>
+                <span>Nouveau contenu</span>
+
+            </button>
+        </div>
+
+    </div>
+
+
+    <!-- MESSAGE D'ERREUR -->
+    <div *ngIf="erreur" class="alert alert-error">
+
+        <i class="bi bi-exclamation-circle"></i>
+
+        <span>{{ erreur }}</span>
+
+    </div>
+
+
+    <!-- FILTRES -->
+    <div class="filters-card">
+
+        <div class="filter-item search-field">
+
+            <label for="recherche">
+                Recherche
+            </label>
+
+            <div class="search-wrapper">
+
+                <i class="bi bi-search search-icon"></i>
+
+                <input id="recherche" type="text" placeholder="Rechercher un titre, auteur..." [(ngModel)]="recherche"
+                    (ngModelChange)="appliquerFiltres()" />
+
+            </div>
+
+        </div>
+
+
+        <div class="filter-item">
+
+            <label for="theme">
+                Thématique
+            </label>
+
+            <select id="theme" [(ngModel)]="themeSelectionne" (ngModelChange)="appliquerFiltres()">
+
+                <option value="">
+                    Toutes les thématiques
+                </option>
+
+                <option *ngFor="let theme of themes" [value]="theme">
+
+                    {{ getLibelleTheme(theme) }}
+
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="filter-item">
+
+            <label for="format">
+                Format
+            </label>
+
+            <select id="format" [(ngModel)]="formatSelectionne" (ngModelChange)="appliquerFiltres()">
+
+                <option value="">
+                    Tous les formats
+                </option>
+
+                <option *ngFor="let format of formats" [value]="format">
+
+                    {{ getLibelleFormat(format) }}
+
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="filter-actions">
+
+            <button type="button" class="btn btn-secondary" (click)="reinitialiserFiltres()">
+
+                <i class="bi bi-arrow-counterclockwise"></i>
+                <span>Réinitialiser</span>
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- CHARGEMENT -->
+    <div *ngIf="chargement" class="loading-container">
+
+        <i class="bi bi-arrow-repeat loading-icon"></i>
+
+        <span>
+            Chargement des contenus...
+        </span>
+
+    </div>
+
+
+    <!-- TABLEAU -->
+    <div *ngIf="!chargement" class="table-card">
+
+        <div class="table-header">
+
+            <div>
+                <h2>Liste des contenus</h2>
+
+                <span class="result-count">
+                    {{ contenusFiltres.length }} contenu(s)
+                </span>
+            </div>
+
+        </div>
+
+
+        <!-- ÉTAT VIDE -->
+        <div *ngIf="contenusFiltres.length === 0" class="empty-state">
+
+            <div class="empty-state-icon">
+                <i class="bi bi-mortarboard"></i>
+            </div>
+
+            <h3>
+                Aucun contenu trouvé
+            </h3>
+
+            <p>
+                Aucun contenu éducatif ne correspond aux critères sélectionnés.
+            </p>
+
+            <button type="button" class="btn btn-primary" (click)="nouveauContenu()">
+
+                <i class="bi bi-plus-lg"></i>
+                <span>Ajouter un contenu</span>
+
+            </button>
+
+        </div>
+
+
+        <!-- TABLEAU -->
+        <div *ngIf="contenusFiltres.length > 0" class="table-responsive">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>Titre</th>
+                        <th>Thématique</th>
+                        <th>Format</th>
+                        <th>Média</th>
+                        <th>Auteur</th>
+                        <th>Date</th>
+                        <th class="actions-column">Actions</th>
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    <tr *ngFor="let contenu of contenusFiltres">
+
+                        <!-- TITRE -->
+                        <td>
+
+                            <div class="title-cell">
+
+                                <div class="content-icon">
+
+                                    <i [class]="getIconeFormat(contenu.format)">
+                                    </i>
+
+                                </div>
+
+                                <div class="content-title">
+                                    {{ contenu.titre }}
+                                </div>
+
+                            </div>
+
+                        </td>
+
+
+                        <!-- THÉMATIQUE -->
+                        <td>
+
+                            <span class="theme-badge">
+                                {{ getLibelleTheme(contenu.theme) }}
+                            </span>
+
+                        </td>
+
+
+                        <!-- FORMAT -->
+                        <td>
+
+                            <span class="format-badge">
+
+                                <i [class]="getIconeFormat(contenu.format)">
+                                </i>
+
+                                {{ getLibelleFormat(contenu.format) }}
+
+                            </span>
+
+                        </td>
+
+
+                        <!-- MÉDIA -->
+                        <td>
+
+                            <a [href]="contenu.mediaUrl" target="_blank" rel="noopener noreferrer" class="media-link">
+
+                                <i class="bi bi-box-arrow-up-right"></i>
+
+                                <span>Ouvrir</span>
+
+                            </a>
+
+                        </td>
+
+
+                        <!-- AUTEUR -->
+                        <td>
+
+                            <span class="author-name">
+                                {{ contenu.nomAuteur || '—' }}
+                            </span>
+
+                        </td>
+
+
+                        <!-- DATE -->
+                        <td>
+
+                            <span class="date-cell">
+                                {{ contenu.datePublication | date:'dd/MM/yyyy HH:mm' }}
+                            </span>
+
+                        </td>
+
+
+                        <!-- ACTIONS -->
+                        <td class="actions-column">
+
+                            <div class="actions">
+
+                                <button type="button" class="action-button" title="Modifier"
+                                    aria-label="Modifier le contenu" (click)="modifierContenu(contenu.idContenu)">
+
+                                    <i class="bi bi-pencil"></i>
+
+                                </button>
+
+
+                                <button type="button" class="action-button action-danger" title="Supprimer"
+                                    aria-label="Supprimer le contenu" (click)="supprimerContenu(contenu)">
+
+                                    <i class="bi bi-trash3"></i>
+
+                                </button>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>

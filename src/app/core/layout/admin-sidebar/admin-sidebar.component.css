@@ -2,74 +2,195 @@
   display: flex;
   flex-direction: column;
   height: 100%;
+  min-height: 0;
+  font-family: 'Inter', sans-serif;
 }
 
+
+/* =========================================
+   HEADER
+   ========================================= */
+
 .sidebar-header {
-  padding: 24px;
   display: flex;
-  justify-content: center;
   align-items: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  justify-content: center;
+  /* Logo centré */
+  min-height: 76px;
+  padding: 18px 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .sidebar-logo {
-  max-width: 140px;
+  display: block;
+  width: auto;
+  max-width: 145px;
   height: auto;
 }
 
+
+/* =========================================
+   NAVIGATION
+   ========================================= */
+
 .sidebar-nav {
-  flex-grow: 1;
-  padding: 24px 0;
+  flex: 1;
+  min-height: 0;
+  padding: 22px 12px;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
+
+/* Scrollbar discrète */
+
+.sidebar-nav::-webkit-scrollbar {
+  width: 4px;
+}
+
+.sidebar-nav::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-nav::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 4px;
+}
+
+
+/* =========================================
+   LISTE
+   ========================================= */
+
 .nav-list {
-  list-style: none;
-  padding: 0;
   margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .nav-item {
-  margin-bottom: 8px;
-  padding: 0 16px;
+  margin: 0 0 4px;
 }
+
+
+/* =========================================
+   LIENS
+   ========================================= */
 
 .nav-link {
+  position: relative;
   display: flex;
   align-items: center;
-  padding: 12px 16px;
-  color: rgba(255, 255, 255, 0.7);
+  min-height: 44px;
+  padding: 10px 13px;
+
+  color: rgba(255, 255, 255, 0.68);
+
+  border-radius: 7px;
   text-decoration: none;
-  border-radius: 8px;
-  transition: all 150ms ease-in-out;
+
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
   font-weight: 500;
+  line-height: 1.4;
+
+  transition:
+    background-color 160ms ease,
+    color 160ms ease;
 }
+
+
+/* =========================================
+   ICÔNES
+   ========================================= */
 
 .nav-link i {
-  font-size: 1.25rem;
-  margin-right: 12px;
+  width: 20px;
+  margin-right: 11px;
+
+  color: rgba(255, 255, 255, 0.55);
+
+  font-size: 16px;
+  line-height: 1;
+  text-align: center;
+
+  transition: color 160ms ease;
 }
+
+
+/* =========================================
+   HOVER
+   ========================================= */
 
 .nav-link:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  color: white;
+  background-color: rgba(255, 255, 255, 0.055);
+  color: rgba(255, 255, 255, 0.95);
 }
+
+.nav-link:hover i {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+
+/* =========================================
+   ÉTAT ACTIF / CLIQUÉ
+   ========================================= */
 
 .nav-link.active {
-  background-color: var(--color-accent-orange);
-  color: white;
+  background-color: #3b82f6;
+  color: #ffffff;
+  font-weight: 600;
+  border-radius: 10px;
 }
+
+
+/* On retire la barre verticale à gauche */
+
+.nav-link.active::before {
+  display: none;
+}
+
+
+/* Icône active */
+
+.nav-link.active i {
+  color: #ffffff;
+}
+
+
+/* =========================================
+   FOOTER
+   ========================================= */
 
 .sidebar-footer {
-  padding: 16px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  padding: 14px 12px 16px;
+
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
+
+/* =========================================
+   DÉCONNEXION
+   ========================================= */
+
 .sidebar-footer .nav-link.logout {
-  color: #FCA5A5; /* subtle red */
+  color: rgba(252, 165, 165, 0.82);
 }
+
+.sidebar-footer .nav-link.logout i {
+  color: rgba(252, 165, 165, 0.72);
+}
+
 .sidebar-footer .nav-link.logout:hover {
-  background-color: rgba(239, 68, 68, 0.1);
+  background-color: rgba(239, 68, 68, 0.08);
+  color: #FCA5A5;
+}
+
+.sidebar-footer .nav-link.logout:hover i {
   color: #EF4444;
 }
 
@@ -106,5 +227,71 @@
 
   :host-context(.structure-layout) .sidebar-footer {
     padding: 8px;
+  }
+}
+
+:host(.structure-sidebar) .nav-link.active {
+  background-color: #3982f2;
+  color: white;
+}
+
+@media (max-width: 760px) {
+  :host-context(.structure-layout) .sidebar-header {
+    padding: 16px 6px;
+  }
+
+  :host-context(.structure-layout) .sidebar-logo {
+    max-width: 54px;
+  }
+
+  :host-context(.structure-layout) .nav-item {
+    padding: 0 7px;
+  }
+
+  :host-context(.structure-layout) .nav-link {
+    justify-content: center;
+    padding: 12px 4px;
+  }
+
+  :host-context(.structure-layout) .nav-link span {
+    display: none;
+  }
+
+  :host-context(.structure-layout) .nav-link i {
+    margin: 0;
+  }
+
+  :host-context(.structure-layout) .sidebar-footer {
+    padding: 8px;
+  }
+}
+
+
+/* =========================================
+   RESPONSIVE
+   ========================================= */
+
+@media (max-width: 768px) {
+
+  .sidebar-header {
+    min-height: 68px;
+    padding: 16px 20px;
+  }
+
+  .sidebar-logo {
+    max-width: 135px;
+  }
+
+  .sidebar-nav {
+    padding: 16px 10px;
+  }
+
+  .nav-link {
+    min-height: 42px;
+    padding: 9px 12px;
+  }
+
+  .sidebar-footer {
+    padding: 12px 10px;
   }
 }

@@ -1,4 +1,3 @@
-// Interface principale de lecture (Actualité)
 export interface Actualite {
     idActualite: number;
     titre: string;
@@ -7,22 +6,24 @@ export interface Actualite {
     estUrgent: boolean;
     datePublication: string;
 
-    // Relation Auteur (Admin)
-    idAuteur: number;
-    nomAuteur?: string;
-    prenomAuteur?: string;
+    // Auteur de l'actualité
+    idAdminAuteur?: number;
+    nomAdminAuteur?: string;
 }
 
-// DTO pour la création ou modification d'une actualité (Request)
+
+// DTO envoyé au backend
+// L'auteur est déterminé automatiquement
+// par l'administrateur connecté.
 export interface ActualiteRequestDto {
     titre: string;
     corpsTexte: string;
     communeCible?: string;
-    estUrgent?: boolean;
-    idAuteur: number;
+    estUrgent: boolean;
 }
 
-// DTO de réponse API (Response)
+
+// DTO retourné par l'API
 export interface ActualiteResponseDto {
     idActualite: number;
     titre: string;
@@ -30,6 +31,7 @@ export interface ActualiteResponseDto {
     communeCible?: string;
     estUrgent: boolean;
     datePublication: string;
-    idAuteur: number;
-    nomCompletAuteur?: string;
+
+    idAdminAuteur?: number;
+    nomAdminAuteur?: string;
 }
