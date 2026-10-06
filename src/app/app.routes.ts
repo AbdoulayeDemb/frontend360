@@ -18,6 +18,14 @@ import { UtilisateursListComponent } from './features/admin/utilisateurs-list/ut
 
 import { UtilisateurFormComponent } from './features/admin/utilisateur-form/utilisateur-form.component';
 
+import { ActualitesManagementComponent } from './features/admin/actualites-management/actualites-management.component';
+
+import { ActualiteFormComponent } from './features/admin/actualite-form/actualite-form.component';
+
+import { ContenusEducatifsManagementComponent } from './features/admin/contenus-educatifs-management/contenus-educatifs-management.component';
+
+import { ContenuEducatifFormComponent } from './features/admin/contenu-educatif-form/contenu-educatif-form.component';
+
 
 export const routes: Routes = [
 
@@ -86,6 +94,52 @@ export const routes: Routes = [
       {
         path: 'structures',
         component: StructuresManagementComponent
+      },
+
+
+      // =========================
+      // ACTUALITÉS
+      // =========================
+
+      // Ajouter une actualité
+      {
+        path: 'actualites/nouveau',
+        component: ActualiteFormComponent
+      },
+
+      // Modifier une actualité
+      {
+        path: 'actualites/:id/modifier',
+        component: ActualiteFormComponent
+      },
+
+      // Liste des actualités
+      {
+        path: 'actualites',
+        component: ActualitesManagementComponent
+      },
+
+
+      // =========================
+      // CONTENUS ÉDUCATIFS
+      // =========================
+
+      // Ajouter un contenu éducatif
+      {
+        path: 'contenus-educatifs/nouveau',
+        component: ContenuEducatifFormComponent
+      },
+
+      // Modifier un contenu éducatif
+      {
+        path: 'contenus-educatifs/:id/modifier',
+        component: ContenuEducatifFormComponent
+      },
+
+      // Liste des contenus éducatifs
+      {
+        path: 'contenus-educatifs',
+        component: ContenusEducatifsManagementComponent
       },
 
 

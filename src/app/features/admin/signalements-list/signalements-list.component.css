@@ -10,6 +10,22 @@
   margin-bottom: 26px;
 }
 
+
+.badge-blue {
+  color: #3B82F6;
+  background-color: rgba(59, 130, 246, 0.10);
+}
+
+.badge-orange {
+  color: #F59E0B;
+  background-color: rgba(245, 158, 11, 0.10);
+}
+
+.badge-green {
+  color: #10B981;
+  background-color: rgba(16, 185, 129, 0.10);
+}
+
 .page-heading {
   min-width: 0;
 }

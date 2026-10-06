@@ -1,6 +1,16 @@
-/* ==========================================
-   EN-TÊTE DE PAGE
-========================================== */
+/* =========================
+   CONTENEUR
+========================= */
+
+.page-container {
+    width: 100%;
+    padding: 0;
+}
+
+
+/* =========================
+   EN-TÊTE
+========================= */
 
 .page-header {
     display: flex;
@@ -38,64 +48,31 @@
 }
 
 
-/* ==========================================
-   CARTE PRINCIPALE
-========================================== */
+/* =========================
+   CARTE FORMULAIRE
+========================= */
 
-.user-form-card {
+.form-card {
+    width: 100%;
     overflow: hidden;
     border: 1px solid #E8EDF3;
     border-radius: 10px;
     background-color: #FFFFFF;
 }
 
-.card {
-    background-color: #FFFFFF;
-}
 
-.card-body {
-    padding: 28px;
-}
-
-.card-footer {
-    padding: 16px 28px;
-    border-top: 1px solid #EEF2F6;
-    background-color: #FFFFFF;
-}
-
-
-/* ==========================================
-   SECTIONS DU FORMULAIRE
-========================================== */
+/* =========================
+   SECTIONS
+========================= */
 
 .form-section {
-    padding-bottom: 30px;
-    margin-bottom: 30px;
+    padding: 26px 28px 30px;
     border-bottom: 1px solid #EEF2F6;
 }
 
-.form-section:last-child {
-    margin-bottom: 0;
-    padding-bottom: 0;
+.form-section:last-of-type {
     border-bottom: none;
 }
-
-
-/*
-   La section structure est légèrement différenciée
-   car elle apparaît uniquement pour les agents.
-*/
-.structure-section {
-    padding: 22px;
-    border: 1px solid #E2E8F0;
-    border-radius: 8px;
-    background-color: #FAFCFF;
-}
-
-
-/* ==========================================
-   TITRE DE SECTION
-========================================== */
 
 .section-heading {
     display: flex;
@@ -109,17 +86,23 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+
     width: 34px;
     height: 34px;
+
     border-radius: 7px;
+
     background-color: rgba(59, 130, 246, 0.09);
     color: #2563EB;
+
     font-size: 15px;
 }
 
 .section-heading h2 {
     margin: 0 0 3px;
+
     color: #1E293B;
+
     font-family: 'Poppins', sans-serif;
     font-size: 14px;
     font-weight: 600;
@@ -128,16 +111,18 @@
 
 .section-heading p {
     margin: 0;
+
     color: #64748B;
+
     font-family: 'Inter', sans-serif;
     font-size: 11px;
     line-height: 1.4;
 }
 
 
-/* ==========================================
-   GRILLE
-========================================== */
+/* =========================
+   GRILLE FORMULAIRE
+========================= */
 
 .form-grid {
     display: grid;
@@ -145,45 +130,52 @@
     gap: 20px 22px;
 }
 
-
-/* ==========================================
-   CHAMPS
-========================================== */
+.full-width {
+    grid-column: 1 / -1;
+}
 
 .form-group {
     display: flex;
     flex-direction: column;
-    gap: 7px;
     min-width: 0;
 }
 
-.form-group label {
+
+/* =========================
+   LABELS
+========================= */
+
+.form-group label:not(.urgent-option) {
+    margin-bottom: 7px;
+
     color: #334155;
+
     font-family: 'Inter', sans-serif;
     font-size: 12px;
     font-weight: 600;
     line-height: 1.4;
 }
 
-.form-group label span {
+.required {
+    margin-left: 2px;
     color: #DC2626;
 }
 
 
-/* ==========================================
-   INPUTS / SELECTS
-========================================== */
+/* =========================
+   INPUTS
+========================= */
 
-.form-control {
+.form-group input[type="text"],
+.form-group textarea {
     width: 100%;
-    height: 40px;
-    padding: 0 12px;
     box-sizing: border-box;
 
     border: 1px solid #DCE3EA;
     border-radius: 7px;
 
     outline: none;
+
     background-color: #FFFFFF;
     color: #334155;
 
@@ -195,95 +187,206 @@
         box-shadow 160ms ease;
 }
 
-.form-control::placeholder {
+.form-group input[type="text"] {
+    height: 40px;
+    padding: 0 12px;
+}
+
+.form-group textarea {
+    min-height: 220px;
+    padding: 11px 12px;
+
+    resize: vertical;
+
+    line-height: 1.6;
+}
+
+.form-group input[type="text"]::placeholder,
+.form-group textarea::placeholder {
     color: #94A3B8;
 }
 
-.form-control:hover {
+.form-group input[type="text"]:hover,
+.form-group textarea:hover {
     border-color: #CBD5E1;
 }
 
-.form-control:focus {
+.form-group input[type="text"]:focus,
+.form-group textarea:focus {
     border-color: #2563EB;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+
+    box-shadow:
+        0 0 0 3px rgba(37, 99, 235, 0.08);
 }
 
-select.form-control {
-    cursor: pointer;
-}
-
-
-/* ==========================================
-   VALIDATION
-========================================== */
-
-.form-control.is-invalid {
+.form-group input.invalid,
+.form-group textarea.invalid {
     border-color: #DC2626;
 }
 
-.form-control.is-invalid:focus {
+.form-group input.invalid:focus,
+.form-group textarea.invalid:focus {
     border-color: #DC2626;
-    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.08);
+
+    box-shadow:
+        0 0 0 3px rgba(220, 38, 38, 0.08);
 }
 
-.error-text {
-    margin-top: -1px;
+
+/* =========================
+   ERREURS / INDICATIONS
+========================= */
+
+.field-error {
+    margin-top: 6px;
+
     color: #DC2626;
+
     font-family: 'Inter', sans-serif;
     font-size: 10px;
     line-height: 1.4;
 }
 
-.helper-text {
-    color: #64748B;
+.field-hint {
+    margin-top: 6px;
+
+    color: #94A3B8;
+
     font-family: 'Inter', sans-serif;
     font-size: 10px;
-    line-height: 1.4;
+    line-height: 1.5;
 }
 
 
-/* ==========================================
-   CHECKBOX RESPONSABLE
-========================================== */
+/* =========================
+   OPTION URGENTE
+========================= */
 
-.checkbox-group {
-    grid-column: 1 / -1;
-    padding-top: 3px;
+.urgent-option {
+    display: flex !important;
+    align-items: center;
+    flex-direction: row !important;
+
+    gap: 10px;
+
+    min-height: 40px;
+
+    margin: 0 !important;
+    padding: 0 12px;
+
+    border: 1px solid #DCE3EA;
+    border-radius: 7px;
+
+    background-color: #FFFFFF;
+
+    color: #334155;
+
+    cursor: pointer;
+
+    transition:
+        border-color 160ms ease,
+        background-color 160ms ease;
 }
 
-.checkbox-label {
+.urgent-option:hover {
+    border-color: #CBD5E1;
+    background-color: #FAFBFC;
+}
+
+.urgent-option input {
+    width: 16px;
+    height: 16px;
+
+    margin: 0;
+
+    cursor: pointer;
+
+    accent-color: #F59E0B;
+}
+
+.urgent-option span {
+    color: #334155;
+
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+
+/* =========================
+   BOÎTE INFORMATION
+========================= */
+
+.info-box {
+    display: flex;
+    align-items: flex-start;
+
+    gap: 12px;
+
+    padding: 14px 16px;
+
+    border: 1px solid rgba(59, 130, 246, 0.16);
+    border-radius: 7px;
+
+    background-color: rgba(59, 130, 246, 0.05);
+}
+
+.info-icon {
     display: flex;
     align-items: center;
-    gap: 9px;
-    margin: 0;
-    cursor: pointer;
+    justify-content: center;
+    flex-shrink: 0;
+
+    width: 30px;
+    height: 30px;
+
+    border-radius: 6px;
+
+    background-color: rgba(59, 130, 246, 0.10);
+    color: #2563EB;
+
+    font-size: 14px;
+}
+
+.info-content {
+    min-width: 0;
+}
+
+.info-content strong {
+    display: block;
+
+    margin-bottom: 3px;
+
     color: #334155;
+
     font-family: 'Inter', sans-serif;
     font-size: 12px;
     font-weight: 600;
 }
 
-.checkbox-label input {
-    width: 16px;
-    height: 16px;
+.info-content p {
     margin: 0;
-    flex-shrink: 0;
-    cursor: pointer;
-    accent-color: #2563EB;
+
+    color: #64748B;
+
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    line-height: 1.5;
 }
 
 
-/* ==========================================
-   MESSAGES
-========================================== */
+/* =========================
+   ALERTES
+========================= */
 
 .alert {
     display: flex;
     align-items: flex-start;
+
     gap: 9px;
 
+    margin-bottom: 18px;
     padding: 11px 13px;
-    margin-bottom: 24px;
 
     border-radius: 7px;
 
@@ -295,73 +398,96 @@ select.form-control {
 .alert i {
     flex-shrink: 0;
     margin-top: 1px;
+
     font-size: 14px;
 }
 
-.alert-danger {
+.alert-error {
     border: 1px solid rgba(239, 68, 68, 0.18);
+
     background-color: rgba(239, 68, 68, 0.05);
+
     color: #B91C1C;
 }
 
 .alert-success {
     border: 1px solid rgba(16, 185, 129, 0.18);
+
     background-color: rgba(16, 185, 129, 0.05);
+
     color: #047857;
 }
 
 
-/* ==========================================
+/* =========================
    CHARGEMENT
-========================================== */
+========================= */
 
-.loading-container {
+.loading-card {
     display: flex;
     align-items: center;
     justify-content: center;
+
+    min-height: 220px;
+
+    border: 1px solid #E8EDF3;
+    border-radius: 10px;
+
+    background-color: #FFFFFF;
+}
+
+.loading-state {
+    display: flex;
+    align-items: center;
+
     gap: 10px;
 
-    min-height: 300px;
-    padding: 30px;
-
     color: #64748B;
+
     font-family: 'Inter', sans-serif;
     font-size: 12px;
 }
 
 .loading-icon {
+    color: #2563EB;
+    font-size: 15px;
+
     animation: spin 1s linear infinite;
 }
 
-.loading-container .loading-icon {
-    color: #2563EB;
-    font-size: 18px;
-}
 
-
-/* ==========================================
-   FOOTER DU FORMULAIRE
-========================================== */
+/* =========================
+   FOOTER
+========================= */
 
 .form-footer {
     display: flex;
     align-items: center;
     justify-content: flex-end;
+
     gap: 9px;
+
+    padding: 16px 28px;
+
+    border-top: 1px solid #EEF2F6;
+
+    background-color: #FAFBFC;
 }
 
 
-/* ==========================================
+/* =========================
    BOUTONS
-========================================== */
+========================= */
 
 .btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+
     gap: 7px;
 
     min-height: 38px;
+
     padding: 8px 14px;
 
     border: 1px solid transparent;
@@ -389,18 +515,24 @@ select.form-control {
     color: #FFFFFF;
 }
 
-.btn-primary:hover {
+.btn-primary:hover:not(:disabled) {
     background-color: #2563EB;
+}
+
+.btn-primary:active:not(:disabled) {
+    background-color: #1D4ED8;
 }
 
 .btn-secondary {
     border-color: #E2E8F0;
+
     background-color: #FFFFFF;
     color: #475569;
 }
 
-.btn-secondary:hover {
+.btn-secondary:hover:not(:disabled) {
     border-color: #CBD5E1;
+
     background-color: #F8FAFC;
     color: #1E293B;
 }
@@ -411,11 +543,22 @@ select.form-control {
 }
 
 
-/* ==========================================
-   RESPONSIVE — TABLETTE
-========================================== */
+/* =========================
+   ANIMATION
+========================= */
 
-@media (max-width: 768px) {
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 800px) {
 
     .page-header {
         align-items: flex-start;
@@ -431,39 +574,16 @@ select.form-control {
         width: 100%;
     }
 
-    .card-body {
-        padding: 20px;
-    }
-
     .form-grid {
         grid-template-columns: 1fr;
-        gap: 18px;
     }
 
-    .checkbox-group {
+    .full-width {
         grid-column: auto;
     }
-
-    .card-footer {
-        padding: 16px 20px;
-    }
-
-    .form-footer {
-        flex-direction: column-reverse;
-    }
-
-    .form-footer .btn {
-        width: 100%;
-    }
-
 }
 
-
-/* ==========================================
-   RESPONSIVE — MOBILE
-========================================== */
-
-@media (max-width: 480px) {
+@media (max-width: 600px) {
 
     .page-title {
         font-size: 21px;
@@ -473,12 +593,8 @@ select.form-control {
         font-size: 12px;
     }
 
-    .card-body {
-        padding: 16px;
-    }
-
-    .structure-section {
-        padding: 16px;
+    .form-section {
+        padding: 20px 16px;
     }
 
     .section-heading {
@@ -488,26 +604,20 @@ select.form-control {
     .section-icon {
         width: 32px;
         height: 32px;
-        font-size: 14px;
     }
 
-    .section-heading h2 {
-        font-size: 13px;
-    }
+    .form-footer {
+        flex-direction: column-reverse;
+        align-items: stretch;
 
-    .card-footer {
         padding: 14px 16px;
     }
 
-}
+    .form-footer .btn {
+        width: 100%;
+    }
 
-
-/* ==========================================
-   ANIMATION
-========================================== */
-
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
+    .info-box {
+        padding: 13px;
     }
 }
