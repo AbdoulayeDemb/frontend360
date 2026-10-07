@@ -1,19 +1,32 @@
 <div class="page-header">
 
     <div class="page-heading">
-        <h1 class="page-title">Utilisateurs</h1>
+
+        <h1 class="page-title">
+            Utilisateurs
+        </h1>
 
         <p class="page-subtitle">
             Gérez les comptes citoyens, administrateurs et agents de structure
         </p>
+
     </div>
 
-    <!-- <div class="header-actions">
-        <button class="btn btn-primary" (click)="ajouterUtilisateur()">
+    <!--
+    <div class="header-actions">
+        <button
+            class="btn btn-primary"
+            (click)="ajouterUtilisateur()">
+
             <i class="bi bi-person-plus"></i>
-            <span>Ajouter un utilisateur</span>
+
+            <span>
+                Ajouter un utilisateur
+            </span>
+
         </button>
-    </div> -->
+    </div>
+    -->
 
 </div>
 
@@ -39,18 +52,41 @@
 
                 <!-- Filtre par rôle -->
                 <select class="form-select" [value]="selectedRole" (change)="onRoleChange($event)">
-                    <option value="">Tous les rôles</option>
-                    <option value="CITOYEN">Citoyens</option>
-                    <option value="ADMIN">Administrateurs</option>
-                    <option value="STRUCTURE">Agents de structure</option>
+
+                    <option value="">
+                        Tous les rôles
+                    </option>
+
+                    <option value="CITOYEN">
+                        Citoyens
+                    </option>
+
+                    <option value="ADMIN">
+                        Administrateurs
+                    </option>
+
+                    <option value="STRUCTURE">
+                        Agents de structure
+                    </option>
+
                 </select>
 
 
                 <!-- Filtre par statut -->
                 <select class="form-select" [value]="selectedStatut" (change)="onStatutChange($event)">
-                    <option value="">Tous les statuts</option>
-                    <option value="ACTIF">Actifs</option>
-                    <option value="INACTIF">Inactifs</option>
+
+                    <option value="">
+                        Tous les statuts
+                    </option>
+
+                    <option value="ACTIF">
+                        Actifs
+                    </option>
+
+                    <option value="INACTIF">
+                        Inactifs
+                    </option>
+
                 </select>
 
             </div>
@@ -66,8 +102,13 @@
         @if (isLoading) {
 
         <div class="table-state">
+
             <i class="bi bi-arrow-repeat loading-icon"></i>
-            <span>Chargement des utilisateurs...</span>
+
+            <span>
+                Chargement des utilisateurs...
+            </span>
+
         </div>
 
         }
@@ -78,13 +119,19 @@
         <div class="table-state table-state-error">
 
             <div class="state-icon">
+
                 <i class="bi bi-exclamation-circle"></i>
+
             </div>
 
-            <p>{{ errorMessage }}</p>
+            <p>
+                {{ errorMessage }}
+            </p>
 
             <button class="btn btn-secondary btn-sm" (click)="loadUtilisateurs()">
+
                 Réessayer
+
             </button>
 
         </div>
@@ -99,23 +146,50 @@
             <table class="table">
 
                 <thead>
+
                     <tr>
-                        <th>Utilisateur</th>
-                        <th>Téléphone</th>
-                        <th>Email</th>
-                        <th>Rôle</th>
-                        <th>Structure</th>
-                        <th>Date création</th>
-                        <th>Statut</th>
-                        <th class="text-right">Actions</th>
+
+                        <th>
+                            Utilisateur
+                        </th>
+
+                        <th>
+                            Téléphone
+                        </th>
+
+                        <th>
+                            Email
+                        </th>
+
+                        <th>
+                            Rôle
+                        </th>
+
+                        <th>
+                            Structure
+                        </th>
+
+                        <th>
+                            Date création
+                        </th>
+
+                        <th>
+                            Statut
+                        </th>
+
+                        <th class="text-right">
+                            Actions
+                        </th>
+
                     </tr>
+
                 </thead>
 
 
                 <tbody>
 
                     @for (
-                    user of filteredUtilisateurs;
+                    user of paginatedUtilisateurs;
                     track user.idUtilisateur
                     ) {
 
@@ -141,13 +215,17 @@
 
                         <!-- Téléphone -->
                         <td class="text-secondary">
+
                             {{ user.telephone }}
+
                         </td>
 
 
                         <!-- Email -->
                         <td class="text-secondary email-cell">
+
                             {{ user.email || '-' }}
+
                         </td>
 
 
@@ -155,7 +233,9 @@
                         <td>
 
                             <span class="badge" [class]="getRoleClass(user.role)">
+
                                 {{ getRoleLabel(user.role) }}
+
                             </span>
 
                         </td>
@@ -163,13 +243,17 @@
 
                         <!-- Structure -->
                         <td class="text-secondary">
+
                             {{ getStructureName(user) }}
+
                         </td>
 
 
                         <!-- Date -->
                         <td class="text-secondary date-cell">
+
                             {{ formatDate(user.dateCreation) }}
+
                         </td>
 
 
@@ -177,7 +261,9 @@
                         <td>
 
                             <span class="badge" [class]="getStatutClass(user.estActif)">
+
                                 {{ getStatutLabel(user.estActif) }}
+
                             </span>
 
                         </td>
@@ -191,7 +277,9 @@
                                 <!-- Modifier -->
                                 <button class="action-button" title="Modifier" aria-label="Modifier l'utilisateur"
                                     (click)="modifierUtilisateur(user.idUtilisateur)">
+
                                     <i class="bi bi-pencil"></i>
+
                                 </button>
 
 
@@ -202,15 +290,21 @@
                                     [disabled]="isUpdatingStatusId === user.idUtilisateur"
                                     (click)="changerStatutUtilisateur(user)">
 
-                                    @if (isUpdatingStatusId === user.idUtilisateur) {
+                                    @if (
+                                    isUpdatingStatusId === user.idUtilisateur
+                                    ) {
 
                                     <i class="bi bi-arrow-repeat loading-icon"></i>
 
-                                    } @else if (user.estActif) {
+                                    }
+
+                                    @else if (user.estActif) {
 
                                     <i class="bi bi-person-x"></i>
 
-                                    } @else {
+                                    }
+
+                                    @else {
 
                                     <i class="bi bi-person-check"></i>
 
@@ -237,15 +331,21 @@
                             <div class="empty-state">
 
                                 <div class="empty-icon">
+
                                     <i class="bi bi-people"></i>
+
                                 </div>
 
                                 <p class="empty-title">
+
                                     Aucun utilisateur trouvé
+
                                 </p>
 
                                 <p class="empty-text">
+
                                     Aucun compte ne correspond aux critères de recherche.
+
                                 </p>
 
                             </div>
@@ -267,16 +367,74 @@
     </div>
 
 
-    <!-- Footer -->
+    <!-- Footer pagination -->
     <div class="card-footer pagination-footer">
 
-        <span class="text-secondary text-sm">
+        <span class="results-count">
+
             Affichage de
-            <strong>{{ filteredUtilisateurs.length }}</strong>
-            utilisateur(s)
+
+            <strong>
+                {{ paginationStart }}
+            </strong>
+
+            à
+
+            <strong>
+                {{ paginationEnd }}
+            </strong>
+
             sur
-            <strong>{{ utilisateurs.length }}</strong>
+
+            <strong>
+                {{ filteredUtilisateurs.length }}
+            </strong>
+
+            utilisateur(s)
+
         </span>
+
+
+        @if (totalPages > 1) {
+
+        <div class="pagination">
+
+            <!-- Page précédente -->
+            <button type="button" class="pagination-button" [disabled]="currentPage === 1" (click)="goToPreviousPage()"
+                aria-label="Page précédente">
+
+                <i class="bi bi-chevron-left"></i>
+
+            </button>
+
+
+            <!-- Numéros de pages -->
+            @for (
+            page of visiblePages;
+            track page
+            ) {
+
+            <button type="button" class="pagination-button page-number" [class.active]="page === currentPage"
+                (click)="goToPage(page)">
+
+                {{ page }}
+
+            </button>
+
+            }
+
+
+            <!-- Page suivante -->
+            <button type="button" class="pagination-button" [disabled]="currentPage === totalPages"
+                (click)="goToNextPage()" aria-label="Page suivante">
+
+                <i class="bi bi-chevron-right"></i>
+
+            </button>
+
+        </div>
+
+        }
 
     </div>
 

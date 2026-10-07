@@ -5,7 +5,10 @@
 <header class="dashboard-header">
 
   <div class="header-content">
-    <span class="eyebrow">Vue d'ensemble</span>
+
+    <span class="eyebrow">
+      Vue d'ensemble
+    </span>
 
     <h1 class="page-title">
       Tableau de bord
@@ -14,21 +17,34 @@
     <p class="page-subtitle">
       Aperçu général de l'activité sur Alert'360
     </p>
+
   </div>
 
-  <div class="header-actions">
+
+  <!-- <div class="header-actions">
 
     <button type="button" class="btn btn-secondary">
+
       <i class="bi bi-calendar3"></i>
-      <span>Cette semaine</span>
+
+      <span>
+        Cette semaine
+      </span>
+
     </button>
+
 
     <button type="button" class="btn btn-primary">
+
       <i class="bi bi-file-earmark-arrow-down"></i>
-      <span>Exporter</span>
+
+      <span>
+        Exporter
+      </span>
+
     </button>
 
-  </div>
+  </div> -->
 
 </header>
 
@@ -42,9 +58,11 @@
   <div class="card-body">
 
     <div class="state-content">
+
       <i class="bi bi-arrow-repeat loading-icon"></i>
 
       <div>
+
         <p class="state-title">
           Chargement des données
         </p>
@@ -52,7 +70,9 @@
         <p class="state-description">
           Préparation de votre tableau de bord...
         </p>
+
       </div>
+
     </div>
 
   </div>
@@ -88,8 +108,11 @@
 
     </div>
 
+
     <button type="button" class="btn btn-primary state-action" (click)="loadDashboard()">
+
       Réessayer
+
     </button>
 
   </div>
@@ -101,7 +124,7 @@
      CONTENU DU DASHBOARD
      ========================================================= -->
 
-<div *ngIf="!isLoading && !errorMessage" class="dashboard-wrapper">
+<div [hidden]="isLoading || errorMessage" class="dashboard-wrapper">
 
 
   <!-- =======================================================
@@ -110,13 +133,17 @@
 
   <section class="stats-grid" aria-label="Statistiques">
 
+
     <!-- Total -->
 
     <article class="stat-card">
 
       <div class="stat-icon bg-navy-light">
+
         <img src="assets/icons/signalements.png" alt="" class="stat-custom-icon">
+
       </div>
+
 
       <div class="stat-content">
 
@@ -138,8 +165,11 @@
     <article class="stat-card">
 
       <div class="stat-icon bg-blue-light">
+
         <img src="assets/icons/declare.png" alt="" class="stats-custom-icon">
+
       </div>
+
 
       <div class="stat-content">
 
@@ -161,8 +191,11 @@
     <article class="stat-card">
 
       <div class="stat-icon bg-orange-light">
+
         <img src="assets/icons/Inprogress.png" alt="" class="stats2-custom-icon">
+
       </div>
+
 
       <div class="stat-content">
 
@@ -184,8 +217,11 @@
     <article class="stat-card">
 
       <div class="stat-icon bg-green-light">
+
         <img src="assets/icons/sucess.png" alt="" class="stats3-custom-icon">
+
       </div>
+
 
       <div class="stat-content">
 
@@ -200,6 +236,17 @@
       </div>
 
     </article>
+
+  </section>
+
+
+  <!-- =======================================================
+       CARTE DES SIGNALEMENTS
+       ======================================================= -->
+
+  <section class="dashboard-map-section">
+
+    <app-signalements-map></app-signalements-map>
 
   </section>
 
@@ -222,6 +269,7 @@
         <div class="card-header">
 
           <div>
+
             <span class="section-eyebrow">
               Suivi
             </span>
@@ -229,17 +277,23 @@
             <h2 class="card-title">
               Derniers signalements
             </h2>
+
           </div>
 
+
           <button type="button" class="btn-link" (click)="voirTousLesSignalements()">
+
             Voir tout
+
             <i class="bi bi-arrow-right"></i>
+
           </button>
 
         </div>
 
 
         <div class="card-body table-container">
+
 
           <!-- Aucun signalement -->
 
@@ -269,12 +323,31 @@
               <thead>
 
                 <tr>
-                  <th>ID</th>
-                  <th>Catégorie</th>
-                  <th>Citoyen</th>
-                  <th>Date</th>
-                  <th>Urgence</th>
-                  <th>Statut</th>
+
+                  <th>
+                    ID
+                  </th>
+
+                  <th>
+                    Catégorie
+                  </th>
+
+                  <th>
+                    Citoyen
+                  </th>
+
+                  <th>
+                    Date
+                  </th>
+
+                  <th>
+                    Urgence
+                  </th>
+
+                  <th>
+                    Statut
+                  </th>
+
                 </tr>
 
               </thead>
@@ -289,39 +362,48 @@
 
                 <tr class="clickable-row" (click)="voirDetail(sig.idSignalement)">
 
+
                   <!-- ID -->
 
                   <td>
+
                     <span class="tracking-code">
                       {{ sig.codeTrackingUnique }}
                     </span>
+
                   </td>
 
 
                   <!-- Catégorie -->
 
                   <td>
+
                     <span class="table-primary-text">
                       {{ sig.nomCategorie || 'Non catégorisée' }}
                     </span>
+
                   </td>
 
 
                   <!-- Citoyen -->
 
                   <td>
+
                     <span class="table-secondary-text">
                       {{ sig.citoyenNomComplet || 'Citoyen inconnu' }}
                     </span>
+
                   </td>
 
 
                   <!-- Date -->
 
                   <td>
+
                     <span class="table-secondary-text">
                       {{ formatDateRelative(sig.dateHeureAlerte) }}
                     </span>
+
                   </td>
 
 
@@ -330,7 +412,9 @@
                   <td>
 
                     <span class="badge badge-outline" [ngClass]="getUrgenceClass(sig.typeUrgence)">
+
                       {{ getUrgenceLabel(sig.typeUrgence) }}
+
                     </span>
 
                   </td>
@@ -341,7 +425,9 @@
                   <td>
 
                     <span class="badge" [ngClass]="getStatutClass(sig.statut)">
+
                       {{ getStatutLabel(sig.statut) }}
+
                     </span>
 
                   </td>
@@ -374,6 +460,7 @@
         <div class="card-header">
 
           <div>
+
             <span class="section-eyebrow">
               Dernières mises à jour
             </span>
@@ -381,12 +468,14 @@
             <h2 class="card-title">
               Activité récente
             </h2>
+
           </div>
 
         </div>
 
 
         <div class="card-body">
+
 
           <!-- Aucune activité -->
 
@@ -418,7 +507,8 @@
 
             <div class="timeline-item clickable-row" (click)="voirDetail(sig.idSignalement)">
 
-              <div class="timeline-marker" [ngClass]="getStatutClass(sig.statut)"></div>
+              <div class="timeline-marker" [ngClass]="getStatutClass(sig.statut)">
+              </div>
 
 
               <div class="timeline-content">
@@ -443,6 +533,7 @@
 
                 </p>
 
+
                 <time class="timeline-date">
                   {{ formatDateRelative(sig.dateHeureAlerte) }}
                 </time>
@@ -460,6 +551,7 @@
       </div>
 
     </aside>
+
 
   </div>
 

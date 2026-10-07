@@ -18,8 +18,13 @@
         <div class="header-actions">
 
             <button type="button" class="btn btn-primary" (click)="ajouterActualite()">
+
                 <i class="bi bi-megaphone"></i>
-                <span>Publier une actualité</span>
+
+                <span>
+                    Publier une actualité
+                </span>
+
             </button>
 
         </div>
@@ -90,7 +95,9 @@
             <div class="table-state table-state-error">
 
                 <div class="state-icon">
+
                     <i class="bi bi-exclamation-circle"></i>
+
                 </div>
 
                 <p>
@@ -112,11 +119,26 @@
 
                         <tr>
 
-                            <th>Actualité</th>
-                            <th>Commune cible</th>
-                            <th>Urgence</th>
-                            <th>Auteur</th>
-                            <th>Date</th>
+                            <th>
+                                Actualité
+                            </th>
+
+                            <th>
+                                Commune cible
+                            </th>
+
+                            <th>
+                                Urgence
+                            </th>
+
+                            <th>
+                                Auteur
+                            </th>
+
+                            <th>
+                                Date
+                            </th>
+
                             <th class="actions-column">
                                 Actions
                             </th>
@@ -129,7 +151,7 @@
                     <tbody>
 
                         @for (
-                        actualite of filteredActualites;
+                        actualite of paginatedActualites;
                         track actualite.idActualite
                         ) {
 
@@ -153,7 +175,9 @@
 
 
                             <td class="text-secondary">
+
                                 {{ actualite.communeCible || '-' }}
+
                             </td>
 
 
@@ -209,13 +233,17 @@
                                     <button type="button" class="action-button" title="Modifier"
                                         aria-label="Modifier l'actualité"
                                         (click)="modifierActualite(actualite.idActualite)">
+
                                         <i class="bi bi-pencil"></i>
+
                                     </button>
 
 
                                     <button type="button" class="action-button action-danger" title="Supprimer"
                                         aria-label="Supprimer l'actualité" (click)="supprimerActualite(actualite)">
+
                                         <i class="bi bi-trash3"></i>
+
                                     </button>
 
                                 </div>
@@ -236,7 +264,9 @@
                                 <div class="empty-state-content">
 
                                     <div class="empty-state-icon">
+
                                         <i class="bi bi-newspaper"></i>
+
                                     </div>
 
                                     <p>
@@ -258,14 +288,80 @@
             </div>
 
 
+            <!-- =========================
+                     FOOTER + PAGINATION
+                ========================= -->
+
             <div class="table-footer">
 
-                <span>
-                    {{ filteredActualites.length }}
-                    actualité(s)
+                <span class="results-count">
+
+                    Affichage de
+
+                    <strong>
+                        {{ paginationStart }}
+                    </strong>
+
+                    à
+
+                    <strong>
+                        {{ paginationEnd }}
+                    </strong>
+
                     sur
-                    {{ actualites.length }}
+
+                    <strong>
+                        {{ filteredActualites.length }}
+                    </strong>
+
+                    actualité(s)
+
                 </span>
+
+
+                @if (totalPages > 1) {
+
+                <div class="pagination">
+
+                    <!-- Page précédente -->
+
+                    <button type="button" class="pagination-button" [disabled]="currentPage === 1"
+                        (click)="goToPreviousPage()" aria-label="Page précédente">
+
+                        <i class="bi bi-chevron-left"></i>
+
+                    </button>
+
+
+                    <!-- Numéros de pages -->
+
+                    @for (
+                    page of visiblePages;
+                    track page
+                    ) {
+
+                    <button type="button" class="pagination-button page-number" [class.active]="page === currentPage"
+                        (click)="goToPage(page)">
+
+                        {{ page }}
+
+                    </button>
+
+                    }
+
+
+                    <!-- Page suivante -->
+
+                    <button type="button" class="pagination-button" [disabled]="currentPage === totalPages"
+                        (click)="goToNextPage()" aria-label="Page suivante">
+
+                        <i class="bi bi-chevron-right"></i>
+
+                    </button>
+
+                </div>
+
+                }
 
             </div>
 

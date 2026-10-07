@@ -92,8 +92,6 @@
     cursor: not-allowed;
 }
 
-
-/* Petit bouton */
 .btn-sm {
     min-height: 34px;
     padding: 7px 11px;
@@ -235,14 +233,16 @@
 .table-responsive {
     width: 100%;
     overflow-x: auto;
-    scrollbar-width: thin;
+
 }
 
 .table {
     width: 100%;
-    min-width: 1050px;
+    min-width: 900px;
+
+    margin: 0;
+
     border-collapse: collapse;
-    font-family: 'Inter', sans-serif;
 }
 
 .table thead {
@@ -333,12 +333,6 @@
     line-height: 1;
     white-space: nowrap;
 }
-
-
-/*
-   Les classes ci-dessous restent compatibles
-   avec getRoleClass() et getStatutClass().
-*/
 
 .badge-info {
     color: #2563EB;
@@ -509,26 +503,91 @@
 
 
 /* ==========================================
-   FOOTER
+   FOOTER + PAGINATION
 ========================================== */
 
 .pagination-footer {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 20px;
+    min-height: 58px;
+    padding: 12px 20px;
+    border-top: 1px solid #EEF2F6;
+    background-color: #FFFFFF;
 }
 
-.pagination-footer .text-secondary {
+.results-count {
     color: #64748B;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.results-count strong {
+    color: #475569;
+    font-weight: 600;
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.pagination-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 1px solid #E2E8F0;
+    border-radius: 6px;
+    background-color: #FFFFFF;
+    color: #64748B;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition:
+        background-color 150ms ease,
+        border-color 150ms ease,
+        color 150ms ease;
+}
+
+.pagination-button:hover:not(:disabled):not(.active) {
+    border-color: #CBD5E1;
+    background-color: #F8FAFC;
+    color: #334155;
+}
+
+.pagination-button.active {
+    border-color: #2563EB;
+    background-color: #2563EB;
+    color: #FFFFFF;
+    font-weight: 600;
+    cursor: default;
+}
+
+.pagination-button i {
+    font-size: 12px;
+}
+
+.pagination-button:disabled {
+    opacity: 0.45;
+    background-color: #F8FAFC;
+    cursor: not-allowed;
+}
+
+.pagination-button:focus-visible {
+    outline: none;
+    border-color: #3B82F6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.10);
 }
 
 .text-sm {
     font-size: 11px;
-}
-
-.pagination-footer strong {
-    color: #475569;
-    font-weight: 600;
 }
 
 
@@ -558,9 +617,11 @@
 ========================================== */
 
 @keyframes spin {
+
     to {
         transform: rotate(360deg);
     }
+
 }
 
 
@@ -586,6 +647,26 @@
     .filter-actions .form-select {
         flex: 1;
         width: auto;
+    }
+
+}
+
+
+/* ==========================================
+   TABLETTE PAGINATION
+========================================== */
+
+@media (max-width: 768px) {
+
+    .pagination-footer {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 14px 16px;
+    }
+
+    .pagination {
+        width: 100%;
+        justify-content: flex-end;
     }
 
 }
@@ -633,7 +714,21 @@
     }
 
     .pagination-footer {
+        gap: 12px;
         padding: 13px 15px;
+    }
+
+    .results-count {
+        font-size: 11px;
+    }
+
+    .pagination {
+        justify-content: center;
+    }
+
+    .pagination-button {
+        width: 30px;
+        height: 30px;
     }
 
 }

@@ -211,7 +211,7 @@
 
   appearance: none;
 
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2364748B' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2364748B' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
 
   background-repeat: no-repeat;
   background-position: right 11px center;
@@ -519,10 +519,14 @@
   align-items: center;
   justify-content: space-between;
 
-  min-height: 52px;
-  padding: 14px 20px;
+  gap: 20px;
+
+  min-height: 58px;
+  padding: 12px 20px;
 
   border-top: 1px solid var(--color-border);
+
+  background-color: #FFFFFF;
 }
 
 .results-count {
@@ -530,11 +534,94 @@
 
   font-family: 'Inter', sans-serif;
   font-size: 12px;
+
+  white-space: nowrap;
 }
 
 .results-count strong {
   color: var(--text-primary);
   font-weight: 600;
+}
+
+
+/* =========================================
+   PAGINATION
+   ========================================= */
+
+.pagination {
+  display: flex;
+  align-items: center;
+
+  gap: 4px;
+}
+
+.pagination-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 32px;
+  height: 32px;
+
+  padding: 0;
+
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+
+  background-color: #FFFFFF;
+
+  color: #64748B;
+
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+
+  cursor: pointer;
+
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    color 150ms ease;
+}
+
+.pagination-button:hover:not(:disabled):not(.active) {
+  border-color: #CBD5E1;
+
+  background-color: #F8FAFC;
+
+  color: #334155;
+}
+
+.pagination-button.active {
+  border-color: #2563EB;
+
+  background-color: #2563EB;
+
+  color: #FFFFFF;
+
+  font-weight: 600;
+
+  cursor: default;
+}
+
+.pagination-button i {
+  font-size: 12px;
+}
+
+.pagination-button:disabled {
+  opacity: 0.45;
+
+  background-color: #F8FAFC;
+
+  cursor: not-allowed;
+}
+
+.pagination-button:focus-visible {
+  outline: none;
+
+  border-color: #3B82F6;
+
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.10);
 }
 
 
@@ -560,6 +647,7 @@
   .form-select {
     flex: 1;
   }
+
 }
 
 
@@ -592,8 +680,17 @@
   }
 
   .pagination-footer {
-    padding: 13px 16px;
+    align-items: flex-start;
+    flex-direction: column;
+
+    padding: 14px 16px;
   }
+
+  .pagination {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
 }
 
 
@@ -611,4 +708,22 @@
   .signalements-table td {
     padding: 12px;
   }
+
+  .pagination-footer {
+    gap: 12px;
+  }
+
+  .results-count {
+    font-size: 11px;
+  }
+
+  .pagination {
+    justify-content: center;
+  }
+
+  .pagination-button {
+    width: 30px;
+    height: 30px;
+  }
+
 }

@@ -17,8 +17,13 @@
         <div class="header-actions">
 
             <button type="button" class="btn btn-primary" (click)="ajouterStructure()">
+
                 <i class="bi bi-building-add"></i>
-                <span>Ajouter une structure</span>
+
+                <span>
+                    Ajouter une structure
+                </span>
+
             </button>
 
         </div>
@@ -105,7 +110,9 @@
             <div class="table-state table-state-error">
 
                 <div class="state-icon">
+
                     <i class="bi bi-exclamation-circle"></i>
+
                 </div>
 
                 <p>
@@ -127,17 +134,29 @@
 
                         <tr>
 
-                            <th>Structure</th>
+                            <th>
+                                Structure
+                            </th>
 
-                            <th>Type</th>
+                            <th>
+                                Type
+                            </th>
 
-                            <th>Quartier</th>
+                            <th>
+                                Quartier
+                            </th>
 
-                            <th>Téléphone urgence</th>
+                            <th>
+                                Téléphone urgence
+                            </th>
 
-                            <th>Agents</th>
+                            <th>
+                                Agents
+                            </th>
 
-                            <th>Signalements actifs</th>
+                            <th>
+                                Signalements actifs
+                            </th>
 
                             <th class="actions-column">
                                 Actions
@@ -151,7 +170,7 @@
                     <tbody>
 
                         @for (
-                        structure of filteredStructures;
+                        structure of paginatedStructures;
                         track structure.idStructure
                         ) {
 
@@ -173,29 +192,39 @@
                             <td>
 
                                 <span class="badge" [class]="getTypeClass(structure.typeStructure)">
+
                                     {{ getTypeLabel(structure.typeStructure) }}
+
                                 </span>
 
                             </td>
 
 
                             <td class="text-secondary">
+
                                 {{ structure.quartier || '-' }}
+
                             </td>
 
 
                             <td class="text-secondary">
+
                                 {{ structure.telephoneUrgence || '-' }}
+
                             </td>
 
 
                             <td class="numeric-cell">
+
                                 {{ getNombreAgents(structure) }}
+
                             </td>
 
 
                             <td class="numeric-cell">
+
                                 {{ getNombreSignalementsActifs(structure) }}
+
                             </td>
 
 
@@ -206,13 +235,17 @@
                                     <button type="button" class="action-button" title="Modifier"
                                         aria-label="Modifier la structure"
                                         (click)="modifierStructure(structure.idStructure)">
+
                                         <i class="bi bi-pencil"></i>
+
                                     </button>
 
 
                                     <button type="button" class="action-button action-danger" title="Supprimer"
                                         aria-label="Supprimer la structure" (click)="supprimerStructure(structure)">
+
                                         <i class="bi bi-trash3"></i>
+
                                     </button>
 
                                 </div>
@@ -233,7 +266,9 @@
                                 <div class="empty-state-content">
 
                                     <div class="empty-state-icon">
+
                                         <i class="bi bi-building"></i>
+
                                     </div>
 
                                     <p>
@@ -255,14 +290,80 @@
             </div>
 
 
+            <!-- =========================
+                     FOOTER PAGINATION
+                ========================= -->
+
             <div class="table-footer">
 
-                <span>
-                    {{ filteredStructures.length }}
-                    structure(s)
+                <span class="results-count">
+
+                    Affichage de
+
+                    <strong>
+                        {{ paginationStart }}
+                    </strong>
+
+                    à
+
+                    <strong>
+                        {{ paginationEnd }}
+                    </strong>
+
                     sur
-                    {{ structures.length }}
+
+                    <strong>
+                        {{ filteredStructures.length }}
+                    </strong>
+
+                    structure(s)
+
                 </span>
+
+
+                @if (totalPages > 1) {
+
+                <div class="pagination">
+
+                    <!-- Page précédente -->
+
+                    <button type="button" class="pagination-button" [disabled]="currentPage === 1"
+                        (click)="goToPreviousPage()" aria-label="Page précédente">
+
+                        <i class="bi bi-chevron-left"></i>
+
+                    </button>
+
+
+                    <!-- Numéros de pages -->
+
+                    @for (
+                    page of visiblePages;
+                    track page
+                    ) {
+
+                    <button type="button" class="pagination-button page-number" [class.active]="page === currentPage"
+                        (click)="goToPage(page)">
+
+                        {{ page }}
+
+                    </button>
+
+                    }
+
+
+                    <!-- Page suivante -->
+
+                    <button type="button" class="pagination-button" [disabled]="currentPage === totalPages"
+                        (click)="goToNextPage()" aria-label="Page suivante">
+
+                        <i class="bi bi-chevron-right"></i>
+
+                    </button>
+
+                </div>
+
+                }
 
             </div>
 
@@ -271,6 +372,5 @@
         </div>
 
     </div>
-
 
 </div>
