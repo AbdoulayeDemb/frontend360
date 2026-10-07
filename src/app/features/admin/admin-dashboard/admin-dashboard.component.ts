@@ -18,6 +18,7 @@ import {
   EnumStatut,
   EnumTypeUrgence
 } from '../../../core/models/enums.model';
+import { SignalementsMapComponent } from '../signalements-map/signalements-map.component';
 
 
 @Component({
@@ -25,7 +26,8 @@ import {
   standalone: true,
 
   imports: [
-    CommonModule
+    CommonModule,
+    SignalementsMapComponent
   ],
 
   templateUrl: './admin-dashboard.component.html',

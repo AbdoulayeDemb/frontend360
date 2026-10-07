@@ -677,6 +677,111 @@ tbody tr:last-child td {
 
 
 /* =========================
+   PAGINATION
+========================= */
+
+.pagination-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    min-height: 56px;
+
+    padding: 8px 18px;
+
+    border-top: 1px solid #EEF2F6;
+
+    background-color: #FAFBFC;
+}
+
+.pagination-info {
+    color: #64748B;
+
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+
+    white-space: nowrap;
+}
+
+.pagination-info strong {
+    color: #334155;
+    font-weight: 600;
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+
+    gap: 4px;
+}
+
+.pagination-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 30px;
+    height: 30px;
+
+    padding: 0 8px;
+
+    border: 1px solid #E2E8F0;
+    border-radius: 6px;
+
+    background-color: #FFFFFF;
+    color: #64748B;
+
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+
+    cursor: pointer;
+
+    transition:
+        background-color 140ms ease,
+        border-color 140ms ease,
+        color 140ms ease;
+}
+
+.pagination-button:hover:not(:disabled) {
+    border-color: #CBD5E1;
+
+    background-color: #F8FAFC;
+    color: #334155;
+}
+
+.pagination-button.active {
+    border-color: #3B82F6;
+
+    background-color: #3B82F6;
+    color: #FFFFFF;
+}
+
+.pagination-button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.pagination-arrow {
+    font-size: 12px;
+}
+
+.pagination-ellipsis {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 24px;
+    height: 30px;
+
+    color: #94A3B8;
+
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+}
+
+
+/* =========================
    ANIMATION
 ========================= */
 
@@ -731,7 +836,17 @@ tbody tr:last-child td {
     .filter-actions .btn {
         width: 100%;
     }
+
+    .pagination-footer {
+        align-items: flex-start;
+        flex-direction: column;
+
+        gap: 10px;
+
+        padding: 12px 18px;
+    }
 }
+
 
 @media (max-width: 600px) {
 
@@ -760,5 +875,20 @@ tbody tr:last-child td {
 
     .empty-state {
         padding: 46px 16px;
+    }
+
+    .pagination-footer {
+        padding: 12px 14px;
+    }
+
+    .pagination {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .pagination-button {
+        min-width: 28px;
+        height: 28px;
+        padding: 0 6px;
     }
 }

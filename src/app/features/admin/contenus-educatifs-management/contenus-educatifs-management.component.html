@@ -132,11 +132,29 @@
         <div class="table-header">
 
             <div>
+
                 <h2>Liste des contenus</h2>
 
                 <span class="result-count">
-                    {{ contenusFiltres.length }} contenu(s)
+
+                    @if (contenusFiltres.length > 0) {
+
+                    Affichage de
+                    {{ premierElement }}
+                    à
+                    {{ dernierElement }}
+                    sur
+                    {{ contenusFiltres.length }}
+                    contenu(s)
+
+                    } @else {
+
+                    0 contenu
+
+                    }
+
                 </span>
+
             </div>
 
         </div>
@@ -181,7 +199,9 @@
                         <th>Média</th>
                         <th>Auteur</th>
                         <th>Date</th>
-                        <th class="actions-column">Actions</th>
+                        <th class="actions-column">
+                            Actions
+                        </th>
                     </tr>
 
                 </thead>
@@ -189,7 +209,7 @@
 
                 <tbody>
 
-                    <tr *ngFor="let contenu of contenusFiltres">
+                    <tr *ngFor="let contenu of contenusPagines">
 
                         <!-- TITRE -->
                         <td>
@@ -300,6 +320,66 @@
                 </tbody>
 
             </table>
+
+        </div>
+
+
+        <!-- PAGINATION -->
+        <div *ngIf="contenusFiltres.length > 0" class="pagination-footer">
+
+            <div class="pagination-info">
+
+                Affichage de
+                <strong>{{ premierElement }}</strong>
+                à
+                <strong>{{ dernierElement }}</strong>
+                sur
+                <strong>{{ contenusFiltres.length }}</strong>
+                contenu(s)
+
+            </div>
+
+
+            <nav *ngIf="nombrePages > 1" class="pagination" aria-label="Pagination des contenus éducatifs">
+
+                <!-- PAGE PRÉCÉDENTE -->
+                <button type="button" class="pagination-button pagination-arrow" aria-label="Page précédente"
+                    [disabled]="pageActuelle === 1" (click)="pagePrecedente()">
+
+                    <i class="bi bi-chevron-left"></i>
+
+                </button>
+
+
+                <!-- NUMÉROS DE PAGE -->
+                <ng-container *ngFor="let page of pagesPagination">
+
+                    <span *ngIf="page === -1" class="pagination-ellipsis">
+
+                        ...
+
+                    </span>
+
+
+                    <button *ngIf="page !== -1" type="button" class="pagination-button"
+                        [class.active]="pageActuelle === page" (click)="allerAlaPage(page)">
+
+                        {{ page }}
+
+                    </button>
+
+                </ng-container>
+
+
+                <!-- PAGE SUIVANTE -->
+                <button type="button" class="pagination-button pagination-arrow" aria-label="Page suivante"
+                    [disabled]="pageActuelle === nombrePages" (click)="pageSuivante()">
+
+                    <i class="bi bi-chevron-right"></i>
+
+                </button>
+
+            </nav>
 
         </div>
 

@@ -1,3 +1,4 @@
+
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -47,9 +48,167 @@ export class ContenusEducatifsManagementComponent implements OnInit {
     readonly themes = Object.values(EnumThematique);
     readonly formats = Object.values(EnumFormat);
 
+
+    // ==========================================
+    // PAGINATION
+    // ==========================================
+
+    readonly taillePage = 10;
+
+    pageActuelle = 1;
+
+
+    get nombrePages(): number {
+
+        return Math.ceil(
+            this.contenusFiltres.length /
+            this.taillePage
+        );
+    }
+
+
+    get contenusPagines(): ContenuEducatifResponseDto[] {
+
+        const debut =
+            (this.pageActuelle - 1) *
+            this.taillePage;
+
+        const fin =
+            debut +
+            this.taillePage;
+
+        return this.contenusFiltres.slice(
+            debut,
+            fin
+        );
+    }
+
+
+    get premierElement(): number {
+
+        if (this.contenusFiltres.length === 0) {
+            return 0;
+        }
+
+        return (
+            (this.pageActuelle - 1) *
+            this.taillePage
+        ) + 1;
+    }
+
+
+    get dernierElement(): number {
+
+        return Math.min(
+            this.pageActuelle *
+            this.taillePage,
+            this.contenusFiltres.length
+        );
+    }
+
+
+    get pagesPagination(): number[] {
+
+        const total =
+            this.nombrePages;
+
+        const actuelle =
+            this.pageActuelle;
+
+        if (total <= 5) {
+
+            return Array.from(
+                { length: total },
+                (_, index) => index + 1
+            );
+        }
+
+        const pages: number[] = [];
+
+        pages.push(1);
+
+        if (actuelle > 3) {
+            pages.push(-1);
+        }
+
+        const debut =
+            Math.max(
+                2,
+                actuelle - 1
+            );
+
+        const fin =
+            Math.min(
+                total - 1,
+                actuelle + 1
+            );
+
+        for (
+            let page = debut;
+            page <= fin;
+            page++
+        ) {
+            pages.push(page);
+        }
+
+        if (actuelle < total - 2) {
+            pages.push(-1);
+        }
+
+        pages.push(total);
+
+        return pages;
+    }
+
+
+    allerAlaPage(page: number): void {
+
+        if (
+            page < 1 ||
+            page > this.nombrePages ||
+            page === this.pageActuelle
+        ) {
+            return;
+        }
+
+        this.pageActuelle = page;
+    }
+
+
+    pagePrecedente(): void {
+
+        if (this.pageActuelle > 1) {
+
+            this.pageActuelle--;
+        }
+    }
+
+
+    pageSuivante(): void {
+
+        if (
+            this.pageActuelle <
+            this.nombrePages
+        ) {
+
+            this.pageActuelle++;
+        }
+    }
+
+
+    // ==========================================
+    // INITIALISATION
+    // ==========================================
+
     ngOnInit(): void {
+
         this.chargerContenus();
     }
+
+
+    // ==========================================
+    // CHARGEMENT
+    // ==========================================
 
     /**
      * Charger tous les contenus éducatifs
@@ -87,13 +246,20 @@ export class ContenusEducatifsManagementComponent implements OnInit {
             });
     }
 
+
+    // ==========================================
+    // FILTRES
+    // ==========================================
+
     /**
      * Recherche + filtres
      */
     appliquerFiltres(): void {
 
         const rechercheNormalisee =
-            this.recherche.trim().toLowerCase();
+            this.recherche
+                .trim()
+                .toLowerCase();
 
         this.contenusFiltres =
             this.contenus.filter((contenu) => {
@@ -124,7 +290,13 @@ export class ContenusEducatifsManagementComponent implements OnInit {
                     correspondFormat
                 );
             });
+
+
+        // Toujours revenir à la première page
+        // après une recherche ou un filtre.
+        this.pageActuelle = 1;
     }
+
 
     /**
      * Réinitialiser les filtres
@@ -138,6 +310,11 @@ export class ContenusEducatifsManagementComponent implements OnInit {
         this.appliquerFiltres();
     }
 
+
+    // ==========================================
+    // NAVIGATION
+    // ==========================================
+
     /**
      * Aller vers le formulaire de création
      */
@@ -148,10 +325,13 @@ export class ContenusEducatifsManagementComponent implements OnInit {
         ]);
     }
 
+
     /**
      * Modifier un contenu
      */
-    modifierContenu(idContenu: number): void {
+    modifierContenu(
+        idContenu: number
+    ): void {
 
         this.router.navigate([
             '/admin/contenus-educatifs',
@@ -159,6 +339,11 @@ export class ContenusEducatifsManagementComponent implements OnInit {
             'modifier'
         ]);
     }
+
+
+    // ==========================================
+    // SUPPRESSION
+    // ==========================================
 
     /**
      * Supprimer un contenu
@@ -168,7 +353,7 @@ export class ContenusEducatifsManagementComponent implements OnInit {
     ): void {
 
         const confirmation = confirm(
-            `Voulez-vous vraiment supprimer le contenu "${contenu.titre}" ?`
+            `Voulez - vous vraiment supprimer le contenu "${contenu.titre}" ? `
         );
 
         if (!confirmation) {
@@ -205,6 +390,11 @@ export class ContenusEducatifsManagementComponent implements OnInit {
             });
     }
 
+
+    // ==========================================
+    // AFFICHAGE
+    // ==========================================
+
     /**
      * Libellé lisible du thème
      */
@@ -231,6 +421,7 @@ export class ContenusEducatifsManagementComponent implements OnInit {
         }
     }
 
+
     /**
      * Libellé lisible du format
      */
@@ -253,6 +444,7 @@ export class ContenusEducatifsManagementComponent implements OnInit {
                 return format;
         }
     }
+
 
     /**
      * Icône Bootstrap selon le format
