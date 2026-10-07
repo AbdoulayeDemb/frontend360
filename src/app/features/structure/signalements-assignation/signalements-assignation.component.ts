@@ -75,12 +75,29 @@ export class SignalementsAssignationComponent implements OnInit {
 
 	get filteredAgents(): AgentStructureResponseDto[] {
 		const query = this.searchTerm.trim().toLocaleLowerCase('fr');
-		return this.agents.filter(agent =>
-			!query ||
-			`${agent.prenom} ${agent.nom}`.toLocaleLowerCase('fr').includes(query) ||
-			agent.matriculeAgent.toLocaleLowerCase('fr').includes(query) ||
-			agent.telephone.toLocaleLowerCase('fr').includes(query)
-		);
+		return this.agents.filter(agent => {
+			if (!query) {
+				return true;
+			}
+
+			const searchableText = [
+				`${agent.prenom} ${agent.nom}`,
+				agent.matriculeAgent,
+				agent.telephone
+			].join(' ').toLocaleLowerCase('fr');
+
+			return searchableText.includes(query);
+		});
+	}
+
+	getAgentInitials(agent: AgentStructureResponseDto): string {
+		const prenom = agent.prenom?.charAt(0) || '';
+		const nom = agent.nom?.charAt(0) || '';
+		return `${prenom}${nom}`;
+	}
+
+	getAgentFullName(agent: AgentStructureResponseDto): string {
+		return `${agent.prenom || ''} ${agent.nom || ''}`.trim();
 	}
 
 	get selectedAgent(): AgentStructureResponseDto | null {

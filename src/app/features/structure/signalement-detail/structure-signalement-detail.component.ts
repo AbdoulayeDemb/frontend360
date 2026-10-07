@@ -106,10 +106,6 @@ export class StructureSignalementDetailComponent implements OnInit {
       return `${Math.abs(value).toFixed(4)}° ${hemisphere}`;
     }
 
-  takeCharge(): void {
-    this.updateStatus(EnumStatut.EN_COURS, 'Le signalement est maintenant pris en charge.');
-  }
-
   refuse(): void {
     if (this.signalement && window.confirm('Confirmer le refus de ce signalement ?')) {
       this.updateStatus(EnumStatut.REJETE, 'Le signalement a été refusé.');

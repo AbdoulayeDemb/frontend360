@@ -16,7 +16,6 @@ import { AuthService } from '../../../core/services/auth.service';
 export class AgentsTerrainComponent implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly agentService = inject(AgentService);
-
   readonly currentUser = this.authService.currentUserValue;
   readonly structureName = this.currentUser?.nomStructure || 'Votre structure';
   readonly isResponsable = this.currentUser?.estResponsable ?? false;
@@ -27,6 +26,8 @@ export class AgentsTerrainComponent implements OnInit {
   agents: AgentStructureResponseDto[] = [];
   isLoading = false;
   errorMessage = '';
+  actionErrorMessage = '';
+  deletingAgentId: number | null = null;
 
   private readonly avatarColors = ['#d4b2a4', '#95bdb3', '#bca5d9', '#d9bfa8', '#cdbaf2'];
 
@@ -99,5 +100,28 @@ export class AgentsTerrainComponent implements OnInit {
 
   getAvatarStyle(idUtilisateur: number): Record<string, string> {
     return { background: this.avatarColors[idUtilisateur % this.avatarColors.length] };
+  }
+
+  supprimerAgent(agent: AgentStructureResponseDto): void {
+    if (!this.isResponsable || this.deletingAgentId !== null) return;
+
+    const confirmed = window.confirm(
+      `Voulez-vous vraiment supprimer l’agent ${agent.prenom} ${agent.nom} ? Cette action est définitive.`
+    );
+    if (!confirmed) return;
+
+    this.actionErrorMessage = '';
+    this.deletingAgentId = agent.idUtilisateur;
+    this.agentService.supprimerAgent(agent.idUtilisateur).subscribe({
+      next: () => {
+        this.agents = this.agents.filter(item => item.idUtilisateur !== agent.idUtilisateur);
+        this.deletingAgentId = null;
+      },
+      error: error => {
+        console.error('Erreur lors de la suppression de l’agent :', error);
+        this.actionErrorMessage = error.error?.message || 'Impossible de supprimer cet agent.';
+        this.deletingAgentId = null;
+      }
+    });
   }
 }

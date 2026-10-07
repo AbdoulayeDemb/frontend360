@@ -1,8 +1,8 @@
 <section class="agent-form-page">
   <header class="page-heading">
     <div>
-      <h1>Ajouter un agent de terrain</h1>
-      <p>Créez le profil d’un nouvel agent de votre structure.</p>
+      <h1>{{ isEditMode ? 'Modifier un agent de terrain' : 'Ajouter un agent de terrain' }}</h1>
+      <p>{{ isEditMode ? 'Mettez à jour les informations de cet agent.' : 'Créez le profil d’un nouvel agent de votre structure.' }}</p>
     </div>
   </header>
 
@@ -11,7 +11,14 @@
     Retour
   </button>
 
-  <form class="form-panel" [formGroup]="agentForm" (ngSubmit)="enregistrer()">
+  <div *ngIf="isLoading" class="form-panel state-message" role="status">Chargement des informations de l’agent...</div>
+
+  <div *ngIf="errorMessage && !isLoading && isEditMode && !isAgentLoaded" class="form-error" role="alert">
+    <i class="bi bi-exclamation-circle" aria-hidden="true"></i>
+    {{ errorMessage }}
+  </div>
+
+  <form *ngIf="!isLoading && (!isEditMode || isAgentLoaded)" class="form-panel" [formGroup]="agentForm" (ngSubmit)="enregistrer()">
     <div *ngIf="errorMessage" class="form-error" role="alert">
       <i class="bi bi-exclamation-circle" aria-hidden="true"></i>
       {{ errorMessage }}
@@ -64,9 +71,12 @@
         </div>
 
         <div class="form-field">
-          <label for="agent-password">Mot de passe <span>*</span></label>
-          <input id="agent-password" type="password" formControlName="motDePasse" placeholder="Minimum 6 caractères" autocomplete="new-password" [class.invalid]="isInvalid('motDePasse')">
+          <label for="agent-password">Mot de passe <span *ngIf="!isEditMode">*</span></label>
+          <input id="agent-password" type="password" formControlName="motDePasse"
+            [placeholder]="isEditMode ? 'Laisser vide pour le conserver' : 'Minimum 6 caractères'"
+            autocomplete="new-password" [class.invalid]="isInvalid('motDePasse')">
           <small *ngIf="isInvalid('motDePasse')">Le mot de passe doit contenir au moins 6 caractères.</small>
+          <small *ngIf="isEditMode && !isInvalid('motDePasse')">Laissez vide pour conserver le mot de passe actuel.</small>
         </div>
 
         <div class="form-field structure-field">
@@ -82,8 +92,8 @@
     <footer class="form-footer">
       <button type="button" class="cancel-button" (click)="retourListe()" [disabled]="isSubmitting">Annuler</button>
       <button type="submit" class="submit-button" [disabled]="isSubmitting">
-        <i class="bi" [ngClass]="isSubmitting ? 'bi-arrow-repeat' : 'bi-plus-circle'" aria-hidden="true"></i>
-        {{ isSubmitting ? 'Création...' : 'Ajouter l’agent' }}
+        <i class="bi" [ngClass]="isSubmitting ? 'bi-arrow-repeat' : (isEditMode ? 'bi-check-lg' : 'bi-plus-circle')" aria-hidden="true"></i>
+        {{ isSubmitting ? (isEditMode ? 'Enregistrement...' : 'Création...') : (isEditMode ? 'Enregistrer les modifications' : 'Ajouter l’agent') }}
       </button>
     </footer>
   </form>

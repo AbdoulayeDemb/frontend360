@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Router, RouterLink } from '@angular/router';
 
 import { EnumStatut, EnumTypeUrgence } from '../../../core/models/enums.model';
@@ -8,11 +7,24 @@ import { Signalement } from '../../../core/models/signalement.model';
 import { AuthService } from '../../../core/services/auth.service';
 import { SignalementService } from '../../../core/services/signalement.service';
 
-interface CategorySummary {
+interface UrgencySummary {
 	name: string;
 	count: number;
 	percentage: number;
 	color: string;
+}
+
+interface ActivityPoint {
+	label: string;
+	dateLabel: string;
+	count: number;
+	x: number;
+	y: number;
+}
+
+interface ActivityTick {
+	value: number;
+	y: number;
 }
 
 @Component({
@@ -26,7 +38,6 @@ export class StructureDashboardComponent implements OnInit {
 	private readonly authService = inject(AuthService);
 	private readonly signalementService = inject(SignalementService);
 	private readonly router = inject(Router);
-	private readonly sanitizer = inject(DomSanitizer);
 
 	readonly currentUser = this.authService.currentUserValue;
 	readonly structureId = this.authService.getIdStructure();
@@ -34,23 +45,25 @@ export class StructureDashboardComponent implements OnInit {
 		day: 'numeric', month: 'long', year: 'numeric'
 	});
 	structureName = this.currentUser?.nomStructure || '';
-	mapUrl: SafeResourceUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
-		'https://www.openstreetmap.org/export/embed.html?bbox=-8.1%2C12.55%2C-7.9%2C12.75&layer=mapnik'
-	);
 
 	signalements: Signalement[] = [];
 	recentSignalements: Signalement[] = [];
-	categories: CategorySummary[] = [];
+	urgencySummaries: UrgencySummary[] = [];
+	activityPoints: ActivityPoint[] = [];
+	activityTicks: ActivityTick[] = [];
+	activityLinePath = '';
+	activityAreaPath = '';
 	isLoading = false;
 	errorMessage = '';
 
 	stats = {
 		total: 0,
 		declares: 0,
+		enCours: 0,
 		resolus: 0
 	};
 
-	chartBackground = 'conic-gradient(#3485f6 0% 100%)';
+	urgencyChartBackground = 'conic-gradient(#e8eef7 0% 100%)';
 
 	ngOnInit(): void {
 		this.loadDashboard();
@@ -76,13 +89,14 @@ export class StructureDashboardComponent implements OnInit {
 				this.structureName = this.currentUser?.nomStructure ||
 					signalements.find(signalement => signalement.nomStructureAssignee)?.nomStructureAssignee ||
 					'Votre structure';
-				this.updateMap(signalements);
+				this.updateActivityChart(signalements);
 				this.stats = {
 					total: signalements.length,
 					declares: signalements.filter(signalement => signalement.statut === EnumStatut.DECLARE).length,
+					enCours: signalements.filter(signalement => signalement.statut === EnumStatut.EN_COURS).length,
 					resolus: signalements.filter(signalement => signalement.statut === EnumStatut.RESOLU).length
 				};
-				this.calculateCategories(signalements);
+				this.calculateUrgencies(signalements);
 				this.isLoading = false;
 			},
 			error: (error) => {
@@ -93,79 +107,113 @@ export class StructureDashboardComponent implements OnInit {
 		});
 	}
 
-	private updateMap(signalements: Signalement[]): void {
-		const located = signalements.filter(signalement =>
-			Number.isFinite(signalement.latitude) && Number.isFinite(signalement.longitude)
-		);
-		if (!located.length) return;
+	private updateActivityChart(signalements: Signalement[]): void {
+		const today = new Date();
+		today.setHours(0, 0, 0, 0);
 
-		const latitudes = located.map(signalement => signalement.latitude);
-		const longitudes = located.map(signalement => signalement.longitude);
-		const latitudePadding = Math.max((Math.max(...latitudes) - Math.min(...latitudes)) * 0.2, 0.02);
-		const longitudePadding = Math.max((Math.max(...longitudes) - Math.min(...longitudes)) * 0.2, 0.02);
-		const bounds = [
-			Math.min(...longitudes) - longitudePadding,
-			Math.min(...latitudes) - latitudePadding,
-			Math.max(...longitudes) + longitudePadding,
-			Math.max(...latitudes) + latitudePadding
-		].map(value => value.toFixed(5)).join('%2C');
-
-		this.mapUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
-			`https://www.openstreetmap.org/export/embed.html?bbox=${bounds}&layer=mapnik`
-		);
-	}
-
-	calculateCategories(signalements: Signalement[]): void {
-		const counts = new Map<string, number>();
+		const countsByDate = new Map<string, number>();
 		signalements.forEach(signalement => {
-			const name = signalement.nomCategorie || 'Autres';
-			counts.set(name, (counts.get(name) ?? 0) + 1);
+			const alertDate = new Date(signalement.dateHeureAlerte);
+			if (Number.isNaN(alertDate.getTime())) return;
+
+			const key = this.getDateKey(alertDate);
+			countsByDate.set(key, (countsByDate.get(key) ?? 0) + 1);
 		});
 
-		const rankedCategories = [...counts.entries()]
-			.sort((first, second) => second[1] - first[1]);
-		const visibleCategories = rankedCategories.slice(0, 5);
-		const remainingCount = rankedCategories.slice(5)
-			.reduce((total, [, count]) => total + count, 0);
-		if (remainingCount) visibleCategories.push(['Autres', remainingCount]);
+		const dates = Array.from({ length: 7 }, (_, index) => {
+			const date = new Date(today);
+			date.setDate(today.getDate() - (6 - index));
+			return date;
+		});
+		const counts = dates.map(date => countsByDate.get(this.getDateKey(date)) ?? 0);
+		const maximumCount = Math.max(1, ...counts);
+		const chartMaximum = Math.max(4, Math.ceil(maximumCount / 4) * 4);
+		const chartTop = 24;
+		const chartBottom = 174;
 
-		const palette = ['#3485f6', '#08a979', '#66758f', '#a125dc', '#f59e0b', '#ef476f'];
-		this.categories = visibleCategories
-			.map(([name, count], index) => ({
-				name,
+		this.activityPoints = dates.map((date, index) => ({
+			label: date.toLocaleDateString('fr-FR', { weekday: 'short' }).replace('.', ''),
+			dateLabel: date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' }),
+			count: counts[index],
+			x: 56 + index * 82,
+			y: chartBottom - (counts[index] / chartMaximum) * (chartBottom - chartTop)
+		}));
+		this.activityTicks = Array.from({ length: 5 }, (_, index) => {
+			const value = chartMaximum - (chartMaximum / 4) * index;
+			return {
+				value,
+				y: chartTop + ((chartBottom - chartTop) / 4) * index
+			};
+		});
+
+		const firstPoint = this.activityPoints[0];
+		const lastPoint = this.activityPoints[this.activityPoints.length - 1];
+		this.activityLinePath = this.activityPoints
+			.map((point, index) => `${index === 0 ? 'M' : 'L'} ${point.x} ${point.y}`)
+			.join(' ');
+		this.activityAreaPath = `${this.activityLinePath} L ${lastPoint.x} ${chartBottom} L ${firstPoint.x} ${chartBottom} Z`;
+	}
+
+	private getDateKey(date: Date): string {
+		const year = date.getFullYear();
+		const month = String(date.getMonth() + 1).padStart(2, '0');
+		const day = String(date.getDate()).padStart(2, '0');
+		return `${year}-${month}-${day}`;
+	}
+
+	calculateUrgencies(signalements: Signalement[]): void {
+		const urgencyLevels: { type: EnumTypeUrgence; name: string; color: string }[] = [
+			{ type: EnumTypeUrgence.FAIBLE, name: 'Faible', color: '#10b981' },
+			{ type: EnumTypeUrgence.MOYENNE, name: 'Moyenne', color: '#f59e0b' },
+			{ type: EnumTypeUrgence.ELEVEE, name: 'Élevée', color: '#f97316' },
+			{ type: EnumTypeUrgence.CRITIQUE, name: 'Critique', color: '#ef4444' }
+		];
+		const counts = new Map<EnumTypeUrgence, number>();
+		signalements.forEach(signalement => {
+			counts.set(signalement.typeUrgence, (counts.get(signalement.typeUrgence) ?? 0) + 1);
+		});
+
+		this.urgencySummaries = urgencyLevels.map(level => {
+			const count = counts.get(level.type) ?? 0;
+			return {
+				name: level.name,
 				count,
 				percentage: signalements.length
 					? Math.round((count / signalements.length) * 100)
 					: 0,
-				color: palette[index % palette.length]
-			}))
-			.sort((first, second) => second.count - first.count)
-			.slice(0, 6);
-
+				color: level.color
+			};
+		});
 		let currentPercentage = 0;
-		const slices = this.categories.map(category => {
+		const slices = this.urgencySummaries
+			.filter(summary => summary.count > 0)
+			.map(summary => {
 			const start = currentPercentage;
 			currentPercentage += signalements.length
-				? (category.count / signalements.length) * 100
+				? (summary.count / signalements.length) * 100
 				: 0;
-			return `${category.color} ${start}% ${currentPercentage}%`;
+			return `${summary.color} ${start}% ${currentPercentage}%`;
 		});
-		this.chartBackground = `conic-gradient(${slices.join(', ') || '#e8eef7 0% 100%'})`;
+		this.urgencyChartBackground = `conic-gradient(${slices.join(', ') || '#e8eef7 0% 100%'})`;
 	}
 
-	mapCoordinate(signalement: Signalement, axis: 'x' | 'y'): number {
-		const values = this.recentSignalements.map(item =>
-			axis === 'x' ? item.longitude : item.latitude
-		);
-		const value = axis === 'x' ? signalement.longitude : signalement.latitude;
-		const minimum = Math.min(...values);
-		const maximum = Math.max(...values);
-		if (minimum === maximum) return 50;
+	get prioritySignalementsCount(): number {
+		return this.signalements.filter(signalement =>
+			(signalement.typeUrgence === EnumTypeUrgence.ELEVEE ||
+				signalement.typeUrgence === EnumTypeUrgence.CRITIQUE) &&
+			(signalement.statut === EnumStatut.DECLARE || signalement.statut === EnumStatut.EN_COURS)
+		).length;
+	}
 
-		const normalized = (value - minimum) / (maximum - minimum);
-		return axis === 'x'
-			? 8 + normalized * 84
-			: 86 - normalized * 72;
+	get activityWeekTotal(): number {
+		return this.activityPoints.reduce((total, point) => total + point.count, 0);
+	}
+
+	get busiestActivityDay(): ActivityPoint | null {
+		return this.activityPoints.reduce<ActivityPoint | null>(
+			(busiest, point) => !busiest || point.count > busiest.count ? point : busiest,
+			null
+		);
 	}
 
 	getStructureName(): string {

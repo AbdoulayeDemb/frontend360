@@ -4,7 +4,8 @@ import { Observable } from 'rxjs';
 
 import {
 	AgentStructureRequestDto,
-	AgentStructureResponseDto
+	AgentStructureResponseDto,
+	AgentStructureUpdateDto
 } from '../models/agent-structure.model';
 
 @Injectable({
@@ -21,10 +22,27 @@ export class AgentService {
 		);
 	}
 
+	obtenirAgentParId(idUtilisateur: number): Observable<AgentStructureResponseDto> {
+		return this.http.get<AgentStructureResponseDto>(
+			`${this.apiUrl}/${idUtilisateur}`
+		);
+	}
+
 	creerAgent(idStructure: number, dto: AgentStructureRequestDto): Observable<AgentStructureResponseDto> {
 		return this.http.post<AgentStructureResponseDto>(
 			`${this.apiUrl}/structure/${idStructure}`,
 			dto
 		);
+	}
+
+	modifierAgent(idUtilisateur: number, dto: AgentStructureUpdateDto): Observable<AgentStructureResponseDto> {
+		return this.http.put<AgentStructureResponseDto>(
+			`${this.apiUrl}/${idUtilisateur}`,
+			dto
+		);
+	}
+
+	supprimerAgent(idUtilisateur: number): Observable<void> {
+		return this.http.delete<void>(`${this.apiUrl}/${idUtilisateur}`);
 	}
 }

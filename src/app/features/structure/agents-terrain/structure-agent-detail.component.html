@@ -1,0 +1,159 @@
+<section class="agent-detail-page">
+	<a routerLink="/structure/agents" class="back-link">
+		<i class="bi bi-arrow-left" aria-hidden="true"></i> Retour
+	</a>
+
+	<div *ngIf="isLoading" class="state-message" role="status">
+		<span class="spinner" aria-hidden="true"></span> Chargement des informations de l’agent...
+	</div>
+
+	<div *ngIf="!isLoading && errorMessage" class="state-message state-error" role="alert">
+		<i class="bi bi-exclamation-circle" aria-hidden="true"></i>
+		<span>{{ errorMessage }}</span>
+		<a routerLink="/structure/agents">Revenir à la liste</a>
+	</div>
+
+	<ng-container *ngIf="!isLoading && agent as currentAgent">
+		<header class="page-heading">
+			<div>
+				<h1>Détails de l’agent terrain</h1>
+				<p>Consultez son profil complet et les signalements qui lui sont confiés.</p>
+			</div>
+			<span class="assignment-count"><strong>{{ signalements.length }}</strong> signalement(s) assigné(s)</span>
+		</header>
+
+		<header class="section-heading">
+			<div>
+				<h2>Signalements assignés</h2>
+			</div>
+		</header>
+
+		<div class="agent-detail-layout">
+			<section class="reports-column" aria-label="Signalements assignés à l’agent">
+				<nav *ngIf="reportPageCount > 1" class="report-pagination" aria-label="Pages de signalements">
+					<span aria-live="polite">{{ firstVisibleReport }}–{{ lastVisibleReport }} sur {{ signalements.length }} signalements</span>
+					<div>
+						<button type="button" [disabled]="currentReportPage === 1"
+							(click)="changeReportPage(currentReportPage - 1)" aria-label="Page précédente">
+							<i class="bi bi-chevron-left" aria-hidden="true"></i>
+						</button>
+						<button *ngFor="let page of reportPageNumbers" type="button"
+							[class.active]="page === currentReportPage"
+							[attr.aria-current]="page === currentReportPage ? 'page' : null"
+							[attr.aria-label]="'Page ' + page"
+							(click)="changeReportPage(page)">{{ page }}</button>
+						<button type="button" [disabled]="currentReportPage === reportPageCount"
+							(click)="changeReportPage(currentReportPage + 1)" aria-label="Page suivante">
+							<i class="bi bi-chevron-right" aria-hidden="true"></i>
+						</button>
+					</div>
+				</nav>
+				<div *ngIf="signalements.length; else noAssignments" class="report-list">
+					<article *ngFor="let signalement of visibleSignalements" class="report-card">
+						<div class="report-photo">
+							<img *ngIf="signalement.photoAvantUrl; else noPhoto"
+								[src]="signalement.photoAvantUrl"
+								[alt]="'Photo du signalement ' + signalement.codeTrackingUnique">
+							<ng-template #noPhoto>
+								<div class="photo-placeholder">
+									<i class="bi bi-image" aria-hidden="true"></i>
+									<span>Aucune photo</span>
+								</div>
+							</ng-template>
+						</div>
+
+						<div class="report-content">
+							<div class="report-title-row">
+								<div>
+									<p class="field-label">ID du signalement</p>
+									<a class="tracking-code" [routerLink]="['/structure/signalements', signalement.idSignalement]">#{{ signalement.codeTrackingUnique }}</a>
+								</div>
+								<span class="status-pill" [ngClass]="getStatusClass(signalement.statut)">
+									<span class="dot"></span>{{ getStatusLabel(signalement.statut) }}
+								</span>
+							</div>
+
+							<div class="report-fields">
+								<div>
+									<span class="field-label">Catégorie</span>
+									<strong>{{ signalement.nomCategorie || 'Autres' }}</strong>
+								</div>
+								<div>
+									<span class="field-label">Description</span>
+									<p>{{ signalement.description || 'Aucune description fournie.' }}</p>
+								</div>
+								<div class="report-meta">
+									<div>
+										<span class="field-label">Niveau d’urgence</span>
+										<span class="urgency-pill" [class.urgency-high]="signalement.typeUrgence === EnumTypeUrgence.ELEVEE || signalement.typeUrgence === EnumTypeUrgence.CRITIQUE">
+											{{ getUrgencyLabel(signalement.typeUrgence) }}
+										</span>
+									</div>
+									<div>
+										<span class="field-label">Date et heure</span>
+										<strong>{{ formatDate(signalement.dateHeureAlerte) }}</strong>
+									</div>
+								</div>
+								<div class="report-meta">
+									<div>
+										<span class="field-label">Citoyen déclarant</span>
+										<strong>{{ signalement.citoyenNomComplet || 'Citoyen inconnu' }} · #{{ signalement.idCitoyen }}</strong>
+									</div>
+									<div>
+										<span class="field-label">Structure assignée</span>
+										<strong>{{ signalement.nomStructureAssignee || 'Non renseignée' }}</strong>
+									</div>
+								</div>
+								<div *ngIf="signalement.audioUrl" class="audio-field">
+									<span class="field-label">Message vocal</span>
+									<audio controls [src]="signalement.audioUrl">Votre navigateur ne supporte pas la lecture audio.</audio>
+								</div>
+								<div class="location-field">
+									<span class="location-icon"><i class="bi bi-geo-alt-fill" aria-hidden="true"></i></span>
+									<div>
+										<span class="field-label">Position géographique</span>
+										<strong>{{ formatCoordinate(signalement.latitude, 'latitude') }} · {{ formatCoordinate(signalement.longitude, 'longitude') }}</strong>
+										<p *ngIf="signalement.repereVisuel">{{ signalement.repereVisuel }}</p>
+										<a [href]="'https://www.openstreetmap.org/?mlat=' + signalement.latitude + '&mlon=' + signalement.longitude + '#map=16/' + signalement.latitude + '/' + signalement.longitude"
+											target="_blank" rel="noopener noreferrer">Voir sur la carte</a>
+									</div>
+								</div>
+							</div>
+						</div>
+					</article>
+				</div>
+
+				<ng-template #noAssignments>
+					<div class="empty-state">
+						<i class="bi bi-inbox" aria-hidden="true"></i>
+						<strong>Aucun signalement assigné</strong>
+						<span>Les signalements confiés à cet agent apparaîtront ici.</span>
+					</div>
+				</ng-template>
+			</section>
+
+			<aside class="agent-info-card" aria-label="Informations de l’agent">
+				<div class="agent-profile-heading">
+					<div class="agent-avatar" aria-hidden="true">{{ currentAgent.prenom.charAt(0) }}{{ currentAgent.nom.charAt(0) }}</div>
+					<div>
+						<p class="eyebrow">Profil agent terrain</p>
+						<h2>Informations de l’agent</h2>
+					</div>
+				</div>
+
+				<dl class="agent-info-list">
+					<div><dt>Nom</dt><dd>{{ currentAgent.nom }}</dd></div>
+					<div><dt>Prénom</dt><dd>{{ currentAgent.prenom }}</dd></div>
+					<div><dt>Matricule</dt><dd>{{ currentAgent.matriculeAgent }}</dd></div>
+					<div><dt>Téléphone</dt><dd><a [href]="'tel:' + currentAgent.telephone">{{ currentAgent.telephone }}</a></dd></div>
+					<div><dt>Email</dt><dd><a *ngIf="currentAgent.email; else noEmail" [href]="'mailto:' + currentAgent.email">{{ currentAgent.email }}</a><ng-template #noEmail>Non renseigné</ng-template></dd></div>
+					<div><dt>Structure</dt><dd>{{ currentAgent.nomStructure }}</dd></div>
+				</dl>
+
+				<a *ngIf="isResponsable" [routerLink]="['/structure/agents', currentAgent.idUtilisateur, 'modifier']" class="edit-agent-button">
+					<i class="bi bi-pencil" aria-hidden="true"></i> Modifier l’agent
+				</a>
+			</aside>
+		</div>
+	</ng-container>
+</section>

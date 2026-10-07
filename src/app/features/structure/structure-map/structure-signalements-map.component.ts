@@ -14,16 +14,15 @@ import 'leaflet.markercluster';
 import { SignalementService } from '../../../core/services/signalement.service';
 import { Signalement } from '../../../core/models/signalement.model';
 import { AuthService } from '../../../core/services/auth.service';
-import { EnumRole } from '../../../core/models/enums.model';
 
 @Component({
-  selector: 'app-signalements-map',
+  selector: 'app-structure-signalements-map',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './signalements-map.component.html',
-  styleUrls: ['./signalements-map.component.css']
+  templateUrl: './structure-signalements-map.component.html',
+  styleUrls: ['./structure-signalements-map.component.css']
 })
-export class SignalementsMapComponent
+export class StructureSignalementsMapComponent
   implements AfterViewInit, OnDestroy {
 
   private readonly signalementService =
@@ -60,16 +59,7 @@ export class SignalementsMapComponent
    */
   nombreSignalementsAffiches = 0;
   errorMessage = '';
-
-  get isStructureMode(): boolean {
-    return this.authService.currentUserValue?.role === EnumRole.STRUCTURE;
-  }
-
-  get mapDescription(): string {
-    return this.isStructureMode
-      ? 'Visualisation des signalements attribués à votre structure'
-      : 'Visualisation géographique des signalements';
-  }
+  readonly mapDescription = 'Visualisation des signalements attribués à votre structure';
 
   /**
    * Permet d'éviter de continuer les timers
@@ -400,16 +390,12 @@ export class SignalementsMapComponent
     );
 
     const idStructure = this.authService.getIdStructure();
-    if (this.isStructureMode && idStructure === null) {
+    if (idStructure === null) {
       this.errorMessage = 'Aucune structure n’est associée à ce compte.';
       return;
     }
 
-    const signalements$ = this.isStructureMode && idStructure !== null
-      ? this.signalementService.getByStructure(idStructure)
-      : this.signalementService.getAll();
-
-    signalements$
+    this.signalementService.getByStructure(idStructure)
       .subscribe({
 
         next: (
