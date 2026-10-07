@@ -67,9 +67,9 @@
 					role="radio"
 					(click)="selectedAgentId = agent.idUtilisateur"
 				>
-					<span class="agent-avatar" aria-hidden="true">{{ agent.prenom.charAt(0) }}{{ agent.nom.charAt(0) }}</span>
+					<span class="agent-avatar" aria-hidden="true">{{ getAgentInitials(agent) }}</span>
 					<span class="agent-identity">
-						<strong>{{ agent.prenom }} {{ agent.nom }}</strong>
+						<strong>{{ getAgentFullName(agent) }}</strong>
 						<small>Agent de terrain · {{ agent.matriculeAgent }}</small>
 					</span>
 					<span class="agent-contact">

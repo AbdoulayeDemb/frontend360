@@ -24,35 +24,35 @@
         </article>
 
         <article class="info-card location-card">
-          <span class="info-icon icon-red"><i class="bi bi-geo-alt-fill" aria-hidden="true"></i></span>
+          <span class="info-icon icon-red"><img src="assets/icons/localisation.png" alt=""></span>
           <div><h2>Position GPS</h2><p>{{ formatCoordinate(sig.latitude, 'latitude') }} · {{ formatCoordinate(sig.longitude, 'longitude') }}</p>
             <a [href]="'https://www.openstreetmap.org/?mlat=' + sig.latitude + '&mlon=' + sig.longitude + '#map=16/' + sig.latitude + '/' + sig.longitude" target="_blank" rel="noopener noreferrer">Voir sur la carte</a>
           </div>
         </article>
 
         <article class="info-card citizen-card">
-          <span class="citizen-avatar"><i class="bi bi-person-fill" aria-hidden="true"></i></span>
+          <span class="citizen-avatar"><img src="assets/icons/utilisateur.png" alt=""></span>
           <div><h2>Citoyen déclarant</h2><p class="citizen-name">{{ sig.citoyenNomComplet || 'Citoyen inconnu' }}</p><small>Identifiant : {{ sig.idCitoyen }}</small></div>
         </article>
       </div>
 
       <div class="detail-column">
         <article class="info-card description-card">
-          <span class="info-icon icon-blue"><i class="bi bi-grid" aria-hidden="true"></i></span>
+          <span class="info-icon icon-blue"><img src="assets/icons/categorie.png" alt=""></span>
           <div><small>Catégorie</small><h2>{{ sig.nomCategorie || 'Autres' }}</h2></div>
-          <span class="info-icon icon-blue description-icon"><i class="bi bi-file-text" aria-hidden="true"></i></span>
+          <span class="info-icon icon-blue description-icon"><img src="assets/icons/description.png" alt=""></span>
           <div class="description-copy"><small>Description</small><p>{{ sig.description || 'Aucune description fournie.' }}</p></div>
           <div *ngIf="sig.audioUrl" class="audio-block"><h3>Message vocal</h3><audio controls [src]="sig.audioUrl">Votre navigateur ne supporte pas la lecture audio.</audio></div>
           <div *ngIf="sig.repereVisuel" class="visual-marker"><small>Repère visuel</small><p>{{ sig.repereVisuel }}</p></div>
         </article>
 
         <article class="info-card date-card">
-          <span class="info-icon icon-blue"><i class="bi bi-calendar2-check" aria-hidden="true"></i></span>
+          <span class="info-icon icon-blue"><img src="assets/icons/calendrier.png" alt=""></span>
           <div><h2>Date et heure</h2><p>{{ formatDate(sig.dateHeureAlerte) }}</p></div>
         </article>
 
         <article class="info-card urgency-card">
-          <span class="info-icon icon-orange"><i class="bi bi-broadcast-pin" aria-hidden="true"></i></span>
+          <span class="info-icon icon-orange"><img src="assets/icons/urgence.png" alt=""></span>
           <div><small>Niveau d’urgence</small><h2>{{ getUrgencyLabel(sig.typeUrgence) }}</h2></div>
         </article>
       </div>
@@ -60,19 +60,16 @@
       <aside class="actions-panel">
         <section class="assignment-summary">
           <h2>Statut</h2><span class="status-pill" [ngClass]="getStatusClass(sig.statut)">{{ getStatusLabel(sig.statut) }}</span>
-          <h2>Structure compétente</h2><div class="structure-name"><i class="bi bi-building" aria-hidden="true"></i>{{ sig.nomStructureAssignee || 'Votre structure' }}</div>
+          <h2>Structure compétente</h2><div class="structure-name"><img src="assets/icons/autorite.png" alt="">{{ sig.nomStructureAssignee || 'Votre structure' }}</div>
         </section>
 
-        <button *ngIf="sig.statut === EnumStatut.DECLARE" type="button" class="primary-action" [disabled]="isUpdating" (click)="takeCharge()">
-          <i class="bi bi-check2-circle" aria-hidden="true"></i>{{ isUpdating ? 'Mise à jour...' : 'Prise en charge' }}
-        </button>
         <div *ngIf="sig.statut === EnumStatut.EN_COURS" class="taken-status"><i class="bi bi-arrow-repeat" aria-hidden="true"></i>Traitement en cours</div>
 
         <button type="button" class="secondary-action" disabled title="La gestion des abus n’est pas encore disponible dans l’API.">
           <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>Marquer comme abus
         </button>
-        <button *ngIf="sig.statut === EnumStatut.DECLARE || sig.statut === EnumStatut.EN_COURS" type="button" class="secondary-action" [routerLink]="['/structure/signalements', sig.idSignalement, 'assigner']">
-          <i class="bi bi-person-check" aria-hidden="true"></i>Assigner un agent
+        <button *ngIf="sig.statut === EnumStatut.DECLARE || sig.statut === EnumStatut.EN_COURS" type="button" class="primary-action" [routerLink]="['/structure/signalements', sig.idSignalement, 'assigner']">
+          <img src="assets/icons/utilisateur.png" alt="">Assigner un agent
         </button>
         <button *ngIf="sig.statut === EnumStatut.DECLARE || sig.statut === EnumStatut.EN_COURS" type="button" class="secondary-action action-refuse" [disabled]="isUpdating" (click)="refuse()">
           <i class="bi bi-x-circle" aria-hidden="true"></i>Refuser le signalement
