@@ -1,0 +1,110 @@
+﻿<section class="structure-list">
+  <header class="list-heading">
+    <div>
+      <p class="eyebrow">Espace structure</p>
+      <h1>Liste des agents de terrain</h1>
+      <p class="subtitle">Consultez et gérez les agents de terrain de votre structure.</p>
+    </div>
+
+    <div class="header-actions">
+      <label class="search-box">
+        <i class="bi bi-search" aria-hidden="true"></i>
+        <input type="search" placeholder="Rechercher un agent..." [value]="searchTerm" (input)="searchTerm = $any($event.target).value" aria-label="Rechercher un agent">
+      </label>
+      <a routerLink="/structure/agents/nouveau" class="add-agent-btn">
+        <i class="bi bi-plus-lg" aria-hidden="true"></i>
+        Ajouter un agent
+      </a>
+    </div>
+  </header>
+
+  <nav class="status-tabs" aria-label="Filtrer par statut">
+    <button type="button" [class.active]="selectedFilter === 'Tous'" (click)="selectedFilter = 'Tous'">
+      Tous <strong>{{ agents.length }}</strong>
+    </button>
+    <button type="button" [class.active]="selectedFilter === 'Actifs'" (click)="selectedFilter = 'Actifs'">
+      Actifs <strong>{{ totalActifs }}</strong>
+    </button>
+    <button type="button" [class.active]="selectedFilter === 'Inactifs'" (click)="selectedFilter = 'Inactifs'">
+      Inactifs <strong>{{ totalInactifs }}</strong>
+    </button>
+  </nav>
+
+  <div *ngIf="isLoading" class="state-message" role="status">Chargement des agents...</div>
+  <div *ngIf="!isLoading && errorMessage" class="state-message state-error" role="alert">
+    {{ errorMessage }} <button type="button" (click)="loadAgents()">Réessayer</button>
+  </div>
+
+  <section *ngIf="!isLoading && !errorMessage" class="table-panel">
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Agent</th>
+            <th>Matricule</th>
+            <th>Téléphone</th>
+            <th>Email</th>
+            <th>Statut</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let agent of filteredAgents">
+            <td>
+              <div class="agent-cell">
+                <span class="avatar" [ngStyle]="getAvatarStyle(agent.idUtilisateur)">
+                  {{ agent.prenom.charAt(0) }}{{ agent.nom.charAt(0) }}
+                </span>
+
+                <div class="agent-meta">
+                  <span class="agent-name">{{ agent.prenom }} {{ agent.nom }}</span>
+                </div>
+              </div>
+            </td>
+
+            <td class="agent-code">{{ agent.matriculeAgent }}</td>
+            <td>{{ agent.telephone }}</td>
+            <td>{{ agent.email || '—' }}</td>
+
+            <td>
+              <span class="status-pill" [ngClass]="getStatusClass(agent.estActif)">
+                <span class="dot"></span>
+                {{ getStatusLabel(agent.estActif) }}
+              </span>
+            </td>
+
+            <td>
+              <div class="actions-cell">
+                <button type="button" class="icon-button" [attr.aria-label]="'Voir ' + agent.prenom + ' ' + agent.nom" title="Voir le détail">
+                  <i class="bi bi-eye" aria-hidden="true"></i>
+                </button>
+                <button type="button" class="icon-button danger" [attr.aria-label]="'Supprimer ' + agent.prenom + ' ' + agent.nom" title="Supprimer">
+                  <i class="bi bi-trash" aria-hidden="true"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <tr *ngIf="filteredAgents.length === 0">
+            <td colspan="6" class="empty-row">Aucun agent trouvé pour ce filtre.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <footer class="table-footer">
+      <span>{{ displayCount }} agent(s) affiché(s) sur {{ agents.length }}</span>
+
+      <div class="pagination" aria-label="Pagination">
+        <button type="button" aria-label="Page précédente">
+          <i class="bi bi-chevron-left" aria-hidden="true"></i>
+        </button>
+        <span>Page 1</span>
+        <button type="button" aria-label="Page suivante">
+          <i class="bi bi-chevron-right" aria-hidden="true"></i>
+        </button>
+      </div>
+    </footer>
+  </section>
+</section>

@@ -1,0 +1,42 @@
+<section class="structure-page">
+  <header class="page-heading">
+    <div>
+      <p class="eyebrow">Compte</p>
+      <h1>Rapport Profile</h1>
+      <p class="subtitle">Informations générales de votre profile utilisateur.</p>
+    </div>
+  </header>
+
+  <section class="profile-card" aria-labelledby="profile-title">
+    <div class="profile-avatar" aria-hidden="true">
+      <i class="bi bi-person-circle"></i>
+    </div>
+
+    <div class="profile-content">
+      <h2 id="profile-title">{{ currentUser?.prenom || 'Utilisateur' }} {{ currentUser?.nom || '' }}</h2>
+      <p class="profile-role">
+        <i class="bi bi-shield-check" aria-hidden="true"></i>
+        {{ isResponsable ? 'Responsable de structure' : 'Agent de structure' }}
+      </p>
+
+      <div class="profile-grid">
+        <div class="profile-item">
+          <span class="label">Email</span>
+          <strong>{{ currentUser?.email || 'Non renseigné' }}</strong>
+        </div>
+        <div class="profile-item">
+          <span class="label">Téléphone</span>
+          <strong>{{ currentUser?.telephone || 'Non renseigné' }}</strong>
+        </div>
+        <div class="profile-item">
+          <span class="label">Structure</span>
+          <strong>{{ structureName }}</strong>
+        </div>
+        <div class="profile-item">
+          <span class="label">Statut</span>
+          <strong>{{ currentUser?.estActif ? 'Actif' : 'Inactif' }}</strong>
+        </div>
+      </div>
+    </div>
+  </section>
+</section>
