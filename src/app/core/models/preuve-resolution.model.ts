@@ -25,4 +25,8 @@ export interface PreuveResolutionResponseDto {
     dateResolution: string;
     idSignalement?: number;
     codeTrackingUnique?: string;
+    nomAgent?: string;
+    prenomAgent?: string;
+    telephoneAgent?: string;
+    matriculeAgent?: string;
 }

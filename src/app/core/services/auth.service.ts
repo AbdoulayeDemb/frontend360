@@ -135,6 +135,12 @@ export class AuthService {
         return this.currentUserSubject.value;
     }
 
+    public mettreAJourUtilisateur(user: Utilisateur): void {
+        localStorage.setItem(this.USER_KEY, JSON.stringify(user));
+        this.currentUserSubject.next(user);
+        this.currentUserSignal.set(user);
+    }
+
     public getToken(): string | null {
         return localStorage.getItem(this.TOKEN_KEY);
     }

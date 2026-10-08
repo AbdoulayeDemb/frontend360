@@ -137,7 +137,7 @@
    ========================================= */
 
 .nav-link.active {
-  background-color: #3b82f6;
+  background-color: var(--color-button-primary);
   color: #ffffff;
   font-weight: 600;
   border-radius: 10px;
@@ -194,11 +194,6 @@
   color: #EF4444;
 }
 
-:host(.structure-sidebar) .nav-link.active {
-  background-color: #3982f2;
-  color: white;
-}
-
 @media (max-width: 760px) {
   :host-context(.structure-layout) .sidebar-header {
     padding: 16px 6px;
@@ -228,11 +223,6 @@
   :host-context(.structure-layout) .sidebar-footer {
     padding: 8px;
   }
-}
-
-:host(.structure-sidebar) .nav-link.active {
-  background-color: #3982f2;
-  color: white;
 }
 
 @media (max-width: 760px) {

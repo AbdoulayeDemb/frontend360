@@ -1,35 +1,91 @@
-<section class="structure-page">
-  <header class="page-heading">
+<main class="abuse-page">
+  <header class="list-heading">
     <div>
-      <p class="eyebrow">Signalements</p>
-      <h1>Abus</h1>
-      <p class="subtitle">Consultation des signalements signalés comme abusifs.</p>
+      <h1>Liste des abus</h1>
+      <p class="subtitle">Consultez et gérez les signalements classés comme abus.</p>
     </div>
+    <label class="search-box">
+      <i class="bi bi-search" aria-hidden="true"></i>
+      <input type="search" placeholder="Rechercher un abus…" [value]="recherche" (input)="rechercher($event)">
+    </label>
   </header>
 
-  <div *ngIf="isLoading" class="state-panel" role="status">
-    <span class="spinner" aria-hidden="true"></span>
-    Chargement des signalements...
-  </div>
+  <nav class="status-tabs" aria-label="Filtrer les abus">
+    <button type="button" [class.active]="filtre === 'TOUS'" (click)="setFiltre('TOUS')">
+      Tous <strong>{{ nombreParStatut('TOUS') | number:'2.0' }}</strong>
+    </button>
+    <button type="button" [class.active]="filtre === 'A_VERIFIER'" (click)="setFiltre('A_VERIFIER')">
+      <i class="status-dot pending-dot" aria-hidden="true"></i> À vérifier <strong>{{ nombreAverifier | number:'2.0' }}</strong>
+    </button>
+    <button type="button" [class.active]="filtre === 'CONFIRME'" (click)="setFiltre('CONFIRME')">
+      <i class="status-dot confirmed-dot" aria-hidden="true"></i> Confirmés <strong>{{ nombreConfirmes | number:'2.0' }}</strong>
+    </button>
+  </nav>
 
-  <div *ngIf="errorMessage" class="state-panel state-error" role="alert">
-    <i class="bi bi-exclamation-circle" aria-hidden="true"></i>
-    <span>{{ errorMessage }}</span>
-  </div>
+  @if (isLoading) {
+    <div class="state-message" role="status"><span class="spinner" aria-hidden="true"></span> Chargement des abus…</div>
+  }
+  @if (errorMessage) {
+    <div class="state-message state-error" role="alert">
+      {{ errorMessage }} @if (!isLoading) { <button type="button" (click)="chargerAbus()">Réessayer</button> }
+    </div>
+  }
+  @if (actionMessage) {
+    <p class="notice-success" role="status"><i class="bi bi-check-circle" aria-hidden="true"></i> {{ actionMessage }}</p>
+  }
 
-  <section *ngIf="!isLoading && !errorMessage" class="info-card">
-    <div class="card-icon">
-      <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
-    </div>
-    <div>
-      <h2>Gestion des abus</h2>
-      <p>
-        L’API actuelle ne permet pas encore de créer ou de consulter une liste distincte des abus.
-        Le bouton de signalement d’abus est disponible dans la fiche détaillée, mais reste désactivé.
-      </p>
-      <p class="card-note">
-        <strong>Signalements rejetés :</strong> {{ signalements.length }}
-      </p>
-    </div>
-  </section>
-</section>
+  @if (!isLoading && !errorMessage) {
+    <section class="table-panel">
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr><th aria-label="Détails"></th><th>ID</th><th>Citoyen</th><th>Catégorie</th><th>Motif de l’abus</th><th>Statut</th><th>Date</th><th>Structure</th><th>Actions</th></tr>
+          </thead>
+          <tbody>
+            @for (item of abusVisibles; track item.idAbus) {
+              <tr>
+                <td><button class="expand-button" type="button" [attr.aria-expanded]="abusOuvert === item.idAbus" [attr.aria-label]="abusOuvert === item.idAbus ? 'Masquer les détails' : 'Afficher les détails'" (click)="basculerDetails(item.idAbus)"><i class="bi" [ngClass]="abusOuvert === item.idAbus ? 'bi-dash' : 'bi-plus'" aria-hidden="true"></i></button></td>
+                <td><button type="button" class="tracking-link" (click)="voirSignalement(item)">{{ item.codeTrackingUnique }}</button></td>
+                <td>{{ item.citoyenNomComplet || 'Citoyen inconnu' }}</td>
+                <td>{{ item.categorie || 'Autres' }}</td>
+                <td class="motive-cell"><strong>{{ labelType(item.typeAbus, item.typeAbusPersonnalise) }}</strong><small>{{ labelGravite(item.niveauGravite) }} · {{ item.justification }}</small></td>
+                <td><span class="status-pill" [ngClass]="classeStatut(item.statut)"><i class="status-dot" [ngClass]="item.statut === 'CONFIRME' ? 'confirmed-dot' : 'pending-dot'" aria-hidden="true"></i>{{ labelStatut(item.statut) }}</span></td>
+                <td>{{ formatDate(item.dateClassement) }}</td>
+                <td>{{ item.nomStructure || 'Votre structure' }}</td>
+                <td class="actions-cell">
+                  <button class="icon-button" type="button" title="Voir le signalement" aria-label="Voir le signalement" (click)="voirSignalement(item)"><i class="bi bi-eye" aria-hidden="true"></i></button>
+                  @if (isResponsable && item.statut === 'A_VERIFIER') {
+                    <button class="icon-button confirm-icon" type="button" title="Confirmer l’abus" aria-label="Confirmer l’abus" [disabled]="confirmationEnCours !== null" (click)="confirmer(item)"><i class="bi bi-check2" aria-hidden="true"></i></button>
+                  }
+                </td>
+              </tr>
+              @if (abusOuvert === item.idAbus) {
+                <tr class="details-row">
+                  <td colspan="9">
+                    <strong>Justification :</strong> {{ item.justification }}
+                    @if (item.pieceJointeUrl) {
+                      <button type="button" class="attachment-link" (click)="ouvrirPieceJointe($event, item.idAbus)"><i class="bi bi-paperclip" aria-hidden="true"></i> Ouvrir la pièce justificative</button>
+                    }
+                  </td>
+                </tr>
+              }
+            } @empty {
+              <tr><td colspan="9" class="empty-row">{{ abus.length ? 'Aucun abus ne correspond à votre recherche ou à ce filtre.' : 'Aucun signalement n’a été classé comme abus.' }}</td></tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <footer class="table-footer">
+        <span>{{ abusVisibles.length }} abus affichés sur {{ abusFiltres.length }}</span>
+        <nav class="pagination" aria-label="Pagination des abus">
+          <button type="button" aria-label="Page précédente" [disabled]="pageActuelle === 1" (click)="changerPage(pageActuelle - 1)"><i class="bi bi-chevron-left" aria-hidden="true"></i></button>
+          @for (page of pages; track page) {
+            <button type="button" [class.active]="pageActuelle === page" [attr.aria-current]="pageActuelle === page ? 'page' : null" (click)="changerPage(page)">{{ page }}</button>
+          }
+          <button type="button" aria-label="Page suivante" [disabled]="pageActuelle === nombrePages" (click)="changerPage(pageActuelle + 1)"><i class="bi bi-chevron-right" aria-hidden="true"></i></button>
+        </nav>
+      </footer>
+    </section>
+    <p class="info-note"><i class="bi bi-info-circle-fill" aria-hidden="true"></i> Un abus correspond à un signalement considéré comme faux, trompeur ou non conforme après vérification.</p>
+  }
+</main>

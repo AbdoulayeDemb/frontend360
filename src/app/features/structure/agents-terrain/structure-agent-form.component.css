@@ -178,8 +178,8 @@
 }
 
 .submit-button {
-  border: 1px solid #3982f2;
-  background: #3982f2;
+  border: 1px solid var(--color-button-primary);
+  background: var(--color-button-primary);
   color: white;
 }
 

@@ -5,6 +5,8 @@
   /* Couleurs Principales */
   --color-primary: #0B2A54;
   --color-primary-hover: #0F3A75;
+  --color-button-primary: #3B82F6;
+  --color-button-primary-hover: #2563EB;
   --color-accent-orange: #FF6B00;
   --color-accent-cyan: #00B4D8;
 
@@ -81,12 +83,12 @@ h6,
 }
 
 .btn-primary {
-  background-color: var(--color-primary);
+  background-color: var(--color-button-primary);
   color: white;
 }
 
 .btn-primary:hover {
-  background-color: var(--color-primary-hover);
+  background-color: var(--color-button-primary-hover);
 }
 
 .btn-secondary {
