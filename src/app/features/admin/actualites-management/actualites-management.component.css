@@ -556,8 +556,8 @@
  }
 
  .pagination-button.active {
-     border-color: #2563EB;
-     background-color: #2563EB;
+     border-color: var(--color-button-primary);
+     background-color: var(--color-button-primary);
      color: #FFFFFF;
      font-weight: 600;
      cursor: default;

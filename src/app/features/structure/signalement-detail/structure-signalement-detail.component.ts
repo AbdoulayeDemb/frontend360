@@ -1,9 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { forkJoin } from 'rxjs';
 
+import { AbusResponseDto } from '../../../core/models/abus.model';
 import { EnumStatut, EnumTypeUrgence } from '../../../core/models/enums.model';
 import { Signalement } from '../../../core/models/signalement.model';
+import { AbusService } from '../../../core/services/abus.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { SignalementService } from '../../../core/services/signalement.service';
 
@@ -17,15 +20,16 @@ import { SignalementService } from '../../../core/services/signalement.service';
 export class StructureSignalementDetailComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly authService = inject(AuthService);
+  private readonly abusService = inject(AbusService);
   private readonly signalementService = inject(SignalementService);
 
   readonly EnumStatut = EnumStatut;
   readonly structureId = this.authService.getIdStructure();
+  readonly isResponsable = this.authService.isResponsableStructure();
   signalement: Signalement | null = null;
+  abusExistant: AbusResponseDto | null = null;
   isLoading = false;
-  isUpdating = false;
   errorMessage = '';
-  actionMessage = '';
 
   ngOnInit(): void {
     this.loadSignalement();
@@ -44,11 +48,16 @@ export class StructureSignalementDetailComponent implements OnInit {
 
     this.isLoading = true;
     this.errorMessage = '';
-    this.signalementService.getByStructure(this.structureId).subscribe({
-      next: signalements => {
+    forkJoin({
+      signalements: this.signalementService.getByStructure(this.structureId),
+      abus: this.abusService.obtenirLesAbus()
+    }).subscribe({
+      next: ({ signalements, abus }) => {
         this.signalement = signalements.find(item => item.idSignalement === id) ?? null;
         if (!this.signalement) {
           this.errorMessage = 'Ce signalement n’est pas attribué à votre structure.';
+        } else {
+          this.abusExistant = abus.find(item => item.idSignalement === id) ?? null;
         }
         this.isLoading = false;
       },
@@ -90,6 +99,10 @@ export class StructureSignalementDetailComponent implements OnInit {
     return labels[urgence] ?? urgence;
   }
 
+  estAssigneAUnAgent(signalement: Signalement): boolean {
+    return signalement.idAgentAssigne != null || signalement.agentAssigne != null;
+  }
+
   formatDate(date: string): string {
     const parsed = new Date(date);
     return Number.isNaN(parsed.getTime())
@@ -106,28 +119,4 @@ export class StructureSignalementDetailComponent implements OnInit {
       return `${Math.abs(value).toFixed(4)}° ${hemisphere}`;
     }
 
-  refuse(): void {
-    if (this.signalement && window.confirm('Confirmer le refus de ce signalement ?')) {
-      this.updateStatus(EnumStatut.REJETE, 'Le signalement a été refusé.');
-    }
-  }
-
-  private updateStatus(statut: EnumStatut, successMessage: string): void {
-    if (!this.signalement || this.isUpdating) return;
-    this.isUpdating = true;
-    this.actionMessage = '';
-    this.errorMessage = '';
-    this.signalementService.changeStatut(this.signalement.idSignalement, statut).subscribe({
-      next: signalement => {
-        this.signalement = signalement;
-        this.actionMessage = successMessage;
-        this.isUpdating = false;
-      },
-      error: error => {
-        console.error('Erreur lors de la mise à jour du statut :', error);
-        this.errorMessage = 'La mise à jour du statut a échoué. Réessayez.';
-        this.isUpdating = false;
-      }
-    });
-  }
 }

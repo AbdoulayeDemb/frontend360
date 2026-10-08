@@ -1,0 +1,50 @@
+:host { display: block; color: #102c57; }
+.abuse-page { max-width: 1120px; margin: 0 auto; padding: 2px 8px 20px; }
+.page-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; margin-bottom: 18px; }
+.page-heading h1 { margin: 0; font-family: 'Poppins', sans-serif; font-size: 24px; }
+.page-heading p { margin: 6px 0 0; color: #718098; font-size: 13px; }
+.back-link { display: inline-flex; align-items: center; gap: 7px; padding: 9px 12px; border: 1px solid #e1e7f0; border-radius: 7px; color: #44546c; font-size: 12px; font-weight: 650; text-decoration: none; white-space: nowrap; }
+.abuse-form { padding: 20px 22px 0; border: 1px solid #e3e9f2; border-radius: 10px; background: white; }
+.form-section { padding-bottom: 20px; }
+.form-section + .form-section { padding-top: 18px; border-top: 1px solid #edf1f6; }
+.form-section h2 { margin: 0; font-size: 15px; }
+.section-description { margin: 5px 0 16px; color: #8290a5; font-size: 11px; }
+.report-fields, .select-fields { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.report-fields label, .field { display: flex; min-width: 0; flex-direction: column; gap: 7px; color: #45546c; font-size: 12px; font-weight: 650; }
+.report-fields input, .field input, .field select, .field textarea { width: 100%; min-height: 40px; padding: 9px 12px; border: 1px solid #dce4ef; border-radius: 7px; outline: none; background: #fff; color: #44546c; font: inherit; font-size: 12px; }
+.report-fields input[readonly] { background: #f7f9fc; }
+.select-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); margin: 16px 0; }
+.field b { color: #d13d59; }
+.field input:focus, .field select:focus, .field textarea:focus { border-color: #78a5ef; box-shadow: 0 0 0 3px #3b82f61f; }
+.custom-abuse-type { margin-bottom: 17px; }
+.justification-field { margin-bottom: 17px; }
+.field textarea { min-height: 78px; resize: vertical; }
+.field small { color: #b42332; font-size: 11px; font-weight: 500; }
+.field-hint { color: #8290a5; font-size: 10px; font-weight: 400; }
+.file-picker { position: relative; display: flex; min-height: 44px; align-items: center; gap: 9px; padding: 8px 12px; border: 1px dashed #cfdced; border-radius: 7px; color: var(--color-button-primary); font-size: 11px; cursor: pointer; }
+.file-picker small { margin-left: 2px; color: #8290a5; }
+.file-picker input { position: absolute; inset: 0; width: 100%; opacity: 0; cursor: pointer; }
+.remove-file { width: fit-content; padding: 4px 0; border: 0; background: none; color: #b42332; font: inherit; font-size: 11px; cursor: pointer; }
+.form-footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 15px 0 18px; border-top: 1px solid #edf1f6; }
+.form-footer > p { margin: 0; color: #a86900; font-size: 11px; }
+.form-footer > p i { margin-right: 6px; }
+.form-actions { display: flex; gap: 10px; }
+.button { display: inline-flex; min-height: 39px; align-items: center; justify-content: center; gap: 7px; padding: 8px 13px; border: 1px solid transparent; border-radius: 7px; font: inherit; font-size: 12px; font-weight: 700; text-decoration: none; cursor: pointer; }
+.button-secondary { border-color: #dce4ef; background: white; color: #53647b; }
+.button-primary { border-color: var(--color-button-primary); background: var(--color-button-primary); color: white; }
+.button-primary:hover:not(:disabled) { border-color: var(--color-button-primary-hover); background: var(--color-button-primary-hover); }
+.button-primary:disabled { cursor: not-allowed; opacity: .55; }
+.form-error, .state-panel { padding: 14px; border-radius: 8px; background: #fff4f3; color: #a6332d; font-size: 13px; }
+.form-error i { margin-right: 7px; }
+.state-panel { background: #fff; color: #52647d; }
+.spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid #fff8; border-top-color: currentColor; border-radius: 50%; animation: spin .7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (max-width: 700px) {
+  .page-heading { flex-direction: column; }
+  .abuse-form { padding: 16px 14px 0; }
+  .report-fields, .select-fields { grid-template-columns: 1fr; gap: 12px; }
+  .file-picker { flex-wrap: wrap; }
+  .form-footer { align-items: stretch; flex-direction: column; }
+  .form-actions { flex-direction: column-reverse; }
+  .button { width: 100%; }
+}

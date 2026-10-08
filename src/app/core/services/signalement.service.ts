@@ -286,7 +286,7 @@ export class SignalementService {
 
             description: data.description,
 
-            photoAvantUrl: data.photoAvantUrl,
+            photoAvantUrl: this.resolvePhotoUrl(data.photoAvantUrl),
             audioUrl: data.audioUrl,
             repereVisuel: data.repereVisuel,
 
@@ -302,7 +302,22 @@ export class SignalementService {
             nomCategorie: data.categorieNom,
 
             idStructureAssignee: data.structureAssigneeId,
-            nomStructureAssignee: data.structureAssigneeNom
+            nomStructureAssignee: data.structureAssigneeNom,
+            idAgentAssigne: data.agentAssigneId
         };
+    }
+
+    /**
+     * Les chemins de fichiers relatifs sont servis par le backend.
+     * Sans origine explicite, le navigateur les résout sur l'URL de la page
+     * Angular (par exemple /admin/signalements/42) au lieu du backend.
+     */
+    private resolvePhotoUrl(photoUrl?: string): string | undefined {
+        if (!photoUrl) {
+            return photoUrl;
+        }
+
+        const backendOrigin = new URL(this.API_URL).origin;
+        return new URL(photoUrl, `${backendOrigin}/`).toString();
     }
 }

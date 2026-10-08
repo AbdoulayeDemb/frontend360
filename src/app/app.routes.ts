@@ -24,8 +24,10 @@ import { AgentsTerrainComponent } from './features/structure/agents-terrain/agen
 import { StructureAgentFormComponent } from './features/structure/agents-terrain/structure-agent-form.component';
 import { StructureAgentDetailComponent } from './features/structure/agents-terrain/structure-agent-detail.component';
 import { AbusComponent } from './features/structure/abus/abus.component';
+import { AbusFormComponent } from './features/structure/abus/abus-form.component';
 import { RapportComponent } from './features/structure/rapport/rapport.component';
 import { RapportProfileComponent } from './features/structure/rapport-profile/rapport-profile.component';
+import { StructurePreuvesComponent } from './features/structure/preuves/structure-preuves.component';
 import { StructureSignalementsMapComponent } from './features/structure/structure-map/structure-signalements-map.component';
 import { EnumRole } from './core/models/enums.model';
 import { roleGuard } from './core/guards/role.guard';
@@ -207,8 +209,10 @@ export const routes: Routes = [
       { path: 'agents/:id', component: StructureAgentDetailComponent },
       { path: 'agents', component: AgentsTerrainComponent },
       { path: 'carte', component: StructureSignalementsMapComponent },
+      { path: 'abus/nouveau/:idSignalement', component: AbusFormComponent },
       { path: 'abus', component: AbusComponent },
       { path: 'rapport', component: RapportComponent },
+      { path: 'preuves', component: StructurePreuvesComponent },
       { path: 'profil', component: RapportProfileComponent },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
@@ -221,7 +225,7 @@ export const routes: Routes = [
 
   {
     path: '',
-    redirectTo: 'admin/dashboard',
+    redirectTo: 'auth/login',
     pathMatch: 'full'
   },
 

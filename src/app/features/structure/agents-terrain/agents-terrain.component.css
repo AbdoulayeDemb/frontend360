@@ -84,7 +84,7 @@ h1 {
   padding: 0 14px;
   border: 0;
   border-radius: 7px;
-  background: #3982f2;
+  background: var(--color-button-primary);
   color: white;
   font: inherit;
   font-size: 12px;
@@ -124,13 +124,13 @@ h1 {
 }
 
 .status-tabs button.active {
-  border-color: #3982f2;
-  background: #3982f2;
+  border-color: var(--color-button-primary);
+  background: var(--color-button-primary);
   color: white;
 }
 
 .status-tabs button.active strong {
-  background: #2469d3;
+  background: var(--color-button-primary-hover);
   color: white;
 }
 
@@ -309,8 +309,8 @@ tbody tr:hover {
 }
 
 .icon-button:hover {
-  border-color: #3982f2;
-  color: #3982f2;
+  border-color: var(--color-button-primary);
+  color: var(--color-button-primary);
 }
 
 .icon-button.danger {
@@ -355,7 +355,7 @@ tbody tr:hover {
   margin-left: 8px;
   border: 0;
   background: none;
-  color: #357cf0;
+  color: var(--color-button-primary);
   font: inherit;
   font-weight: 600;
   cursor: pointer;

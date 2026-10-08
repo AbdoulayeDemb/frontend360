@@ -1,0 +1,122 @@
+<main class="abuse-page">
+  <header class="page-heading">
+    <div>
+      <h1>Créer un abus</h1>
+      <p>Classez un signalement comme abus après vérification des informations reçues.</p>
+    </div>
+    <a routerLink="/structure/abus" class="back-link"><i class="bi bi-arrow-left" aria-hidden="true"></i> Retour aux abus</a>
+  </header>
+
+  @if (isLoading) {
+    <div class="state-panel" role="status"><span class="spinner" aria-hidden="true"></span> Vérification du signalement…</div>
+  }
+  @if (errorMessage) {
+    <p class="form-error" role="alert"><i class="bi bi-exclamation-circle" aria-hidden="true"></i>{{ errorMessage }}</p>
+  }
+
+  @if (!isLoading && signalement && !existingAbus && isResponsable && estEligibleAuClassement(signalement)) {
+    <form class="abuse-form" [formGroup]="form" (ngSubmit)="soumettre()">
+      <section class="form-section">
+        <h2>Signalement concerné</h2>
+        <p class="section-description">Identifiez le signalement et vérifiez les informations avant de le classer comme abus.</p>
+        <div class="report-fields">
+          <label>
+            <span>ID du signalement</span>
+            <input readonly [value]="signalement.codeTrackingUnique">
+          </label>
+          <label>
+            <span>Citoyen</span>
+            <input readonly [value]="signalement.citoyenNomComplet || 'Non renseigné'">
+          </label>
+          <label>
+            <span>Catégorie</span>
+            <input readonly [value]="signalement.nomCategorie || 'Autres'">
+          </label>
+        </div>
+      </section>
+
+      <section class="form-section">
+        <h2>Motif du classement</h2>
+        <div class="select-fields">
+          <label class="field">
+            <span>Type d’abus <b>*</b></span>
+            <select formControlName="typeAbus">
+              @for (type of typesAbus; track type.value) {
+                <option [value]="type.value">{{ type.label }}</option>
+              }
+            </select>
+          </label>
+          <label class="field">
+            <span>Niveau de gravité <b>*</b></span>
+            <select formControlName="niveauGravite">
+              @for (niveau of niveauxGravite; track niveau.value) {
+                <option [value]="niveau.value">{{ niveau.label }}</option>
+              }
+            </select>
+          </label>
+        </div>
+
+        @if (form.controls.typeAbus.value === 'AUTRE') {
+          <label class="field custom-abuse-type">
+            <span>Précisez le type d’abus <b>*</b></span>
+            <input
+              type="text"
+              maxlength="200"
+              formControlName="typeAbusPersonnalise"
+              placeholder="Saisissez le type d’abus">
+            @if (form.controls.typeAbusPersonnalise.touched && form.controls.typeAbusPersonnalise.invalid) {
+              <small>Veuillez préciser le type d’abus (200 caractères maximum).</small>
+            }
+          </label>
+        }
+
+        <label class="field justification-field">
+          <span>Justification / observations <b>*</b></span>
+          <textarea
+            rows="3"
+            maxlength="5000"
+            formControlName="justification"
+            placeholder="Décrivez les éléments qui permettent de considérer ce signalement comme un abus…"></textarea>
+          @if (form.controls.justification.touched && form.controls.justification.invalid) {
+            <small>La justification est obligatoire et limitée à 5 000 caractères.</small>
+          }
+          <span class="field-hint">Ex. La position GPS ne correspond pas au lieu indiqué et la photo ne correspond pas au signalement.</span>
+        </label>
+
+        <label class="field attachment-field">
+          <span>Pièce justificative</span>
+          <span class="file-picker">
+            <i class="bi bi-arrow-up" aria-hidden="true"></i>
+            <span>{{ pieceJointe?.name || 'Ajouter une preuve' }}</span>
+            <small>Photo, document ou autre élément (10 Mo max.)</small>
+            <input #fileInput type="file" accept="image/png,image/jpeg,image/webp,application/pdf,.doc,.docx" (change)="onFileSelected($event)">
+          </span>
+          @if (pieceJointe) {
+            <button type="button" class="remove-file" (click)="retirerPieceJointe(fileInput)">Retirer la pièce jointe</button>
+          }
+          @if (fileError) {
+            <small role="alert">{{ fileError }}</small>
+          }
+        </label>
+      </section>
+
+      <footer class="form-footer">
+        <p><i class="bi bi-exclamation-circle" aria-hidden="true"></i> Cette action doit être effectuée uniquement après vérification du signalement.</p>
+        <div class="form-actions">
+          <a class="button button-secondary" routerLink="/structure/abus">Annuler</a>
+          <button class="button button-primary" type="submit" [disabled]="isSubmitting || form.invalid || !!fileError">
+            @if (isSubmitting) {
+              <span class="spinner" aria-hidden="true"></span> Classement…
+            } @else {
+              <i class="bi bi-arrow-up" aria-hidden="true"></i> Classer comme abus
+            }
+          </button>
+        </div>
+      </footer>
+    </form>
+  }
+
+  @if (!isLoading && signalement && !existingAbus && !estEligibleAuClassement(signalement)) {
+    <p class="form-error" role="alert">Un signalement résolu ou déjà attribué à un agent ne peut pas être classé comme abus.</p>
+  }
+</main>

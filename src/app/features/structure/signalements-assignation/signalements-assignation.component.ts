@@ -7,6 +7,7 @@ import { AgentStructureResponseDto } from '../../../core/models/agent-structure.
 import { EnumStatut, EnumTypeUrgence } from '../../../core/models/enums.model';
 import { Signalement } from '../../../core/models/signalement.model';
 import { AgentService } from '../../../core/services/agent.service';
+import { AbusService } from '../../../core/services/abus.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { SignalementService } from '../../../core/services/signalement.service';
 
@@ -22,6 +23,7 @@ export class SignalementsAssignationComponent implements OnInit {
 	private readonly router = inject(Router);
 	private readonly authService = inject(AuthService);
 	private readonly agentService = inject(AgentService);
+	private readonly abusService = inject(AbusService);
 	private readonly signalementService = inject(SignalementService);
 
 	readonly EnumTypeUrgence = EnumTypeUrgence;
@@ -34,6 +36,7 @@ export class SignalementsAssignationComponent implements OnInit {
 	isLoading = false;
 	isSubmitting = false;
 	errorMessage = '';
+	private signalementEstUnAbus = false;
 
 	ngOnInit(): void {
 		this.loadData();
@@ -55,12 +58,18 @@ export class SignalementsAssignationComponent implements OnInit {
 		this.errorMessage = '';
 		forkJoin({
 			signalements: this.signalementService.getByStructure(this.structureId),
-			agents: this.agentService.obtenirAgentsParStructure(this.structureId)
+			agents: this.agentService.obtenirAgentsParStructure(this.structureId),
+			abus: this.abusService.obtenirLesAbus()
 		}).subscribe({
 			next: result => {
 				this.signalement = result.signalements.find(item => item.idSignalement === idSignalement) ?? null;
 				if (!this.signalement) {
 					this.errorMessage = 'Ce signalement n’est pas attribué à votre structure.';
+				} else if (this.signalement.idAgentAssigne != null) {
+					this.errorMessage = 'Ce signalement est déjà attribué à un agent.';
+				} else if (result.abus.some(item => item.idSignalement === idSignalement)) {
+					this.signalementEstUnAbus = true;
+					this.errorMessage = 'Un signalement classé comme abus ne peut pas être attribué à un agent.';
 				}
 				this.agents = result.agents.filter(agent => !agent.estResponsable && agent.estActif);
 				this.isLoading = false;
@@ -120,7 +129,8 @@ export class SignalementsAssignationComponent implements OnInit {
 	}
 
 	assigner(): void {
-		if (!this.signalement || this.selectedAgentId === null || this.isSubmitting) return;
+		if (!this.signalement || this.signalement.idAgentAssigne != null || this.signalementEstUnAbus ||
+			this.selectedAgentId === null || this.isSubmitting) return;
 
 		this.isSubmitting = true;
 		this.errorMessage = '';

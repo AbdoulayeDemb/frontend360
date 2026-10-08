@@ -593,9 +593,9 @@
 }
 
 .pagination-button.active {
-  border-color: #2563EB;
+  border-color: var(--color-button-primary);
 
-  background-color: #2563EB;
+  background-color: var(--color-button-primary);
 
   color: #FFFFFF;
 
