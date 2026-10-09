@@ -85,7 +85,13 @@ export class StructureDashboardComponent implements OnInit {
 						new Date(second.dateHeureAlerte).getTime() -
 						new Date(first.dateHeureAlerte).getTime()
 				);
-				this.recentSignalements = this.signalements.slice(0, 6);
+				this.recentSignalements = this.signalements
+					.filter(signalement =>
+						signalement.statut === EnumStatut.DECLARE &&
+						(signalement.typeUrgence === EnumTypeUrgence.CRITIQUE ||
+							signalement.typeUrgence === EnumTypeUrgence.ELEVEE)
+					)
+					.slice(0, 6);
 				this.structureName = this.currentUser?.nomStructure ||
 					signalements.find(signalement => signalement.nomStructureAssignee)?.nomStructureAssignee ||
 					'Votre structure';
