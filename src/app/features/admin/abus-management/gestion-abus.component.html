@@ -1,0 +1,318 @@
+<div class="page-container">
+
+    <header class="page-header">
+        <div>
+            <span class="eyebrow">ADMINISTRATION</span>
+            <h1 class="page-title">Gestion des abus</h1>
+            <p class="page-subtitle">
+                Consultez les abus signalés par les structures compétentes
+                et examinez les dossiers citoyens.
+            </p>
+        </div>
+
+        <button type="button" class="btn-refresh" (click)="chargerAbus()" [disabled]="isLoading">
+            <i class="bi bi-arrow-clockwise"></i>
+            Actualiser
+        </button>
+    </header>
+
+    <div class="feedback success" *ngIf="successMessage">
+        <i class="bi bi-check-circle"></i>
+        {{ successMessage }}
+        <button type="button" (click)="successMessage = ''" aria-label="Fermer">×</button>
+    </div>
+
+    <div class="feedback error" *ngIf="errorMessage">
+        <i class="bi bi-exclamation-circle"></i>
+        {{ errorMessage }}
+        <button type="button" (click)="errorMessage = ''" aria-label="Fermer">×</button>
+    </div>
+
+    <section class="stats-grid">
+        <article class="stat-card">
+            <div class="stat-icon total-icon">
+                <img src="assets/icons/declare.png" alt="" class="stat-custom-icon">
+            </div>
+            <div>
+                <span class="stat-label">Total des abus</span>
+                <strong class="stat-value">{{ abus.length }}</strong>
+            </div>
+        </article>
+
+        <article class="stat-card">
+            <div class="stat-icon pending-icon">
+                <img src="assets/icons/Inprogress.png" alt="" class="stat-custom-icon">
+            </div>
+            <div>
+                <span class="stat-label">À vérifier</span>
+                <strong class="stat-value">{{ nombreAVerifier }}</strong>
+            </div>
+        </article>
+
+        <article class="stat-card">
+            <div class="stat-icon confirmed-icon">
+                <img src="assets/icons/sucess.png" alt="" class="stat-custom-icon">
+            </div>
+            <div>
+                <span class="stat-label">Abus confirmés</span>
+                <strong class="stat-value">{{ nombreConfirmes }}</strong>
+            </div>
+        </article>
+    </section>
+
+    <section class="content-card">
+
+        <div class="section-heading">
+            <div>
+                <h2>Liste des abus</h2>
+                <p>Recherchez un dossier ou filtrez les résultats.</p>
+            </div>
+            <span class="result-badge">
+                {{ abusFiltres.length }} résultat(s)
+            </span>
+        </div>
+
+        <div class="filters">
+            <div class="search-box">
+                <i class="bi bi-search"></i>
+                <input type="search" [(ngModel)]="recherche" (ngModelChange)="appliquerFiltres()"
+                    placeholder="Rechercher un citoyen, un code, une catégorie..." aria-label="Rechercher un abus">
+            </div>
+
+            <select [(ngModel)]="filtreStatut" (ngModelChange)="appliquerFiltres()" aria-label="Filtrer par statut">
+                <option value="">Tous les statuts</option>
+                <option value="A_VERIFIER">À vérifier</option>
+                <option value="CONFIRME">Confirmés</option>
+            </select>
+
+            <select [(ngModel)]="filtreGravite" (ngModelChange)="appliquerFiltres()" aria-label="Filtrer par gravité">
+                <option value="">Toutes les gravités</option>
+                <option value="FAIBLE">Faible</option>
+                <option value="MOYEN">Moyenne</option>
+                <option value="ELEVE">Élevée</option>
+            </select>
+
+            <button type="button" class="btn-reset" (click)="reinitialiserFiltres()">
+                Réinitialiser
+            </button>
+        </div>
+
+        <div class="loading-state" *ngIf="isLoading">
+            <span class="spinner"></span>
+            <p>Chargement des abus...</p>
+        </div>
+
+        <div class="error-state" *ngIf="!isLoading && errorMessage">
+            <i class="bi bi-exclamation-triangle"></i>
+            <p>Les données n'ont pas pu être chargées.</p>
+            <button type="button" class="btn-refresh" (click)="chargerAbus()">
+                Réessayer
+            </button>
+        </div>
+
+        <div class="empty-state" *ngIf="!isLoading && !errorMessage && abusFiltres.length === 0">
+            <i class="bi bi-shield-check"></i>
+            <h3>Aucun abus trouvé</h3>
+            <p>Aucun dossier ne correspond aux critères sélectionnés.</p>
+        </div>
+
+        <div class="table-wrapper" *ngIf="!isLoading && !errorMessage && abusFiltres.length > 0">
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Dossier</th>
+                        <th>Citoyen</th>
+                        <th>Type d'abus</th>
+                        <th>Gravité</th>
+                        <th>Structure</th>
+                        <th>Date</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr *ngFor="let abusItem of abusPagines">
+                        <td>
+                            <strong>#{{ abusItem.idAbus }}</strong>
+                            <span class="secondary-text">
+                                {{ abusItem.codeTrackingUnique }}
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="citizen-name">
+                                {{ abusItem.citoyenNomComplet || 'Non renseigné' }}
+                            </span>
+                            <span class="secondary-text">
+                                {{ abusItem.categorie || 'Sans catégorie' }}
+                            </span>
+                        </td>
+
+                        <td>{{ getTypeAbusLabel(abusItem) }}</td>
+
+                        <td>
+                            <span class="severity-badge" [ngClass]="getGraviteClass(abusItem.niveauGravite)">
+                                {{ getGraviteLabel(abusItem.niveauGravite) }}
+                            </span>
+                        </td>
+
+                        <td>{{ abusItem.nomStructure || 'Non renseignée' }}</td>
+
+                        <td>{{ formatDate(abusItem.dateClassement) }}</td>
+
+                        <td>
+                            <span class="status-badge" [ngClass]="getStatutClass(abusItem.statut)">
+                                {{ getStatutLabel(abusItem.statut) }}
+                            </span>
+                        </td>
+
+                        <td>
+                            <div class="actions">
+                                <button type="button" class="action-button detail-button" title="Consulter les détails"
+                                    aria-label="Consulter les détails" (click)="ouvrirDetails(abusItem)">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+
+                                <button *ngIf="abusItem.statut === 'A_VERIFIER'" type="button"
+                                    class="action-button confirm-button" title="Confirmer l'abus"
+                                    aria-label="Confirmer l'abus" [disabled]="idAbusEnCours !== null"
+                                    (click)="confirmerAbus(abusItem)">
+                                    <i class="bi bi-check2-circle"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <footer class="pagination-footer">
+                <span class="results-count">
+                    Affichage de {{ paginationStart }} à {{ paginationEnd }}
+                    sur {{ abusFiltres.length }} abus
+                </span>
+
+                <div class="pagination" *ngIf="totalPages > 1">
+                    <button type="button" class="pagination-button" [disabled]="currentPage === 1"
+                        (click)="changerPage(currentPage - 1)">
+                        <i class="bi bi-chevron-left"></i>
+                    </button>
+
+                    <button *ngFor="let page of pagesVisibles" type="button" class="pagination-button"
+                        [class.active]="currentPage === page" (click)="changerPage(page)">
+                        {{ page }}
+                    </button>
+
+                    <button type="button" class="pagination-button" [disabled]="currentPage === totalPages"
+                        (click)="changerPage(currentPage + 1)">
+                        <i class="bi bi-chevron-right"></i>
+                    </button>
+                </div>
+            </footer>
+        </div>
+    </section>
+
+</div>
+
+<!-- MODALE DES DÉTAILS -->
+<div class="modal-overlay" *ngIf="abusSelectionne" (click)="fermerDetails()">
+
+    <section class="details-modal" role="dialog" aria-modal="true" aria-labelledby="details-title"
+        (click)="$event.stopPropagation()">
+
+        <header class="modal-header">
+            <div>
+                <span class="eyebrow">DOSSIER D'ABUS</span>
+                <h2 id="details-title">
+                    Abus #{{ abusSelectionne.idAbus }}
+                </h2>
+            </div>
+
+            <button type="button" class="modal-close" aria-label="Fermer" (click)="fermerDetails()">
+                ×
+            </button>
+        </header>
+
+        <div class="modal-body">
+
+            <div class="detail-row">
+                <span>Code du signalement</span>
+                <strong>{{ abusSelectionne.codeTrackingUnique }}</strong>
+            </div>
+
+            <div class="detail-row">
+                <span>Identifiant du signalement</span>
+                <strong>{{ abusSelectionne.idSignalement }}</strong>
+            </div>
+
+            <div class="detail-row">
+                <span>Citoyen concerné</span>
+                <strong>
+                    {{ abusSelectionne.citoyenNomComplet || 'Non renseigné' }}
+                </strong>
+            </div>
+
+            <div class="detail-row">
+                <span>Catégorie</span>
+                <strong>{{ abusSelectionne.categorie || 'Non renseignée' }}</strong>
+            </div>
+
+            <div class="detail-row">
+                <span>Type d'abus</span>
+                <strong>{{ getTypeAbusLabel(abusSelectionne) }}</strong>
+            </div>
+
+            <div class="detail-row">
+                <span>Gravité</span>
+                <span class="severity-badge" [ngClass]="getGraviteClass(abusSelectionne.niveauGravite)">
+                    {{ getGraviteLabel(abusSelectionne.niveauGravite) }}
+                </span>
+            </div>
+
+            <div class="detail-row">
+                <span>Statut</span>
+                <span class="status-badge" [ngClass]="getStatutClass(abusSelectionne.statut)">
+                    {{ getStatutLabel(abusSelectionne.statut) }}
+                </span>
+            </div>
+
+            <div class="detail-row">
+                <span>Structure déclarante</span>
+                <strong>{{ abusSelectionne.nomStructure || 'Non renseignée' }}</strong>
+            </div>
+
+            <div class="detail-row">
+                <span>Date de classement</span>
+                <strong>{{ formatDate(abusSelectionne.dateClassement) }}</strong>
+            </div>
+
+            <div class="justification">
+                <h3>Justification</h3>
+                <p>{{ abusSelectionne.justification }}</p>
+            </div>
+
+            <div class="attachment" *ngIf="abusSelectionne.pieceJointeUrl">
+                <h3>Pièce justificative</h3>
+                <button type="button" class="btn-attachment" (click)="ouvrirPieceJointe(abusSelectionne)">
+                    <i class="bi bi-paperclip"></i>
+                    Consulter la pièce jointe
+                </button>
+            </div>
+
+        </div>
+
+        <footer class="modal-footer">
+            <button type="button" class="btn-reset" (click)="fermerDetails()">
+                Fermer
+            </button>
+
+            <button *ngIf="abusSelectionne.statut === 'A_VERIFIER'" type="button" class="btn-confirm"
+                [disabled]="idAbusEnCours !== null" (click)="confirmerAbus(abusSelectionne)">
+                <i class="bi bi-check-circle"></i>
+                Confirmer l'abus
+            </button>
+        </footer>
+
+    </section>
+</div>

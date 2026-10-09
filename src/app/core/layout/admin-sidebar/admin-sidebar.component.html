@@ -106,6 +106,16 @@
     </li>
 
 
+    <li class="nav-item">
+      <a routerLink="/admin/gestion-abus" routerLinkActive="active" class="nav-link">
+
+        <i class="bi bi-shield-exclamation"></i>
+        <span>Gestion des abus</span>
+
+      </a>
+    </li>
+
+
     <!-- <li class="nav-item">
       <a routerLink="/admin/statistiques" routerLinkActive="active" class="nav-link">
         <i class="bi bi-bar-chart-fill"></i>
@@ -119,12 +129,12 @@
 
 
 <div class="sidebar-footer">
-  @if (!isStructure) {
+  <!-- @if (!isStructure) {
   <a routerLink="/admin/parametres" routerLinkActive="active" class="nav-link">
     <i class="bi bi-gear-fill"></i>
     <span>Paramètres</span>
   </a>
-  }
+  } -->
   <a href="javascript:void(0)" class="nav-link logout" (click)="logout()">
     <i class="bi bi-box-arrow-right"></i>
     <span>Déconnexion</span>

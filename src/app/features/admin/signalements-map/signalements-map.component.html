@@ -17,11 +17,11 @@
                 <div>
 
                     <h2 class="map-title">
-                        {{ isStructureMode ? 'Carte des signalements de votre structure' : 'Carte des signalements' }}
+                        Carte des signalements
                     </h2>
 
                     <p class="map-description">
-                        {{ mapDescription }}
+                        Visualisation géographique des signalements
                     </p>
 
                 </div>
@@ -78,11 +78,6 @@
     <div class="map-body">
 
         <div #mapContainer class="signalements-map">
-        </div>
-
-        <div *ngIf="errorMessage" class="map-error" role="alert">
-            <i class="bi bi-exclamation-circle" aria-hidden="true"></i>
-            {{ errorMessage }}
         </div>
 
 

@@ -42,6 +42,8 @@ import { ContenusEducatifsManagementComponent } from './features/admin/contenus-
 
 import { ContenuEducatifFormComponent } from './features/admin/contenu-educatif-form/contenu-educatif-form.component';
 
+import { GestionAbusComponent } from './features/admin/abus-management/gestion-abus.component';
+
 
 export const routes: Routes = [
 
@@ -87,6 +89,13 @@ export const routes: Routes = [
       {
         path: 'signalements/:id',
         component: SignalementDetailComponent
+      },
+
+
+      // GESTION DES ABUS
+      {
+        path: 'gestion-abus',
+        component: GestionAbusComponent
       },
 
 
