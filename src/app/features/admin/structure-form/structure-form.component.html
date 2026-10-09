@@ -1,31 +1,46 @@
 <div class="page-container">
 
+    <!-- ==========================================
+         EN-TÊTE
+    =========================================== -->
+
     <div class="page-header">
 
         <div class="page-heading">
 
             <h1 class="page-title">
-                {{ isEditMode
+
+                {{
+                isEditMode
                 ? 'Modifier la structure'
                 : 'Ajouter une structure'
                 }}
+
             </h1>
 
             <p class="page-subtitle">
+
                 {{
                 isEditMode
                 ? 'Modifiez les informations de cette structure'
                 : 'Créez une nouvelle structure compétente'
                 }}
+
             </p>
 
         </div>
 
+
         <div class="header-actions">
 
             <button type="button" class="btn btn-secondary" (click)="retourListe()">
+
                 <i class="bi bi-arrow-left"></i>
-                <span>Retour aux structures</span>
+
+                <span>
+                    Retour aux structures
+                </span>
+
             </button>
 
         </div>
@@ -33,7 +48,10 @@
     </div>
 
 
-    <!-- Chargement -->
+    <!-- ==========================================
+         CHARGEMENT
+    =========================================== -->
+
     @if (isLoading) {
 
     <div class="card loading-card">
@@ -55,7 +73,10 @@
 
     @if (!isLoading) {
 
-    <!-- Messages -->
+    <!-- ======================================
+             MESSAGE ERREUR
+        ======================================= -->
+
     @if (errorMessage) {
 
     <div class="alert alert-error">
@@ -70,6 +91,10 @@
 
     }
 
+
+    <!-- ======================================
+             MESSAGE SUCCÈS
+        ======================================= -->
 
     @if (successMessage) {
 
@@ -86,9 +111,15 @@
     }
 
 
+    <!-- ======================================
+             FORMULAIRE
+        ======================================= -->
+
     <form class="form-card" [formGroup]="structureForm" (ngSubmit)="enregistrer()">
 
+
         <div class="form-content">
+
 
             <!-- =================================
                      INFORMATIONS GÉNÉRALES
@@ -99,15 +130,21 @@
                 <div class="section-heading">
 
                     <div class="section-icon">
+
                         <i class="bi bi-building"></i>
+
                     </div>
 
                     <div>
-                        <h2>Informations générales</h2>
+
+                        <h2>
+                            Informations générales
+                        </h2>
 
                         <p>
                             Informations principales de la structure
                         </p>
+
                     </div>
 
                 </div>
@@ -115,16 +152,25 @@
 
                 <div class="form-grid">
 
-                    <!-- Nom -->
+
+                    <!-- NOM -->
+
                     <div class="form-group full-width">
 
                         <label for="nomStructure">
+
                             Nom de la structure
-                            <span class="required">*</span>
+
+                            <span class="required">
+                                *
+                            </span>
+
                         </label>
+
 
                         <input id="nomStructure" type="text" formControlName="nomStructure"
                             placeholder="Ex. Mairie de Commune IV" [class.invalid]="isInvalid('nomStructure')">
+
 
                         @if (isInvalid('nomStructure')) {
 
@@ -135,15 +181,20 @@
                             .get('nomStructure')
                             ?.hasError('required')
                             ) {
+
                             Le nom de la structure est obligatoire.
+
                             }
+
 
                             @if (
                             structureForm
                             .get('nomStructure')
                             ?.hasError('minlength')
                             ) {
+
                             Le nom doit contenir au moins 2 caractères.
+
                             }
 
                         </small>
@@ -153,13 +204,20 @@
                     </div>
 
 
-                    <!-- Type -->
+                    <!-- TYPE -->
+
                     <div class="form-group">
 
                         <label for="typeStructure">
+
                             Type de structure
-                            <span class="required">*</span>
+
+                            <span class="required">
+                                *
+                            </span>
+
                         </label>
+
 
                         <select id="typeStructure" formControlName="typeStructure"
                             [class.invalid]="isInvalid('typeStructure')">
@@ -170,17 +228,22 @@
                             ) {
 
                             <option [value]="type.value">
+
                                 {{ type.label }}
+
                             </option>
 
                             }
 
                         </select>
 
+
                         @if (isInvalid('typeStructure')) {
 
                         <small class="field-error">
+
                             Le type de structure est obligatoire.
+
                         </small>
 
                         }
@@ -188,24 +251,48 @@
                     </div>
 
 
-                    <!-- Quartier -->
+                    <!-- QUARTIER -->
+
                     <div class="form-group">
 
                         <label for="quartier">
+
                             Quartier
+
+                            <span class="required">
+                                *
+                            </span>
+
                         </label>
 
-                        <input id="quartier" type="text" formControlName="quartier" placeholder="Ex. Hamdallaye">
+
+                        <input id="quartier" type="text" formControlName="quartier" placeholder="Ex. Hamdallaye"
+                            [class.invalid]="isInvalid('quartier')">
+
+
+                        @if (isInvalid('quartier')) {
+
+                        <small class="field-error">
+
+                            Le quartier est obligatoire.
+
+                        </small>
+
+                        }
 
                     </div>
 
 
-                    <!-- Téléphone -->
+                    <!-- TÉLÉPHONE -->
+
                     <div class="form-group">
 
                         <label for="telephoneUrgence">
+
                             Téléphone d'urgence
+
                         </label>
+
 
                         <input id="telephoneUrgence" type="tel" formControlName="telephoneUrgence"
                             placeholder="Ex. 20 00 00 00">
@@ -226,38 +313,128 @@
                 <div class="section-heading">
 
                     <div class="section-icon">
+
                         <i class="bi bi-geo-alt"></i>
+
                     </div>
 
                     <div>
-                        <h2>Zone de couverture</h2>
+
+                        <h2>
+                            Zone de couverture
+                        </h2>
 
                         <p>
-                            Configuration géographique de la structure
-                        </p>
-                    </div>
-
-                </div>
-
-
-                <div class="info-box">
-
-                    <div class="info-icon">
-                        <i class="bi bi-map"></i>
-                    </div>
-
-                    <div class="info-content">
-
-                        <strong>Configuration GPS</strong>
-
-                        <p>
-                            La zone géographique pourra être configurée
-                            ultérieurement depuis la carte interactive.
+                            Définissez le périmètre géographique d'intervention
                         </p>
 
                     </div>
 
                 </div>
+
+
+                <!-- INSTRUCTION -->
+
+                <div class="map-instruction">
+
+                    <div class="map-instruction-icon">
+
+                        <i class="bi bi-pencil-square"></i>
+
+                    </div>
+
+
+                    <div>
+
+                        <strong>
+                            Dessinez la zone de couverture
+                        </strong>
+
+                        <p>
+
+                            Utilisez l'outil polygone
+                            <i class="bi bi-pentagon"></i>
+                            situé en haut à droite de la carte,
+                            puis cliquez sur les différents points
+                            de la zone à couvrir.
+
+                        </p>
+
+                        <p class="instruction-secondary">
+
+                            Vous pouvez ensuite déplacer ou modifier
+                            le périmètre existant.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- CARTE -->
+
+                <div class="coverage-map-wrapper">
+
+                    <div #mapContainer class="coverage-map">
+                    </div>
+
+                </div>
+
+
+                <!-- STATUT ZONE -->
+
+                <div class="zone-status" [class.zone-status-error]="
+                            isInvalid('zoneCouvertureGPS')
+                        " [class.zone-status-success]="
+                            structureForm
+                                .get('zoneCouvertureGPS')
+                                ?.value
+                        ">
+
+                    @if (
+                    structureForm
+                    .get('zoneCouvertureGPS')
+                    ?.value
+                    ) {
+
+                    <i class="bi bi-check-circle-fill"></i>
+
+                    <span>
+                        Zone de couverture définie.
+                    </span>
+
+                    }
+                    @else {
+
+                    <i class="bi bi-exclamation-circle"></i>
+
+                    <span>
+                        Veuillez dessiner une zone de couverture.
+                    </span>
+
+                    }
+
+                </div>
+
+
+                <!-- CHAMP WKT CACHÉ -->
+
+                <input type="hidden" formControlName="zoneCouvertureGPS">
+
+
+                @if (
+                isInvalid('zoneCouvertureGPS')
+                ) {
+
+                <small class="field-error map-field-error">
+
+                    La zone de couverture est obligatoire.
+                    Dessinez le périmètre sur la carte.
+
+                </small>
+
+                }
 
             </section>
 
@@ -270,12 +447,16 @@
 
         <div class="form-footer">
 
+
             <button type="button" class="btn btn-secondary" [disabled]="isSubmitting" (click)="retourListe()">
+
                 Annuler
+
             </button>
 
 
             <button type="submit" class="btn btn-primary" [disabled]="isSubmitting">
+
 
                 @if (isSubmitting) {
 
@@ -289,13 +470,17 @@
 
                 @else {
 
-                <i class="bi" [class.bi-check-lg]="isEditMode" [class.bi-building-add]="!isEditMode"></i>
+                <i class="bi" [class.bi-check-lg]="isEditMode" [class.bi-building-add]="!isEditMode">
+                </i>
 
                 <span>
-                    {{ isEditMode
+
+                    {{
+                    isEditMode
                     ? 'Enregistrer les modifications'
                     : 'Créer la structure'
                     }}
+
                 </span>
 
                 }
