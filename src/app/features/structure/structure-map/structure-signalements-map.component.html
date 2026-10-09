@@ -1,0 +1,153 @@
+<div class="map-container">
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <div class="map-header">
+
+        <div class="map-header-content">
+
+            <div class="map-title-row">
+
+                <div class="map-icon">
+                    <i class="bi bi-geo-alt"></i>
+                </div>
+
+                <div>
+
+                    <h2 class="map-title">
+                        Carte des signalements de votre structure
+                    </h2>
+
+                    <p class="map-description">
+                        {{ mapDescription }}
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Informations à droite -->
+
+        <div class="map-header-right">
+
+            <!-- Nombre de signalements -->
+
+            <div class="map-count">
+
+                <i class="bi bi-pin-map"></i>
+
+                <span>
+                    {{ nombreSignalementsAffiches }}
+                </span>
+
+                <small>
+                    signalement{{ nombreSignalementsAffiches > 1 ? 's' : '' }}
+                </small>
+
+            </div>
+
+
+            <!-- Localisation -->
+
+            <div class="map-location">
+
+                <i class="bi bi-geo-alt-fill"></i>
+
+                <span>
+                    Bamako
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         CARTE
+    ====================================================== -->
+
+    <div class="map-body">
+
+        <div #mapContainer class="signalements-map">
+        </div>
+
+        <div *ngIf="errorMessage" class="map-error" role="alert">
+            <i class="bi bi-exclamation-circle" aria-hidden="true"></i>
+            {{ errorMessage }}
+        </div>
+
+
+        <!-- =================================================
+             LÉGENDE
+        ================================================== -->
+
+        <div class="map-legend">
+
+            <div class="legend-title">
+                Niveau d'urgence
+            </div>
+
+
+            <div class="legend-items">
+
+                <div class="legend-item">
+
+                    <span class="legend-dot faible">
+                    </span>
+
+                    <span>
+                        Faible
+                    </span>
+
+                </div>
+
+
+                <div class="legend-item">
+
+                    <span class="legend-dot moyenne">
+                    </span>
+
+                    <span>
+                        Moyenne
+                    </span>
+
+                </div>
+
+
+                <div class="legend-item">
+
+                    <span class="legend-dot elevee">
+                    </span>
+
+                    <span>
+                        Élevée
+                    </span>
+
+                </div>
+
+
+                <div class="legend-item">
+
+                    <span class="legend-dot critique">
+                    </span>
+
+                    <span>
+                        Critique
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

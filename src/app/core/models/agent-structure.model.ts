@@ -19,6 +19,15 @@ export interface AgentStructureRequestDto {
     idStructure?: number;
 }
 
+export interface AgentStructureUpdateDto {
+    nom: string;
+    prenom: string;
+    telephone: string;
+    email?: string;
+    matriculeAgent: string;
+    motDePasse?: string;
+}
+
 export interface AgentStructureResponseDto {
     idUtilisateur: number;
     nom: string;

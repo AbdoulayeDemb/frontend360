@@ -37,6 +37,7 @@ export interface Signalement {
     // Structure assignée
     idStructureAssignee?: number;
     nomStructureAssignee?: string;
+    idAgentAssigne?: number;
 
     // Informations complémentaires
     agentAssigne?: AgentStructureResponseDto;

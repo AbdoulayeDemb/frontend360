@@ -34,6 +34,9 @@
   <div *ngIf="!isLoading && errorMessage" class="state-message state-error" role="alert">
     {{ errorMessage }} <button type="button" (click)="loadAgents()">Réessayer</button>
   </div>
+  <div *ngIf="actionErrorMessage" class="state-message state-error" role="alert">
+    {{ actionErrorMessage }}
+  </div>
 
   <section *ngIf="!isLoading && !errorMessage" class="table-panel">
     <div class="table-scroll">
@@ -76,11 +79,16 @@
 
             <td>
               <div class="actions-cell">
-                <button type="button" class="icon-button" [attr.aria-label]="'Voir ' + agent.prenom + ' ' + agent.nom" title="Voir le détail">
+                <button type="button" class="icon-button"
+                  [attr.aria-label]="'Voir les détails de ' + agent.prenom + ' ' + agent.nom"
+                  title="Voir les détails" [routerLink]="['/structure/agents', agent.idUtilisateur]">
                   <i class="bi bi-eye" aria-hidden="true"></i>
                 </button>
-                <button type="button" class="icon-button danger" [attr.aria-label]="'Supprimer ' + agent.prenom + ' ' + agent.nom" title="Supprimer">
-                  <i class="bi bi-trash" aria-hidden="true"></i>
+                <button *ngIf="isResponsable" type="button" class="icon-button danger"
+                  [disabled]="deletingAgentId !== null"
+                  [attr.aria-label]="'Supprimer ' + agent.prenom + ' ' + agent.nom"
+                  title="Supprimer" (click)="supprimerAgent(agent)">
+                  <i class="bi" [ngClass]="deletingAgentId === agent.idUtilisateur ? 'bi-arrow-repeat' : 'bi-trash'" aria-hidden="true"></i>
                 </button>
               </div>
             </td>

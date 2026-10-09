@@ -40,6 +40,8 @@ h1 {
   display: flex;
   align-items: center;
   gap: 12px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 .search-box {
@@ -82,7 +84,7 @@ h1 {
   padding: 0 14px;
   border: 0;
   border-radius: 7px;
-  background: #3982f2;
+  background: var(--color-button-primary);
   color: white;
   font: inherit;
   font-size: 12px;
@@ -122,13 +124,13 @@ h1 {
 }
 
 .status-tabs button.active {
-  border-color: #3982f2;
-  background: #3982f2;
+  border-color: var(--color-button-primary);
+  background: var(--color-button-primary);
   color: white;
 }
 
 .status-tabs button.active strong {
-  background: #2469d3;
+  background: var(--color-button-primary-hover);
   color: white;
 }
 
@@ -145,6 +147,7 @@ h1 {
 
 table {
   width: 100%;
+  min-width: 960px;
   table-layout: fixed;
   border-collapse: collapse;
   font-size: 12px;
@@ -152,32 +155,32 @@ table {
 
 th:nth-child(1),
 td:nth-child(1) {
-  width: 27%;
+  width: 23%;
 }
 
 th:nth-child(2),
 td:nth-child(2) {
-  width: 15%;
+  width: 12%;
 }
 
 th:nth-child(3),
 td:nth-child(3) {
-  width: 17%;
+  width: 14%;
 }
 
 th:nth-child(4),
 td:nth-child(4) {
-  width: 15%;
+  width: 14%;
 }
 
 th:nth-child(5),
 td:nth-child(5) {
-  width: 14%;
+  width: 13%;
 }
 
 th:nth-child(6),
 td:nth-child(6) {
-  width: 12%;
+  width: 24%;
 }
 
 th {
@@ -280,6 +283,8 @@ tbody tr:hover {
   display: flex;
   align-items: center;
   gap: 8px;
+  min-width: max-content;
+  overflow: visible;
 }
 
 .icon-button {
@@ -294,9 +299,18 @@ tbody tr:hover {
   cursor: pointer;
 }
 
+.icon-button:disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
+
+.icon-button:disabled .bi-arrow-repeat {
+  animation: agent-action-spin 1s linear infinite;
+}
+
 .icon-button:hover {
-  border-color: #3982f2;
-  color: #3982f2;
+  border-color: var(--color-button-primary);
+  color: var(--color-button-primary);
 }
 
 .icon-button.danger {
@@ -306,6 +320,16 @@ tbody tr:hover {
 .icon-button.danger:hover {
   border-color: #f15a63;
   color: #f15a63;
+}
+
+.actions-readonly {
+  color: #9aa8b9;
+}
+
+@keyframes agent-action-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .empty-row {
@@ -331,7 +355,7 @@ tbody tr:hover {
   margin-left: 8px;
   border: 0;
   background: none;
-  color: #357cf0;
+  color: var(--color-button-primary);
   font: inherit;
   font-weight: 600;
   cursor: pointer;

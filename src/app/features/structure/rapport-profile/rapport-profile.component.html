@@ -1,42 +1,133 @@
-<section class="structure-page">
+<main class="profile-page">
   <header class="page-heading">
-    <div>
-      <p class="eyebrow">Compte</p>
-      <h1>Rapport Profile</h1>
-      <p class="subtitle">Informations générales de votre profile utilisateur.</p>
-    </div>
+    <a class="back-link" routerLink="/structure/dashboard">
+      <i class="bi bi-arrow-left" aria-hidden="true"></i>
+      Retour
+    </a>
+    <h1>Mon profil</h1>
+    <p class="subtitle">Consultez et mettez à jour vos informations personnelles.</p>
   </header>
 
   <section class="profile-card" aria-labelledby="profile-title">
-    <div class="profile-avatar" aria-hidden="true">
-      <i class="bi bi-person-circle"></i>
-    </div>
+    <aside class="profile-aside">
+      <div class="avatar-frame">
+        @if (avatarPreviewUrl) {
+          <img class="avatar-image" [src]="avatarPreviewUrl" alt="Aperçu de la photo de profil">
+        } @else {
+          <span class="avatar-initials" aria-label="Initiales du profil">{{ initials }}</span>
+        }
+        <label class="avatar-add" for="avatar-upload" aria-label="Choisir une photo de profil">
+          <i class="bi bi-camera-fill" aria-hidden="true"></i>
+        </label>
+        <input
+          id="avatar-upload"
+          class="visually-hidden"
+          type="file"
+          accept=".png,.jpg,.jpeg,image/png,image/jpeg"
+          aria-label="Choisir une photo de profil"
+          (change)="onAvatarSelected($event)">
+      </div>
+      <h2>{{ profileForm.controls.prenom.value }} {{ profileForm.controls.nom.value }}</h2>
+      <div class="profile-affiliation">
+        <p class="profile-role">{{ isResponsable ? 'Responsable de' : 'Agent de structure' }}</p>
+        <p class="structure-name">{{ structureName }}</p>
+      </div>
+      @if (avatarMessage) {
+        <p class="avatar-message" role="status">{{ avatarMessage }}</p>
+      }
+    </aside>
 
     <div class="profile-content">
-      <h2 id="profile-title">{{ currentUser?.prenom || 'Utilisateur' }} {{ currentUser?.nom || '' }}</h2>
-      <p class="profile-role">
-        <i class="bi bi-shield-check" aria-hidden="true"></i>
-        {{ isResponsable ? 'Responsable de structure' : 'Agent de structure' }}
-      </p>
-
-      <div class="profile-grid">
-        <div class="profile-item">
-          <span class="label">Email</span>
-          <strong>{{ currentUser?.email || 'Non renseigné' }}</strong>
+      <div class="section-heading">
+        <div>
+          <h2 id="profile-title">Informations personnelles</h2>
         </div>
-        <div class="profile-item">
-          <span class="label">Téléphone</span>
-          <strong>{{ currentUser?.telephone || 'Non renseigné' }}</strong>
-        </div>
-        <div class="profile-item">
-          <span class="label">Structure</span>
-          <strong>{{ structureName }}</strong>
-        </div>
-        <div class="profile-item">
-          <span class="label">Statut</span>
-          <strong>{{ currentUser?.estActif ? 'Actif' : 'Inactif' }}</strong>
-        </div>
+        <span class="account-status" [class.inactive]="!currentUser?.estActif">
+          <span class="status-dot" aria-hidden="true"></span>
+          {{ currentUser?.estActif ? 'Compte actif' : 'Compte inactif' }}
+        </span>
       </div>
+
+      @if (isLoading) {
+        <p class="notice loading-notice" role="status">
+          <i class="bi bi-arrow-repeat" aria-hidden="true"></i> Chargement des informations du profil…
+        </p>
+      }
+      @if (errorMessage) {
+        <p class="notice error-notice" role="alert">{{ errorMessage }}</p>
+      }
+      @if (successMessage) {
+        <p class="notice success-notice" role="status">{{ successMessage }}</p>
+      }
+
+      <form [formGroup]="profileForm" (ngSubmit)="enregistrer()" novalidate>
+        <div class="form-section">
+          <h3><i class="bi bi-person" aria-hidden="true"></i> Identité</h3>
+          <div class="form-grid">
+            <label class="field">
+              <span>Prénom <b aria-hidden="true">*</b></span>
+              <input type="text" formControlName="prenom" autocomplete="given-name" [class.invalid]="profileForm.controls.prenom.invalid && profileForm.controls.prenom.touched">
+              @if (profileForm.controls.prenom.invalid && profileForm.controls.prenom.touched) {
+                <small>Le prénom doit contenir au moins 2 caractères.</small>
+              }
+            </label>
+            <label class="field">
+              <span>Nom <b aria-hidden="true">*</b></span>
+              <input type="text" formControlName="nom" autocomplete="family-name" [class.invalid]="profileForm.controls.nom.invalid && profileForm.controls.nom.touched">
+              @if (profileForm.controls.nom.invalid && profileForm.controls.nom.touched) {
+                <small>Le nom doit contenir au moins 2 caractères.</small>
+              }
+            </label>
+            <label class="field">
+              <span>Numéro de téléphone <b aria-hidden="true">*</b></span>
+              <input type="tel" formControlName="telephone" autocomplete="tel" [class.invalid]="profileForm.controls.telephone.invalid && profileForm.controls.telephone.touched">
+              @if (profileForm.controls.telephone.invalid && profileForm.controls.telephone.touched) {
+                <small>Le numéro de téléphone est obligatoire.</small>
+              }
+            </label>
+            <label class="field">
+              <span>Adresse e-mail</span>
+              <input type="email" formControlName="email" autocomplete="email" [class.invalid]="profileForm.controls.email.invalid && profileForm.controls.email.touched">
+              @if (profileForm.controls.email.invalid && profileForm.controls.email.touched) {
+                <small>Entrez une adresse e-mail valide.</small>
+              }
+            </label>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h3><i class="bi bi-briefcase" aria-hidden="true"></i> Informations professionnelles</h3>
+          <div class="form-grid">
+            <label class="field">
+              <span>Numéro matricule <b aria-hidden="true">*</b></span>
+              <input type="text" formControlName="matriculeAgent" [class.invalid]="profileForm.controls.matriculeAgent.invalid && profileForm.controls.matriculeAgent.touched">
+              @if (profileForm.controls.matriculeAgent.invalid && profileForm.controls.matriculeAgent.touched) {
+                <small>Le numéro matricule est obligatoire.</small>
+              }
+            </label>
+            <label class="field">
+              <span>Structure</span>
+              <input type="text" [value]="structureName" readonly>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-footer">
+          <p class="required-note"><b>*</b> Champs obligatoires</p>
+          <div class="form-actions">
+            <button class="button button-secondary" type="button" (click)="annuler()" [disabled]="isSubmitting || isLoading">
+              Annuler
+            </button>
+            <button class="button button-primary" type="submit" [disabled]="isSubmitting || isLoading || !isProfileLoaded">
+              @if (isSubmitting) {
+                <span class="button-spinner" aria-hidden="true"></span> Enregistrement…
+              } @else {
+                <i class="bi bi-check2" aria-hidden="true"></i> Enregistrer
+              }
+            </button>
+          </div>
+        </div>
+      </form>
     </div>
   </section>
-</section>
+</main>

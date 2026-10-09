@@ -6,6 +6,7 @@ import {
   ViewChild,
   inject
 } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 import * as L from 'leaflet';
 import 'leaflet.markercluster';
@@ -20,10 +21,13 @@ interface StatistiqueCategorie {
   pourcentage: number;
 }
 
+import { AuthService } from '../../../core/services/auth.service';
+import { EnumRole } from '../../../core/models/enums.model';
 
 @Component({
   selector: 'app-signalements-map',
   standalone: true,
+  imports: [CommonModule],
   templateUrl: './signalements-map.component.html',
   styleUrls: ['./signalements-map.component.css']
 })
@@ -42,6 +46,9 @@ export class SignalementsMapComponent
   // ============================================================
   // CONTENEUR CARTE
   // ============================================================
+
+  private readonly authService =
+    inject(AuthService);
 
   @ViewChild('mapContainer', { static: false })
   private mapContainer!: ElementRef<HTMLDivElement>;
@@ -407,8 +414,18 @@ export class SignalementsMapComponent
     );
 
 
-    this.signalementService
-      .getAll()
+
+    const idStructure = this.authService.getIdStructure();
+    if (this.isStructureMode && idStructure === null) {
+      this.errorMessage = 'Aucune structure n’est associée à ce compte.';
+      return;
+    }
+
+    const signalements$ = this.isStructureMode && idStructure !== null
+      ? this.signalementService.getByStructure(idStructure)
+      : this.signalementService.getAll();
+
+    signalements$
       .subscribe({
 
         next: (
@@ -421,6 +438,8 @@ export class SignalementsMapComponent
           );
 
 
+
+          this.errorMessage = '';
           this.signalements =
             signalements;
 
@@ -449,6 +468,8 @@ export class SignalementsMapComponent
           );
 
 
+
+          this.errorMessage = 'Impossible de charger les signalements sur la carte.';
           this.nombreSignalementsAffiches = 0;
 
           this.statistiquesCategories = [];

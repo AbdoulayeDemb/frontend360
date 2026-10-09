@@ -1,0 +1,152 @@
+<main class="proofs-page">
+  <header class="page-heading">
+    <div>
+      <h1>Preuves de résolution</h1>
+      <p class="subtitle">Consultez les justificatifs transmis par les agents et confirmez les signalements traités.</p>
+    </div>
+  </header>
+
+  <section class="summary-grid" aria-label="Résumé des preuves">
+    <article class="summary-card">
+      <span class="summary-icon"><img src="assets/icons/preuve.png" alt="" aria-hidden="true"></span>
+      <div><span>Total des preuves</span><strong>{{ preuves.length }}</strong></div>
+    </article>
+    <article class="summary-card pending">
+      <span class="summary-icon"><i class="bi bi-hourglass-split" aria-hidden="true"></i></span>
+      <div><span>À confirmer</span><strong>{{ nombreAConfirmer }}</strong></div>
+    </article>
+    <article class="summary-card confirmed">
+      <span class="summary-icon"><img src="assets/icons/sucess.png" alt="" aria-hidden="true"></span>
+      <div><span>Confirmées</span><strong>{{ nombreConfirmees }}</strong></div>
+    </article>
+  </section>
+
+  <nav class="proof-filters" aria-label="Filtrer les preuves">
+    <button type="button" [class.active]="filtre === 'toutes'" (click)="changerFiltre('toutes')">
+      Toutes <span>{{ preuves.length }}</span>
+    </button>
+    <button type="button" [class.active]="filtre === 'a-confirmer'" (click)="changerFiltre('a-confirmer')">
+      À confirmer <span>{{ nombreAConfirmer }}</span>
+    </button>
+    <button type="button" [class.active]="filtre === 'confirmees'" (click)="changerFiltre('confirmees')">
+      Confirmées <span>{{ nombreConfirmees }}</span>
+    </button>
+  </nav>
+
+  @if (isLoading) {
+    <div class="state-panel" role="status"><span class="spinner" aria-hidden="true"></span> Chargement des preuves…</div>
+  }
+  @if (errorMessage) {
+    <div class="state-panel state-error" role="alert">
+      <span>{{ errorMessage }}</span>
+      @if (!isLoading) {
+        <button type="button" (click)="loadPreuves()">Réessayer</button>
+      }
+    </div>
+  }
+  @if (actionMessage) {
+    <p class="notice notice-success" role="status"><i class="bi bi-check-circle" aria-hidden="true"></i> {{ actionMessage }}</p>
+  }
+
+  @if (!isLoading && !errorMessage && preuvesVisibles.length === 0) {
+    <section class="empty-state">
+      <i class="bi bi-images" aria-hidden="true"></i>
+      <h2>{{ preuves.length ? 'Aucune preuve pour ce filtre' : 'Aucune preuve de résolution' }}</h2>
+      <p>{{ preuves.length ? 'Changez le filtre pour consulter les autres preuves.' : 'Les preuves envoyées par les agents apparaîtront ici.' }}</p>
+    </section>
+  }
+
+  @if (!isLoading && !errorMessage && preuvesVisibles.length > 0) {
+    <section class="proof-list" aria-label="Liste des preuves de résolution">
+      @for (item of preuvesPage; track item.preuve.idPreuve) {
+        <article class="proof-card">
+          <div class="proof-photo">
+            @if (item.preuve.photoApresUrl) {
+              <a [href]="item.preuve.photoApresUrl" target="_blank" rel="noopener noreferrer" [attr.aria-label]="'Ouvrir la photo après résolution du signalement ' + item.signalement?.codeTrackingUnique">
+                <img [src]="item.preuve.photoApresUrl" alt="Photo après résolution">
+              </a>
+            } @else {
+              <div class="photo-placeholder"><i class="bi bi-image" aria-hidden="true"></i><span>Pas de photo</span></div>
+            }
+          </div>
+          <div class="proof-content">
+            <div class="proof-heading">
+              <div>
+                <p class="eyebrow">Signalement</p>
+                @if (item.signalement) {
+                  <a class="tracking-link" [routerLink]="['/structure/signalements', item.signalement.idSignalement]">
+                    {{ item.signalement.codeTrackingUnique }}
+                  </a>
+                } @else {
+                  <strong class="tracking-link">N° {{ item.preuve.idSignalement ?? 'indisponible' }}</strong>
+                }
+              </div>
+              @if (item.signalement?.statut === EnumStatut.RESOLU) {
+                <span class="status-pill status-confirmed"><i class="bi bi-check-circle" aria-hidden="true"></i> Résolution confirmée</span>
+              } @else {
+                <span class="status-pill status-pending"><i class="bi bi-clock-history" aria-hidden="true"></i> À confirmer</span>
+              }
+            </div>
+
+            @if (item.signalement) {
+              <p class="report-summary">
+                <strong>{{ item.signalement.nomCategorie || 'Signalement' }}</strong>
+                <span>{{ item.signalement.description }}</span>
+              </p>
+            }
+            <p class="proof-report">{{ item.preuve.rapportTexte || 'Aucun commentaire transmis par l’agent.' }}</p>
+            <div class="proof-agent">
+              <i class="bi bi-person-badge" aria-hidden="true"></i>
+              <span><strong>{{ nomAgent(item.preuve) }}</strong>
+                @if (item.preuve.telephoneAgent) {
+                  <span> · {{ item.preuve.telephoneAgent }}</span>
+                }
+                @if (item.preuve.matriculeAgent) {
+                  <span> · Matricule {{ item.preuve.matriculeAgent }}</span>
+                }
+              </span>
+            </div>
+            <p class="proof-date"><i class="bi bi-calendar3" aria-hidden="true"></i> Traitement déclaré le {{ formatDate(item.preuve.dateResolution) }}</p>
+
+            @if (item.signalement && item.signalement.statut !== EnumStatut.RESOLU) {
+              <button
+                class="confirm-button"
+                type="button"
+                [disabled]="confirmationEnCours !== null"
+                (click)="confirmerResolution(item)">
+                @if (confirmationEnCours === item.preuve.idPreuve) {
+                  <span class="button-spinner" aria-hidden="true"></span> Confirmation…
+                } @else {
+                  <i class="bi bi-check2-circle" aria-hidden="true"></i> Confirmer la résolution
+                }
+              </button>
+            }
+          </div>
+        </article>
+      }
+    </section>
+    @if (nombrePages > 1) {
+      <nav class="proof-pagination" aria-label="Pagination des preuves">
+        <span class="pagination-summary">Affichage {{ debutAffichage }}–{{ finAffichage }} sur {{ preuvesVisibles.length }}</span>
+        <div class="pagination-controls">
+          <button type="button" aria-label="Page précédente" [disabled]="pageActuelle === 1" (click)="allerALaPage(pageActuelle - 1)">
+            <i class="bi bi-chevron-left" aria-hidden="true"></i>
+          </button>
+          @for (page of pages; track page) {
+            <button
+              type="button"
+              [class.active]="pageActuelle === page"
+              [attr.aria-current]="pageActuelle === page ? 'page' : null"
+              [attr.aria-label]="'Page ' + page"
+              (click)="allerALaPage(page)">
+              {{ page }}
+            </button>
+          }
+          <button type="button" aria-label="Page suivante" [disabled]="pageActuelle === nombrePages" (click)="allerALaPage(pageActuelle + 1)">
+            <i class="bi bi-chevron-right" aria-hidden="true"></i>
+          </button>
+        </div>
+      </nav>
+    }
+  }
+</main>

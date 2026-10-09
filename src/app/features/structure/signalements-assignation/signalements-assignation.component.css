@@ -296,8 +296,8 @@
 }
 
 .assign-button {
-  border: 1px solid #3982f2;
-  background: #3982f2;
+  border: 1px solid var(--color-button-primary);
+  background: var(--color-button-primary);
   color: white;
 }
 
@@ -326,7 +326,7 @@
   margin-left: 8px;
   border: 0;
   background: none;
-  color: #357cf0;
+  color: var(--color-button-primary);
   font: inherit;
   font-weight: 600;
   cursor: pointer;
