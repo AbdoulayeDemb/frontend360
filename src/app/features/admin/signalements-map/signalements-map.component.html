@@ -31,7 +31,9 @@
         </div>
 
 
-        <!-- Informations à droite -->
+        <!-- =================================================
+             INFORMATIONS À DROITE
+        ================================================== -->
 
         <div class="map-header-right">
 
@@ -76,6 +78,87 @@
     <div class="map-body">
 
         <div #mapContainer class="signalements-map">
+        </div>
+
+
+        <!-- =================================================
+             STATISTIQUES PAR CATÉGORIE
+        ================================================== -->
+
+        <div class="category-stats">
+
+            <div class="category-stats-header">
+
+                <div class="category-stats-title">
+
+                    <i class="bi bi-bar-chart-line"></i>
+
+                    <span>
+                        Signalements par catégorie
+                    </span>
+
+                </div>
+
+                <span class="category-stats-total">
+                    {{ nombreSignalementsAffiches }}
+                </span>
+
+            </div>
+
+
+            <div class="category-stats-list">
+
+                @if (statistiquesCategories.length === 0) {
+
+                <div class="category-empty">
+                    Aucune catégorie disponible
+                </div>
+
+                } @else {
+
+                @for (
+                statistique of statistiquesCategories;
+                track statistique.categorie
+                ) {
+
+                <div class="category-stat-item">
+
+                    <div class="category-stat-info">
+
+                        <span class="category-stat-name">
+                            {{ statistique.categorie }}
+                        </span>
+
+                        <span class="category-stat-percent">
+                            {{ statistique.pourcentage }}%
+                        </span>
+
+                    </div>
+
+
+                    <div class="category-stat-bottom">
+
+                        <div class="category-progress">
+
+                            <div class="category-progress-bar" [style.width.%]="statistique.pourcentage">
+                            </div>
+
+                        </div>
+
+                        <strong class="category-stat-number">
+                            {{ statistique.nombre }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+                }
+
+                }
+
+            </div>
+
         </div>
 
 

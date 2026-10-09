@@ -13,6 +13,14 @@ import 'leaflet.markercluster';
 import { SignalementService } from '../../../core/services/signalement.service';
 import { Signalement } from '../../../core/models/signalement.model';
 
+
+interface StatistiqueCategorie {
+  categorie: string;
+  nombre: number;
+  pourcentage: number;
+}
+
+
 @Component({
   selector: 'app-signalements-map',
   standalone: true,
@@ -22,26 +30,45 @@ import { Signalement } from '../../../core/models/signalement.model';
 export class SignalementsMapComponent
   implements AfterViewInit, OnDestroy {
 
+
+  // ============================================================
+  // SERVICE
+  // ============================================================
+
   private readonly signalementService =
     inject(SignalementService);
+
+
+  // ============================================================
+  // CONTENEUR CARTE
+  // ============================================================
 
   @ViewChild('mapContainer', { static: false })
   private mapContainer!: ElementRef<HTMLDivElement>;
 
-  /**
-   * Instance Leaflet.
-   */
+
+  // ============================================================
+  // LEAFLET
+  // ============================================================
+
   private map!: L.Map;
 
-  /**
-   * Groupe de clusters.
-   */
   private markersLayer!: L.MarkerClusterGroup;
 
-  /**
-   * Liste des signalements reçus du backend.
-   */
+
+  // ============================================================
+  // SIGNALEMENTS
+  // ============================================================
+
   private signalements: Signalement[] = [];
+
+
+  // ============================================================
+  // STATISTIQUES
+  // ============================================================
+
+  statistiquesCategories: StatistiqueCategorie[] = [];
+
 
   /**
    * Nombre de signalements réellement affichés
@@ -53,11 +80,13 @@ export class SignalementsMapComponent
    */
   nombreSignalementsAffiches = 0;
 
-  /**
-   * Permet d'éviter de continuer les timers
-   * lorsque le composant est détruit.
-   */
+
+  // ============================================================
+  // DESTRUCTION
+  // ============================================================
+
   private composantDetruit = false;
+
 
   // ============================================================
   // BAMAKO
@@ -67,12 +96,15 @@ export class SignalementsMapComponent
    * Centre de Bamako.
    */
   private readonly BAMAKO_LATITUDE = 12.6392;
+
   private readonly BAMAKO_LONGITUDE = -8.0029;
+
 
   /**
    * Zoom initial.
    */
   private readonly BAMAKO_ZOOM = 12;
+
 
   /**
    * Limites raisonnables autour de Bamako.
@@ -82,28 +114,31 @@ export class SignalementsMapComponent
    * toute la carte.
    */
   private readonly BAMAKO_LAT_MIN = 12.45;
+
   private readonly BAMAKO_LAT_MAX = 12.80;
 
   private readonly BAMAKO_LNG_MIN = -8.20;
+
   private readonly BAMAKO_LNG_MAX = -7.80;
+
 
   // ============================================================
   // INITIALISATION
   // ============================================================
 
   ngAfterViewInit(): void {
-    console.log('🗺️ SignalementsMapComponent chargé');
+
+    console.log(
+      '🗺️ SignalementsMapComponent chargé'
+    );
 
     this.attendreConteneur();
   }
 
+
   /**
    * Attend que le conteneur possède réellement
    * une largeur et une hauteur.
-   *
-   * Ceci évite le problème :
-   *
-   * 📐 Dimensions : 0 x 0
    */
   private attendreConteneur(): void {
 
@@ -111,21 +146,28 @@ export class SignalementsMapComponent
       return;
     }
 
+
     if (!this.mapContainer) {
+
       console.error(
         '❌ Conteneur de la carte introuvable.'
       );
+
       return;
     }
+
 
     const element =
       this.mapContainer.nativeElement;
 
+
     const width =
       element.offsetWidth;
 
+
     const height =
       element.offsetHeight;
+
 
     console.log(
       '📐 Vérification conteneur :',
@@ -134,22 +176,27 @@ export class SignalementsMapComponent
       height
     );
 
+
     if (width === 0 || height === 0) {
 
       console.warn(
         '⏳ Le conteneur est encore à 0 x 0. Nouvelle tentative...'
       );
 
+
       setTimeout(() => {
 
         if (!this.composantDetruit) {
+
           this.attendreConteneur();
         }
 
       }, 100);
 
+
       return;
     }
+
 
     console.log(
       '✅ Conteneur prêt :',
@@ -158,10 +205,12 @@ export class SignalementsMapComponent
       height
     );
 
+
     this.initialiserCarte();
 
     this.chargerSignalements();
   }
+
 
   // ============================================================
   // CARTE LEAFLET
@@ -173,20 +222,26 @@ export class SignalementsMapComponent
       return;
     }
 
+
     if (!this.mapContainer) {
+
       console.error(
         '❌ Conteneur Leaflet introuvable.'
       );
+
       return;
     }
 
+
     const element =
       this.mapContainer.nativeElement;
+
 
     console.log(
       '📦 Conteneur Leaflet :',
       element
     );
+
 
     console.log(
       '📐 Dimensions finales :',
@@ -195,17 +250,13 @@ export class SignalementsMapComponent
       element.offsetHeight
     );
 
-    /**
-     * Création de la carte.
-     *
-     * IMPORTANT :
-     * On centre directement sur Bamako.
-     *
-     * On ne fait PAS de fitBounds().
-     * Cela évite qu'une mauvaise coordonnée
-     * éloignée fasse dézoomer la carte.
-     */
+
+    // ==========================================================
+    // CRÉATION CARTE
+    // ==========================================================
+
     this.map = L.map(element, {
+
       center: [
         this.BAMAKO_LATITUDE,
         this.BAMAKO_LONGITUDE
@@ -216,11 +267,14 @@ export class SignalementsMapComponent
       zoomControl: true,
 
       attributionControl: true
+
     });
+
 
     console.log(
       '✅ Carte Leaflet créée'
     );
+
 
     // ==========================================================
     // OPENSTREETMAP
@@ -231,6 +285,7 @@ export class SignalementsMapComponent
         'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
         {
           maxZoom: 19,
+
           minZoom: 3,
 
           attribution:
@@ -238,11 +293,14 @@ export class SignalementsMapComponent
         }
       );
 
+
     tileLayer.addTo(this.map);
+
 
     console.log(
       '🌍 Couche OpenStreetMap ajoutée'
     );
+
 
     tileLayer.on(
       'tileload',
@@ -254,6 +312,7 @@ export class SignalementsMapComponent
 
       }
     );
+
 
     tileLayer.on(
       'tileerror',
@@ -267,6 +326,7 @@ export class SignalementsMapComponent
       }
     );
 
+
     // ==========================================================
     // CLUSTERING
     // ==========================================================
@@ -274,61 +334,24 @@ export class SignalementsMapComponent
     this.markersLayer =
       L.markerClusterGroup({
 
-        /**
-         * Ne montre pas les limites du cluster
-         * lorsque la souris passe dessus.
-         */
         showCoverageOnHover: false,
 
-        /**
-         * Si plusieurs marqueurs restent ensemble
-         * au zoom maximal, ils sont déployés
-         * autour de leur position.
-         */
         spiderfyOnMaxZoom: true,
 
-        /**
-         * Supprime de la carte les clusters
-         * trop éloignés de la zone visible.
-         */
         removeOutsideVisibleBounds: true,
 
-        /**
-         * Animation lors du zoom.
-         */
         animate: true,
 
-        /**
-         * Animation lors de l'ajout des marqueurs.
-         */
         animateAddingMarkers: true,
 
-        /**
-         * Distance maximale pour regrouper
-         * deux marqueurs.
-         */
         maxClusterRadius: 45,
 
-        /**
-         * À partir de ce niveau de zoom,
-         * les marqueurs sont affichés individuellement.
-         */
         disableClusteringAtZoom: 17,
 
-        /**
-         * Zoom automatique vers le cluster
-         * lors d'un clic.
-         */
         zoomToBoundsOnClick: true,
 
-        /**
-         * Distance utilisée pour le spiderfy.
-         */
         spiderfyDistanceMultiplier: 1.4,
 
-        /**
-         * Icône personnalisée du cluster.
-         */
         iconCreateFunction:
           (cluster: L.MarkerCluster): L.DivIcon => {
 
@@ -340,15 +363,14 @@ export class SignalementsMapComponent
 
       });
 
-    /**
-     * Ajout du groupe de clusters
-     * à la carte.
-     */
+
     this.markersLayer.addTo(this.map);
+
 
     console.log(
       '🧩 Groupe de clustering Leaflet créé'
     );
+
 
     // ==========================================================
     // INVALIDATE SIZE
@@ -366,10 +388,13 @@ export class SignalementsMapComponent
         console.log(
           '📐 Taille Leaflet recalculée'
         );
+
       }
 
     }, 300);
+
   }
+
 
   // ============================================================
   // CHARGEMENT DES SIGNALEMENTS
@@ -380,6 +405,7 @@ export class SignalementsMapComponent
     console.log(
       '📡 Chargement des signalements...'
     );
+
 
     this.signalementService
       .getAll()
@@ -394,11 +420,26 @@ export class SignalementsMapComponent
             signalements.length
           );
 
+
           this.signalements =
             signalements;
 
+
+          // ======================================================
+          // CALCUL DES STATISTIQUES
+          // ======================================================
+
+          this.calculerStatistiquesCategories();
+
+
+          // ======================================================
+          // AFFICHAGE CARTE
+          // ======================================================
+
           this.afficherSignalements();
+
         },
+
 
         error: (error) => {
 
@@ -407,11 +448,109 @@ export class SignalementsMapComponent
             error
           );
 
+
           this.nombreSignalementsAffiches = 0;
+
+          this.statistiquesCategories = [];
+
         }
 
       });
+
   }
+
+
+  // ============================================================
+  // STATISTIQUES PAR CATÉGORIE
+  // ============================================================
+
+  private calculerStatistiquesCategories(): void {
+
+    const compteurs =
+      new Map<string, number>();
+
+
+    // ==========================================================
+    // COMPTAGE
+    // ==========================================================
+
+    this.signalements.forEach(
+      (signalement: Signalement) => {
+
+        const categorie =
+          signalement.nomCategorie?.trim() ||
+          'Non catégorisée';
+
+
+        const nombreActuel =
+          compteurs.get(categorie) || 0;
+
+
+        compteurs.set(
+          categorie,
+          nombreActuel + 1
+        );
+
+      }
+    );
+
+
+    // ==========================================================
+    // TOTAL
+    // ==========================================================
+
+    const total =
+      this.signalements.length;
+
+
+    if (total === 0) {
+
+      this.statistiquesCategories = [];
+
+      return;
+    }
+
+
+    // ==========================================================
+    // TRANSFORMATION
+    // ==========================================================
+
+    this.statistiquesCategories =
+      Array.from(compteurs.entries())
+
+        .map(
+          ([categorie, nombre]) => {
+
+            return {
+
+              categorie,
+
+              nombre,
+
+              pourcentage:
+                Math.round(
+                  (nombre / total) * 100
+                )
+
+            };
+
+          }
+        )
+
+        // Plus grand nombre en premier
+        .sort(
+          (a, b) =>
+            b.nombre - a.nombre
+        );
+
+
+    console.log(
+      '📊 Statistiques par catégorie :',
+      this.statistiquesCategories
+    );
+
+  }
+
 
   // ============================================================
   // AFFICHAGE DES SIGNALEMENTS
@@ -428,6 +567,7 @@ export class SignalementsMapComponent
       return;
     }
 
+
     if (!this.markersLayer) {
 
       console.error(
@@ -437,12 +577,15 @@ export class SignalementsMapComponent
       return;
     }
 
-    /**
-     * Nettoyage des anciens marqueurs.
-     */
+
+    // ==========================================================
+    // NETTOYAGE
+    // ==========================================================
+
     this.markersLayer.clearLayers();
 
     this.nombreSignalementsAffiches = 0;
+
 
     if (
       !this.signalements ||
@@ -453,14 +596,17 @@ export class SignalementsMapComponent
         'ℹ️ Aucun signalement à afficher.'
       );
 
+
       this.recentrerSurBamako();
 
       return;
     }
 
+
     let nombreAffiches = 0;
 
     let nombreIgnores = 0;
+
 
     // ==========================================================
     // PARCOURS DES SIGNALEMENTS
@@ -474,8 +620,10 @@ export class SignalementsMapComponent
         const latitude =
           Number(signalement.latitude);
 
+
         const longitude =
           Number(signalement.longitude);
+
 
         // ------------------------------------------------------
         // Vérification numérique
@@ -493,10 +641,12 @@ export class SignalementsMapComponent
             longitude
           );
 
+
           nombreIgnores++;
 
           return;
         }
+
 
         // ------------------------------------------------------
         // Vérification latitude
@@ -513,10 +663,12 @@ export class SignalementsMapComponent
             latitude
           );
 
+
           nombreIgnores++;
 
           return;
         }
+
 
         // ------------------------------------------------------
         // Vérification longitude
@@ -533,10 +685,12 @@ export class SignalementsMapComponent
             longitude
           );
 
+
           nombreIgnores++;
 
           return;
         }
+
 
         // ------------------------------------------------------
         // Vérification zone Bamako
@@ -547,6 +701,7 @@ export class SignalementsMapComponent
             latitude,
             longitude
           );
+
 
         if (!estDansBamako) {
 
@@ -559,10 +714,12 @@ export class SignalementsMapComponent
             longitude
           );
 
+
           nombreIgnores++;
 
           return;
         }
+
 
         console.log(
           '📍 Signalement affiché :',
@@ -570,6 +727,7 @@ export class SignalementsMapComponent
           latitude,
           longitude
         );
+
 
         // ======================================================
         // COULEUR SELON URGENCE
@@ -580,19 +738,11 @@ export class SignalementsMapComponent
             signalement.typeUrgence
           );
 
+
         // ======================================================
         // MARQUEUR
         // ======================================================
 
-        /**
-         * IMPORTANT :
-         *
-         * On utilise L.marker()
-         * et non L.circleMarker().
-         *
-         * leaflet.markercluster fonctionne avec
-         * les Marker Leaflet.
-         */
         const marker =
           L.marker(
             [
@@ -614,6 +764,7 @@ export class SignalementsMapComponent
             }
           );
 
+
         // ======================================================
         // POPUP
         // ======================================================
@@ -624,9 +775,11 @@ export class SignalementsMapComponent
           ),
           {
             maxWidth: 320,
+
             minWidth: 240
           }
         );
+
 
         // ======================================================
         // AJOUT AU CLUSTER
@@ -636,10 +789,12 @@ export class SignalementsMapComponent
           marker
         );
 
+
         nombreAffiches++;
 
       }
     );
+
 
     // ==========================================================
     // COMPTEUR
@@ -648,21 +803,25 @@ export class SignalementsMapComponent
     this.nombreSignalementsAffiches =
       nombreAffiches;
 
+
     console.log(
       '🗺️ Signalements affichés :',
       nombreAffiches
     );
+
 
     console.log(
       '⚠️ Signalements ignorés :',
       nombreIgnores
     );
 
+
     // ==========================================================
     // RECENTRAGE
     // ==========================================================
 
     this.recentrerSurBamako();
+
 
     // ==========================================================
     // RECALCUL DE LA TAILLE
@@ -680,7 +839,9 @@ export class SignalementsMapComponent
       }
 
     }, 100);
+
   }
+
 
   // ============================================================
   // CENTRAGE BAMAKO
@@ -692,18 +853,22 @@ export class SignalementsMapComponent
       return;
     }
 
+
     this.map.setView(
       [
         this.BAMAKO_LATITUDE,
         this.BAMAKO_LONGITUDE
       ],
+
       this.BAMAKO_ZOOM,
+
       {
         animate: false
       }
     );
 
   }
+
 
   // ============================================================
   // VALIDATION ZONE BAMAKO
@@ -715,13 +880,19 @@ export class SignalementsMapComponent
   ): boolean {
 
     return (
+
       latitude >= this.BAMAKO_LAT_MIN &&
+
       latitude <= this.BAMAKO_LAT_MAX &&
 
       longitude >= this.BAMAKO_LNG_MIN &&
+
       longitude <= this.BAMAKO_LNG_MAX
+
     );
+
   }
+
 
   // ============================================================
   // ICÔNE MARQUEUR URGENCE
@@ -780,7 +951,9 @@ export class SignalementsMapComponent
       ]
 
     });
+
   }
+
 
   // ============================================================
   // ICÔNE CLUSTER
@@ -793,25 +966,33 @@ export class SignalementsMapComponent
     const nombre =
       cluster.getChildCount();
 
+
     let taille = 40;
 
     let couleur = '#2563EB';
 
-    /**
-     * Petit cluster.
-     */
+
+    // Petit cluster
+
     if (nombre >= 5) {
+
       taille = 46;
+
       couleur = '#7C3AED';
+
     }
 
-    /**
-     * Gros cluster.
-     */
+
+    // Gros cluster
+
     if (nombre >= 10) {
+
       taille = 52;
+
       couleur = '#EF4444';
+
     }
+
 
     return L.divIcon({
 
@@ -870,7 +1051,9 @@ export class SignalementsMapComponent
       ]
 
     });
+
   }
+
 
   // ============================================================
   // COULEUR URGENCE
@@ -896,8 +1079,11 @@ export class SignalementsMapComponent
 
       default:
         return '#2563EB';
+
     }
+
   }
+
 
   // ============================================================
   // POPUP
@@ -913,11 +1099,13 @@ export class SignalementsMapComponent
         'Non catégorisée'
       );
 
+
     const tracking =
       this.echapperHtml(
         signalement.codeTrackingUnique ||
         '-'
       );
+
 
     const description =
       this.echapperHtml(
@@ -925,15 +1113,18 @@ export class SignalementsMapComponent
         'Aucune description'
       );
 
+
     const urgence =
       this.getUrgenceLabel(
         signalement.typeUrgence
       );
 
+
     const statut =
       this.getStatutLabel(
         signalement.statut
       );
+
 
     const structure =
       this.echapperHtml(
@@ -941,11 +1132,13 @@ export class SignalementsMapComponent
         'Non assignée'
       );
 
+
     const citoyen =
       this.echapperHtml(
         signalement.citoyenNomComplet ||
         'Non renseigné'
       );
+
 
     const date =
       signalement.dateHeureAlerte
@@ -953,6 +1146,7 @@ export class SignalementsMapComponent
           signalement.dateHeureAlerte
         )
         : '-';
+
 
     return `
       <div
@@ -979,6 +1173,7 @@ export class SignalementsMapComponent
           Signalement
         </div>
 
+
         <div
           style="
             margin-bottom: 7px;
@@ -990,6 +1185,7 @@ export class SignalementsMapComponent
           ${categorie}
         </div>
 
+
         <div
           style="
             margin-bottom: 10px;
@@ -999,6 +1195,7 @@ export class SignalementsMapComponent
         >
           ${tracking}
         </div>
+
 
         <div
           style="
@@ -1014,6 +1211,7 @@ export class SignalementsMapComponent
           ${description}
         </div>
 
+
         <div
           style="
             margin-bottom: 5px;
@@ -1024,6 +1222,7 @@ export class SignalementsMapComponent
           <strong>Urgence :</strong>
           ${urgence}
         </div>
+
 
         <div
           style="
@@ -1036,6 +1235,7 @@ export class SignalementsMapComponent
           ${statut}
         </div>
 
+
         <div
           style="
             margin-bottom: 5px;
@@ -1046,6 +1246,7 @@ export class SignalementsMapComponent
           <strong>Citoyen :</strong>
           ${citoyen}
         </div>
+
 
         <div
           style="
@@ -1058,6 +1259,7 @@ export class SignalementsMapComponent
           ${structure}
         </div>
 
+
         <div
           style="
             color: #64748b;
@@ -1069,7 +1271,9 @@ export class SignalementsMapComponent
 
       </div>
     `;
+
   }
+
 
   // ============================================================
   // STATUT
@@ -1095,8 +1299,11 @@ export class SignalementsMapComponent
 
       default:
         return statut || '-';
+
     }
+
   }
+
 
   // ============================================================
   // URGENCE
@@ -1122,8 +1329,11 @@ export class SignalementsMapComponent
 
       default:
         return urgence || '-';
+
     }
+
   }
+
 
   // ============================================================
   // FORMAT DATE
@@ -1139,9 +1349,13 @@ export class SignalementsMapComponent
         'fr-FR',
         {
           day: '2-digit',
+
           month: '2-digit',
+
           year: 'numeric',
+
           hour: '2-digit',
+
           minute: '2-digit'
         }
       ).format(
@@ -1151,8 +1365,11 @@ export class SignalementsMapComponent
     } catch {
 
       return date;
+
     }
+
   }
+
 
   // ============================================================
   // SÉCURITÉ HTML
@@ -1188,7 +1405,9 @@ export class SignalementsMapComponent
         /'/g,
         '&#039;'
       );
+
   }
+
 
   // ============================================================
   // DESTRUCTION
@@ -1198,13 +1417,18 @@ export class SignalementsMapComponent
 
     this.composantDetruit = true;
 
+
     if (this.map) {
 
       this.map.remove();
 
+
       console.log(
         '🗺️ Carte Leaflet détruite'
       );
+
     }
+
   }
+
 }

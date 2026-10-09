@@ -18,7 +18,7 @@ export interface StructureCompetenteRequestDto {
     quartier?: string;
     typeStructure: EnumTypeStructure;
     telephoneUrgence?: string;
-    zoneCouvertureGPS?: any;
+    zoneCouvertureGPS: string;
 }
 
 export interface StructureCompetenteResponseDto {
@@ -27,7 +27,7 @@ export interface StructureCompetenteResponseDto {
     quartier?: string;
     typeStructure: EnumTypeStructure;
     telephoneUrgence?: string;
-    zoneCouvertureGPS?: any;
-    nombreAgents?: number;
+    zoneCouvertureGPS: string;
+    nombreAgents: number;
     nombreSignalementsActifs?: number;
 }
