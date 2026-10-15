@@ -31,10 +31,6 @@ export class AdminLayoutComponent {
   }
 
 
-  // =========================================================
-  // RECHERCHE GLOBALE
-  // =========================================================
-
   onGlobalSearch(searchTerm: string): void {
 
     this.adminSearchService.setSearchTerm(

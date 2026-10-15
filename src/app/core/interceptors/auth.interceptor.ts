@@ -23,7 +23,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         catchError((error: HttpErrorResponse) => {
             if (error.status === 401) {
                 console.warn(
-                    `Session expirée ou invalide (${error.status}).`//Ajouter un message d'erreur plus détaillé si nécessaire 
+                    `Session expirée ou invalide (${error.status}).` 
                 );
 
                 authService.logout();

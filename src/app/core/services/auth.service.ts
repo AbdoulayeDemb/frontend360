@@ -1,6 +1,8 @@
+
 import { Injectable, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+
 import {
     BehaviorSubject,
     Observable,
@@ -49,13 +51,18 @@ export class AuthService {
         private readonly router: Router
     ) { }
 
+    // =========================================================
+    // CONNEXION WEB
+    // Réservée à l'administrateur et au responsable de structure
+    // =========================================================
+
     login(
         credentials: LoginRequestDto
     ): Observable<APIResponse<AuthResponseDto>> {
 
         return this.http
             .post<APIResponse<AuthResponseDto>>(
-                `${this.API_URL}/login`,
+                `${this.API_URL}/login/web`,
                 credentials
             )
             .pipe(
@@ -92,7 +99,7 @@ export class AuthService {
                 catchError((error) => {
 
                     console.error(
-                        'Erreur lors de la connexion :',
+                        'Erreur lors de la connexion web :',
                         error
                     );
 
@@ -100,6 +107,10 @@ export class AuthService {
                 })
             );
     }
+
+    // =========================================================
+    // DÉCONNEXION
+    // =========================================================
 
     logout(): void {
 
@@ -111,6 +122,10 @@ export class AuthService {
 
         this.router.navigate(['/auth/login']);
     }
+
+    // =========================================================
+    // GESTION DE SESSION
+    // =========================================================
 
     private saveSession(
         token: string,
@@ -136,7 +151,12 @@ export class AuthService {
     }
 
     public mettreAJourUtilisateur(user: Utilisateur): void {
-        localStorage.setItem(this.USER_KEY, JSON.stringify(user));
+
+        localStorage.setItem(
+            this.USER_KEY,
+            JSON.stringify(user)
+        );
+
         this.currentUserSubject.next(user);
         this.currentUserSignal.set(user);
     }
@@ -150,6 +170,10 @@ export class AuthService {
         return !!this.getToken() &&
             !!this.currentUserValue;
     }
+
+    // =========================================================
+    // VÉRIFICATION DES RÔLES
+    // =========================================================
 
     public hasRole(role: EnumRole): boolean {
 
@@ -179,12 +203,20 @@ export class AuthService {
             user.estResponsable === true;
     }
 
+    // =========================================================
+    // ACCÈS À LA STRUCTURE
+    // =========================================================
+
     public getIdStructure(): number | null {
 
         const user = this.currentUserValue;
 
         return user?.idStructure ?? null;
     }
+
+    // =========================================================
+    // RÉCUPÉRATION DE L'UTILISATEUR STOCKÉ
+    // =========================================================
 
     private getUserFromStorage(): Utilisateur | null {
 
