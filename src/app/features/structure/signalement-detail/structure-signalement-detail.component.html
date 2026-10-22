@@ -1,78 +1,106 @@
 <section class="structure-detail">
-  <a routerLink="/structure/signalements" class="back-link"><i class="bi bi-arrow-left" aria-hidden="true"></i> Retour à la liste</a>
+  <a routerLink="/structure/signalements" class="back-link"><app-icon name="arrow-left" [size]="15" /> Retour à la liste</a>
 
   <div *ngIf="isLoading" class="state-message" role="status">Chargement du signalement...</div>
   <div *ngIf="!isLoading && errorMessage && !signalement" class="state-message state-error" role="alert">
-    <i class="bi bi-exclamation-circle" aria-hidden="true"></i>{{ errorMessage }}
+    <app-icon name="alert-circle" />{{ errorMessage }}
     <a routerLink="/structure/signalements">Revenir à la liste</a>
   </div>
 
   <ng-container *ngIf="!isLoading && signalement as sig">
-    <header class="detail-heading">
-      <div><p class="eyebrow">Détail du signalement</p><h1>{{ sig.codeTrackingUnique }}</h1></div>
-      <span class="status-pill" [ngClass]="getStatusClass(sig.statut)">{{ getStatusLabel(sig.statut) }}</span>
-    </header>
+    <div *ngIf="errorMessage && signalement" class="notice notice-error" role="alert"><app-icon name="alert-circle" />{{ errorMessage }}</div>
 
-    <div *ngIf="errorMessage && signalement" class="notice notice-error" role="alert"><i class="bi bi-exclamation-circle" aria-hidden="true"></i>{{ errorMessage }}</div>
+    <article class="report-card" [attr.aria-label]="'Signalement ' + sig.codeTrackingUnique">
+      <!-- En-tête -->
+      <header class="report-header">
+        <div class="report-title">
+          <p class="eyebrow">Détail du signalement</p>
+          <h1>{{ sig.codeTrackingUnique }}</h1>
+          <p class="report-meta">
+            <span><app-icon name="tag" [size]="14" />{{ sig.nomCategorie || 'Autres' }}</span>
+            <span class="meta-dot" aria-hidden="true"></span>
+            <span><app-icon name="clock" [size]="14" />{{ formatDate(sig.dateHeureAlerte) }}</span>
+          </p>
+        </div>
+        <div class="report-badges">
+          <span class="urgency-badge" [ngClass]="getUrgencyClass(sig.typeUrgence)">
+            <span class="urgency-dot" aria-hidden="true"></span>Urgence {{ getUrgencyLabel(sig.typeUrgence) | lowercase }}
+          </span>
+          <span class="status-pill" [ngClass]="getStatusClass(sig.statut)">{{ getStatusLabel(sig.statut) }}</span>
+        </div>
+      </header>
 
-    <div class="detail-grid">
-      <div class="detail-column">
-        <article class="photo-panel">
-          <img *ngIf="sig.photoAvantUrl; else noPhoto" [src]="sig.photoAvantUrl" alt="Photo du signalement">
-          <ng-template #noPhoto><div class="photo-empty"><i class="bi bi-image" aria-hidden="true"></i><span>Aucune photo fournie</span></div></ng-template>
-        </article>
+      <div *ngIf="abusExistant" class="abuse-banner" role="status">
+        <app-icon name="alert-triangle" />Ce signalement est classé comme abus
+      </div>
 
-        <article class="info-card location-card">
-          <span class="info-icon icon-red"><img src="assets/icons/localisation.png" alt=""></span>
-          <div><h2>Position GPS</h2><p>{{ formatCoordinate(sig.latitude, 'latitude') }} · {{ formatCoordinate(sig.longitude, 'longitude') }}</p>
-            <a [href]="'https://www.openstreetmap.org/?mlat=' + sig.latitude + '&mlon=' + sig.longitude + '#map=16/' + sig.latitude + '/' + sig.longitude" target="_blank" rel="noopener noreferrer">Voir sur la carte</a>
+      <!-- Corps -->
+      <div class="report-body">
+        <div class="report-media">
+          <figure class="photo-frame">
+            <img *ngIf="sig.photoAvantUrl; else noPhoto" [src]="sig.photoAvantUrl" alt="Photo du signalement">
+            <ng-template #noPhoto><div class="photo-empty"><app-icon name="image" [size]="30" [strokeWidth]="1.5" /><span>Aucune photo fournie</span></div></ng-template>
+          </figure>
+          <div *ngIf="sig.audioUrl" class="audio-block">
+            <p class="field-label"><app-icon name="mic" [size]="14" />Message vocal</p>
+            <audio controls [src]="sig.audioUrl">Votre navigateur ne supporte pas la lecture audio.</audio>
           </div>
-        </article>
+        </div>
 
-        <article class="info-card citizen-card">
-          <span class="citizen-avatar"><img src="assets/icons/utilisateur.png" alt=""></span>
-          <div><h2>Citoyen déclarant</h2><p class="citizen-name">{{ sig.citoyenNomComplet || 'Citoyen inconnu' }}</p><small>Identifiant : {{ sig.idCitoyen }}</small></div>
-        </article>
+        <div class="report-content">
+          <section class="content-section">
+            <h2 class="section-title">Description</h2>
+            <p class="description-text">{{ sig.description || 'Aucune description fournie.' }}</p>
+            <div *ngIf="sig.repereVisuel" class="visual-marker">
+              <app-icon name="flag" />
+              <div><p class="field-label">Repère visuel</p><p>{{ sig.repereVisuel }}</p></div>
+            </div>
+          </section>
+
+          <section class="content-section">
+            <h2 class="section-title">Informations</h2>
+            <dl class="info-grid">
+              <div class="info-item">
+                <dt><app-icon name="map-pin" [size]="14" />Position GPS</dt>
+                <dd>
+                  {{ formatCoordinate(sig.latitude, 'latitude') }} · {{ formatCoordinate(sig.longitude, 'longitude') }}
+                  <a [href]="'https://www.openstreetmap.org/?mlat=' + sig.latitude + '&mlon=' + sig.longitude + '#map=16/' + sig.latitude + '/' + sig.longitude" target="_blank" rel="noopener noreferrer">Voir sur la carte <app-icon name="external-link" [size]="12" /></a>
+                </dd>
+              </div>
+              <div class="info-item">
+                <dt><app-icon name="user" [size]="14" />Citoyen déclarant</dt>
+                <dd>{{ sig.citoyenNomComplet || 'Citoyen inconnu' }}<small>Identifiant : {{ sig.idCitoyen }}</small></dd>
+              </div>
+              <div class="info-item">
+                <dt><app-icon name="building" [size]="14" />Structure compétente</dt>
+                <dd>{{ sig.nomStructureAssignee || 'Votre structure' }}</dd>
+              </div>
+              <div class="info-item">
+                <dt><app-icon name="user-check" [size]="14" />Agent assigné</dt>
+                <dd *ngIf="sig.agentAssigne as agent; else noAgent" class="agent-value">
+                  <span class="agent-avatar" aria-hidden="true">{{ agent.prenom.charAt(0) }}{{ agent.nom.charAt(0) }}</span>
+                  <span class="agent-text">{{ agent.prenom }} {{ agent.nom }}<small>Matricule : {{ agent.matriculeAgent }}</small></span>
+                </dd>
+                <ng-template #noAgent><dd class="muted">{{ estAssigneAUnAgent(sig) ? 'Agent n° ' + sig.idAgentAssigne : 'Non assigné' }}</dd></ng-template>
+              </div>
+            </dl>
+          </section>
+        </div>
       </div>
 
-      <div class="detail-column">
-        <article class="info-card description-card">
-          <span class="info-icon icon-blue"><img src="assets/icons/categorie.png" alt=""></span>
-          <div><small>Catégorie</small><h2>{{ sig.nomCategorie || 'Autres' }}</h2></div>
-          <span class="info-icon icon-blue description-icon"><img src="assets/icons/description.png" alt=""></span>
-          <div class="description-copy"><small>Description</small><p>{{ sig.description || 'Aucune description fournie.' }}</p></div>
-          <div *ngIf="sig.audioUrl" class="audio-block"><h3>Message vocal</h3><audio controls [src]="sig.audioUrl">Votre navigateur ne supporte pas la lecture audio.</audio></div>
-          <div *ngIf="sig.repereVisuel" class="visual-marker"><small>Repère visuel</small><p>{{ sig.repereVisuel }}</p></div>
-        </article>
-
-        <article class="info-card date-card">
-          <span class="info-icon icon-blue"><img src="assets/icons/calendrier.png" alt=""></span>
-          <div><h2>Date et heure</h2><p>{{ formatDate(sig.dateHeureAlerte) }}</p></div>
-        </article>
-
-        <article class="info-card urgency-card">
-          <span class="info-icon icon-orange"><img src="assets/icons/urgence.png" alt=""></span>
-          <div><small>Niveau d’urgence</small><h2>{{ getUrgencyLabel(sig.typeUrgence) }}</h2></div>
-        </article>
-      </div>
-
-      <aside class="actions-panel">
-        <section class="assignment-summary">
-          <h2>Statut</h2><span class="status-pill" [ngClass]="getStatusClass(sig.statut)">{{ getStatusLabel(sig.statut) }}</span>
-          <h2>Structure compétente</h2><div class="structure-name"><img src="assets/icons/autorite.png" alt="">{{ sig.nomStructureAssignee || 'Votre structure' }}</div>
-        </section>
-
-        <div *ngIf="sig.statut === EnumStatut.EN_COURS" class="taken-status"><i class="bi bi-arrow-repeat" aria-hidden="true"></i>Traitement en cours</div>
-
-        <a *ngIf="isResponsable && !abusExistant && sig.statut !== EnumStatut.RESOLU && !estAssigneAUnAgent(sig)" class="secondary-action abuse-action" [routerLink]="['/structure/abus/nouveau', sig.idSignalement]">
-          <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>Marquer comme abus
-        </a>
-        <div *ngIf="abusExistant" class="abuse-recorded"><i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>Ce signalement est classé comme abus</div>
-        <button *ngIf="(sig.statut === EnumStatut.DECLARE || sig.statut === EnumStatut.EN_COURS) && !estAssigneAUnAgent(sig) && !abusExistant" type="button" class="primary-action" [routerLink]="['/structure/signalements', sig.idSignalement, 'assigner']">
-          <img src="assets/icons/utilisateur.png" alt="">Assigner un agent
-        </button>
-        <p class="action-hint">Les actions sont limitées aux opérations disponibles pour votre structure.</p>
-      </aside>
-    </div>
+      <!-- Actions -->
+      <footer class="report-footer">
+        <p class="action-hint"><app-icon name="info" [size]="14" />Les actions sont limitées aux opérations disponibles pour votre structure.</p>
+        <div class="report-actions">
+          <span *ngIf="sig.statut === EnumStatut.EN_COURS" class="taken-status"><app-icon name="refresh" />Traitement en cours</span>
+          <a *ngIf="isResponsable && !abusExistant && sig.statut !== EnumStatut.RESOLU && !estAssigneAUnAgent(sig)" class="secondary-action" [routerLink]="['/structure/abus/nouveau', sig.idSignalement]">
+            <app-icon name="alert-triangle" />Marquer comme abus
+          </a>
+          <button *ngIf="(sig.statut === EnumStatut.DECLARE || sig.statut === EnumStatut.EN_COURS) && !estAssigneAUnAgent(sig) && !abusExistant" type="button" class="primary-action" [routerLink]="['/structure/signalements', sig.idSignalement, 'assigner']">
+            <app-icon name="user-plus" />Assigner un agent
+          </button>
+        </div>
+      </footer>
+    </article>
   </ng-container>
 </section>
