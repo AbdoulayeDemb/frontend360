@@ -1,19 +1,21 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { forkJoin } from 'rxjs';
+import { catchError, forkJoin, of } from 'rxjs';
 
 import { AbusResponseDto } from '../../../core/models/abus.model';
 import { EnumStatut, EnumTypeUrgence } from '../../../core/models/enums.model';
 import { Signalement } from '../../../core/models/signalement.model';
 import { AbusService } from '../../../core/services/abus.service';
+import { AgentService } from '../../../core/services/agent.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { SignalementService } from '../../../core/services/signalement.service';
+import { IconComponent } from '../../../shared/components/icon/icon.component';
 
 @Component({
   selector: 'app-structure-signalement-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, IconComponent],
   templateUrl: './structure-signalement-detail.component.html',
   styleUrl: './structure-signalement-detail.component.css'
 })
@@ -21,6 +23,7 @@ export class StructureSignalementDetailComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly authService = inject(AuthService);
   private readonly abusService = inject(AbusService);
+  private readonly agentService = inject(AgentService);
   private readonly signalementService = inject(SignalementService);
 
   readonly EnumStatut = EnumStatut;
@@ -50,14 +53,21 @@ export class StructureSignalementDetailComponent implements OnInit {
     this.errorMessage = '';
     forkJoin({
       signalements: this.signalementService.getByStructure(this.structureId),
-      abus: this.abusService.obtenirLesAbus()
+      abus: this.abusService.obtenirLesAbus(),
+      // Le backend ne renvoie que l'identifiant de l'agent : on récupère son nom
+      // via la liste des agents de la structure. Un échec ne bloque pas la page.
+      agents: this.agentService.obtenirAgentsParStructure(this.structureId).pipe(catchError(() => of([])))
     }).subscribe({
-      next: ({ signalements, abus }) => {
+      next: ({ signalements, abus, agents }) => {
         this.signalement = signalements.find(item => item.idSignalement === id) ?? null;
         if (!this.signalement) {
           this.errorMessage = 'Ce signalement n’est pas attribué à votre structure.';
         } else {
           this.abusExistant = abus.find(item => item.idSignalement === id) ?? null;
+          const idAgent = this.signalement.idAgentAssigne;
+          if (idAgent != null && !this.signalement.agentAssigne) {
+            this.signalement.agentAssigne = agents.find(agent => agent.idUtilisateur === idAgent);
+          }
         }
         this.isLoading = false;
       },
@@ -97,6 +107,16 @@ export class StructureSignalementDetailComponent implements OnInit {
       [EnumTypeUrgence.CRITIQUE]: 'Critique'
     };
     return labels[urgence] ?? urgence;
+  }
+
+  getUrgencyClass(urgence: EnumTypeUrgence): string {
+    const classes: Record<EnumTypeUrgence, string> = {
+      [EnumTypeUrgence.FAIBLE]: 'urgency-low',
+      [EnumTypeUrgence.MOYENNE]: 'urgency-medium',
+      [EnumTypeUrgence.ELEVEE]: 'urgency-high',
+      [EnumTypeUrgence.CRITIQUE]: 'urgency-critical'
+    };
+    return classes[urgence] ?? '';
   }
 
   estAssigneAUnAgent(signalement: Signalement): boolean {
