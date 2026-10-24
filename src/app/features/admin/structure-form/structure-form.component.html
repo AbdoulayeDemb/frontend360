@@ -9,27 +9,22 @@
         <div class="page-heading">
 
             <h1 class="page-title">
-
                 {{
                 isEditMode
                 ? 'Modifier la structure'
                 : 'Ajouter une structure'
                 }}
-
             </h1>
 
             <p class="page-subtitle">
-
                 {{
                 isEditMode
                 ? 'Modifiez les informations de cette structure'
                 : 'Créez une nouvelle structure compétente'
                 }}
-
             </p>
 
         </div>
-
 
         <div class="header-actions">
 
@@ -37,9 +32,7 @@
 
                 <i class="bi bi-arrow-left"></i>
 
-                <span>
-                    Retour aux structures
-                </span>
+                <span>Retour aux structures</span>
 
             </button>
 
@@ -60,9 +53,7 @@
 
             <i class="bi bi-arrow-repeat loading-icon"></i>
 
-            <span>
-                Chargement de la structure...
-            </span>
+            <span>Chargement de la structure...</span>
 
         </div>
 
@@ -79,13 +70,11 @@
 
     @if (errorMessage) {
 
-    <div class="alert alert-error">
+    <div class="alert alert-error" role="alert">
 
         <i class="bi bi-exclamation-circle"></i>
 
-        <span>
-            {{ errorMessage }}
-        </span>
+        <span>{{ errorMessage }}</span>
 
     </div>
 
@@ -94,17 +83,16 @@
 
     <!-- ======================================
              MESSAGE SUCCÈS
+             Conservé pour ne pas casser l'existant
         ======================================= -->
 
     @if (successMessage) {
 
-    <div class="alert alert-success">
+    <div class="alert alert-success" role="status">
 
         <i class="bi bi-check-circle"></i>
 
-        <span>
-            {{ successMessage }}
-        </span>
+        <span>{{ successMessage }}</span>
 
     </div>
 
@@ -117,9 +105,7 @@
 
     <form class="form-card" [formGroup]="structureForm" (ngSubmit)="enregistrer()">
 
-
         <div class="form-content">
-
 
             <!-- =================================
                      INFORMATIONS GÉNÉRALES
@@ -130,16 +116,12 @@
                 <div class="section-heading">
 
                     <div class="section-icon">
-
                         <i class="bi bi-building"></i>
-
                     </div>
 
                     <div>
 
-                        <h2>
-                            Informations générales
-                        </h2>
+                        <h2>Informations générales</h2>
 
                         <p>
                             Informations principales de la structure
@@ -152,25 +134,17 @@
 
                 <div class="form-grid">
 
-
                     <!-- NOM -->
 
                     <div class="form-group full-width">
 
                         <label for="nomStructure">
-
                             Nom de la structure
-
-                            <span class="required">
-                                *
-                            </span>
-
+                            <span class="required">*</span>
                         </label>
-
 
                         <input id="nomStructure" type="text" formControlName="nomStructure"
                             placeholder="Ex. Mairie de Commune IV" [class.invalid]="isInvalid('nomStructure')">
-
 
                         @if (isInvalid('nomStructure')) {
 
@@ -181,20 +155,15 @@
                             .get('nomStructure')
                             ?.hasError('required')
                             ) {
-
                             Le nom de la structure est obligatoire.
-
                             }
-
 
                             @if (
                             structureForm
                             .get('nomStructure')
                             ?.hasError('minlength')
                             ) {
-
                             Le nom doit contenir au moins 2 caractères.
-
                             }
 
                         </small>
@@ -209,15 +178,9 @@
                     <div class="form-group">
 
                         <label for="typeStructure">
-
                             Type de structure
-
-                            <span class="required">
-                                *
-                            </span>
-
+                            <span class="required">*</span>
                         </label>
-
 
                         <select id="typeStructure" formControlName="typeStructure"
                             [class.invalid]="isInvalid('typeStructure')">
@@ -228,22 +191,17 @@
                             ) {
 
                             <option [value]="type.value">
-
                                 {{ type.label }}
-
                             </option>
 
                             }
 
                         </select>
 
-
                         @if (isInvalid('typeStructure')) {
 
                         <small class="field-error">
-
                             Le type de structure est obligatoire.
-
                         </small>
 
                         }
@@ -256,26 +214,17 @@
                     <div class="form-group">
 
                         <label for="quartier">
-
                             Quartier
-
-                            <span class="required">
-                                *
-                            </span>
-
+                            <span class="required">*</span>
                         </label>
-
 
                         <input id="quartier" type="text" formControlName="quartier" placeholder="Ex. Hamdallaye"
                             [class.invalid]="isInvalid('quartier')">
 
-
                         @if (isInvalid('quartier')) {
 
                         <small class="field-error">
-
                             Le quartier est obligatoire.
-
                         </small>
 
                         }
@@ -288,11 +237,8 @@
                     <div class="form-group">
 
                         <label for="telephoneUrgence">
-
                             Téléphone d'urgence
-
                         </label>
-
 
                         <input id="telephoneUrgence" type="tel" formControlName="telephoneUrgence"
                             placeholder="Ex. 20 00 00 00">
@@ -313,16 +259,12 @@
                 <div class="section-heading">
 
                     <div class="section-icon">
-
                         <i class="bi bi-geo-alt"></i>
-
                     </div>
 
                     <div>
 
-                        <h2>
-                            Zone de couverture
-                        </h2>
+                        <h2>Zone de couverture</h2>
 
                         <p>
                             Définissez le périmètre géographique d'intervention
@@ -338,11 +280,8 @@
                 <div class="map-instruction">
 
                     <div class="map-instruction-icon">
-
                         <i class="bi bi-pencil-square"></i>
-
                     </div>
-
 
                     <div>
 
@@ -351,20 +290,16 @@
                         </strong>
 
                         <p>
-
                             Utilisez l'outil polygone
                             <i class="bi bi-pentagon"></i>
                             situé en haut à droite de la carte,
                             puis cliquez sur les différents points
                             de la zone à couvrir.
-
                         </p>
 
                         <p class="instruction-secondary">
-
                             Vous pouvez ensuite déplacer ou modifier
                             le périmètre existant.
-
                         </p>
 
                     </div>
@@ -404,8 +339,7 @@
                         Zone de couverture définie.
                     </span>
 
-                    }
-                    @else {
+                    } @else {
 
                     <i class="bi bi-exclamation-circle"></i>
 
@@ -423,15 +357,11 @@
                 <input type="hidden" formControlName="zoneCouvertureGPS">
 
 
-                @if (
-                isInvalid('zoneCouvertureGPS')
-                ) {
+                @if (isInvalid('zoneCouvertureGPS')) {
 
                 <small class="field-error map-field-error">
-
                     La zone de couverture est obligatoire.
                     Dessinez le périmètre sur la carte.
-
                 </small>
 
                 }
@@ -447,7 +377,6 @@
 
         <div class="form-footer">
 
-
             <button type="button" class="btn btn-secondary" [disabled]="isSubmitting" (click)="retourListe()">
 
                 Annuler
@@ -457,30 +386,23 @@
 
             <button type="submit" class="btn btn-primary" [disabled]="isSubmitting">
 
-
                 @if (isSubmitting) {
 
                 <i class="bi bi-arrow-repeat loading-icon"></i>
 
-                <span>
-                    Enregistrement...
-                </span>
+                <span>Enregistrement...</span>
 
-                }
-
-                @else {
+                } @else {
 
                 <i class="bi" [class.bi-check-lg]="isEditMode" [class.bi-building-add]="!isEditMode">
                 </i>
 
                 <span>
-
                     {{
                     isEditMode
                     ? 'Enregistrer les modifications'
                     : 'Créer la structure'
                     }}
-
                 </span>
 
                 }
@@ -494,3 +416,44 @@
     }
 
 </div>
+
+
+<!-- ==========================================
+     POPUP DE SUCCÈS
+     Création ou modification d'une structure
+=========================================== -->
+
+@if (notificationVisible) {
+
+<div class="success-modal-overlay" (click)="fermerNotification()">
+
+    <div class="success-modal" role="dialog" aria-modal="true" aria-labelledby="success-modal-title"
+        aria-describedby="success-modal-message" (click)="$event.stopPropagation()">
+
+        <div class="success-icon">
+
+            <i class="bi bi-check-lg"></i>
+
+        </div>
+
+        <h2 id="success-modal-title">
+            {{ notificationTitre }}
+        </h2>
+
+        <p id="success-modal-message">
+            {{ notificationMessage }}
+        </p>
+
+        <button type="button" class="success-button" (click)="fermerNotification()">
+
+            <span>Continuer</span>
+
+            <i class="bi bi-arrow-right"></i>
+
+        </button>
+
+    </div>
+
+</div>
+
+}

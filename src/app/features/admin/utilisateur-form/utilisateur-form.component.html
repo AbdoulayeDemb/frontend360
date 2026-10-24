@@ -430,3 +430,40 @@
     }
 
 </div>
+
+
+<!-- =================================
+         POPUP DE SUCCÈS
+================================== -->
+
+@if (notificationVisible) {
+
+<div class="success-modal-overlay" (click)="fermerNotification()">
+
+    <div class="success-modal" role="dialog" aria-modal="true" aria-labelledby="success-modal-title"
+        aria-describedby="success-modal-message" (click)="$event.stopPropagation()">
+
+        <div class="success-icon">
+            <i class="bi bi-check-lg"></i>
+        </div>
+
+        <h2 id="success-modal-title">
+            {{ notificationTitre }}
+        </h2>
+
+        <p id="success-modal-message">
+            {{ notificationMessage }}
+        </p>
+
+        <button type="button" class="success-button" (click)="fermerNotification()">
+
+            <span>Continuer</span>
+            <i class="bi bi-arrow-right"></i>
+
+        </button>
+
+    </div>
+
+</div>
+
+}

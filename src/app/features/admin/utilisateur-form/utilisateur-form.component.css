@@ -511,3 +511,257 @@ select.form-control {
         transform: rotate(360deg);
     }
 }
+
+/* ==========================================
+   POPUP DE SUCCÈS
+========================================== */
+
+.success-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 24px;
+
+    background-color: rgba(15, 23, 42, 0.48);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+
+    animation: success-overlay-appear 200ms ease-out;
+}
+
+.success-modal {
+    width: 100%;
+    max-width: 420px;
+    box-sizing: border-box;
+
+    padding: 34px 30px 28px;
+
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    border-radius: 18px;
+
+    background-color: #FFFFFF;
+
+    box-shadow:
+        0 24px 70px rgba(15, 23, 42, 0.18),
+        0 8px 20px rgba(15, 23, 42, 0.08);
+
+    text-align: center;
+
+    animation: success-modal-appear 300ms ease-out;
+}
+
+
+/* Icône de confirmation */
+
+.success-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 66px;
+    height: 66px;
+
+    margin: 0 auto 22px;
+
+    border: 7px solid #ECFDF5;
+    border-radius: 50%;
+
+    background-color: #D1FAE5;
+    color: #059669;
+
+    font-size: 29px;
+
+    animation: success-icon-appear 400ms ease-out;
+}
+
+.success-icon i {
+    line-height: 1;
+}
+
+
+/* Titre */
+
+.success-modal h2 {
+    margin: 0 0 12px;
+
+    color: #1E293B;
+
+    font-family: 'Poppins', sans-serif;
+    font-size: 21px;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+
+/* Message */
+
+.success-modal p {
+    margin: 0 0 26px;
+
+    color: #64748B;
+
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+
+/* Bouton Continuer */
+
+.success-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    width: 100%;
+    min-height: 46px;
+
+    padding: 12px 20px;
+
+    border: none;
+    border-radius: 9px;
+
+    background: linear-gradient(135deg, #3B82F6, #2563EB);
+    color: #FFFFFF;
+
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    box-shadow: 0 5px 14px rgba(37, 99, 235, 0.2);
+
+    transition:
+        transform 160ms ease,
+        box-shadow 160ms ease,
+        background 160ms ease;
+}
+
+.success-button:hover {
+    background: linear-gradient(135deg, #2563EB, #1D4ED8);
+
+    box-shadow: 0 7px 18px rgba(37, 99, 235, 0.28);
+
+    transform: translateY(-1px);
+}
+
+.success-button:active {
+    transform: translateY(0);
+}
+
+.success-button:focus-visible {
+    outline: 3px solid rgba(59, 130, 246, 0.35);
+    outline-offset: 3px;
+}
+
+.success-button i {
+    font-size: 15px;
+
+    transition: transform 160ms ease;
+}
+
+.success-button:hover i {
+    transform: translateX(3px);
+}
+
+
+/* ==========================================
+   ANIMATIONS DU POPUP
+========================================== */
+
+@keyframes success-overlay-appear {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes success-modal-appear {
+    from {
+        opacity: 0;
+        transform: translateY(14px) scale(0.97);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes success-icon-appear {
+    from {
+        opacity: 0;
+        transform: scale(0.7);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+
+/* ==========================================
+   RESPONSIVE — POPUP
+========================================== */
+
+@media (max-width: 480px) {
+
+    .success-modal-overlay {
+        padding: 18px;
+    }
+
+    .success-modal {
+        padding: 28px 22px 24px;
+
+        border-radius: 15px;
+    }
+
+    .success-icon {
+        width: 58px;
+        height: 58px;
+
+        margin-bottom: 18px;
+
+        font-size: 25px;
+    }
+
+    .success-modal h2 {
+        font-size: 19px;
+    }
+
+    .success-modal p {
+        font-size: 12px;
+    }
+
+}
+
+
+/* ==========================================
+   ACCESSIBILITÉ — RÉDUCTION DES ANIMATIONS
+========================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .success-modal-overlay,
+    .success-modal,
+    .success-icon {
+        animation: none;
+    }
+
+    .success-button,
+    .success-button i {
+        transition: none;
+    }
+
+}

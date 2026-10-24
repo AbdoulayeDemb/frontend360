@@ -27,49 +27,34 @@
 
     </div>
 
-
     <!-- CHARGEMENT -->
     @if (isLoading) {
 
     <div class="card loading-card">
-
         <div class="loading-state">
             <i class="bi bi-arrow-repeat loading-icon"></i>
             <span>Chargement de l’actualité...</span>
         </div>
-
     </div>
 
     }
-
 
     @if (!isLoading) {
 
     <!-- MESSAGES -->
     @if (errorMessage) {
-
-    <div class="alert alert-error">
-
+    <div class="alert alert-error" role="alert">
         <i class="bi bi-exclamation-circle"></i>
-
         <span>{{ errorMessage }}</span>
-
     </div>
-
     }
 
-    @if (successMessage) {
-
-    <div class="alert alert-success">
-
+    @if (successMessage && !notificationVisible) {
+    <div class="alert alert-success" role="status">
         <i class="bi bi-check-circle"></i>
-
         <span>{{ successMessage }}</span>
-
     </div>
-
     }
-
 
     <!-- FORMULAIRE -->
     <form class="form-card" [formGroup]="actualiteForm" (ngSubmit)="enregistrer()">
@@ -85,14 +70,12 @@
 
                 <div>
                     <h2>Informations de l’actualité</h2>
-
                     <p>
                         Renseignez les informations qui seront communiquées aux citoyens.
                     </p>
                 </div>
 
             </div>
-
 
             <div class="form-grid">
 
@@ -108,7 +91,6 @@
                         [class.invalid]="isInvalid('titre')" />
 
                     @if (isInvalid('titre')) {
-
                     <small class="field-error">
 
                         @if (actualiteForm.get('titre')?.hasError('required')) {
@@ -124,11 +106,9 @@
                         }
 
                     </small>
-
                     }
 
                 </div>
-
 
                 <!-- COMMUNE -->
                 <div class="form-group">
@@ -145,7 +125,6 @@
 
                 </div>
 
-
                 <!-- URGENCE -->
                 <div class="form-group">
 
@@ -154,13 +133,11 @@
                     </label>
 
                     <label class="urgent-option">
-
                         <input id="estUrgent" type="checkbox" formControlName="estUrgent" />
 
                         <span>
                             Publier comme actualité urgente
                         </span>
-
                     </label>
 
                     <small class="field-hint">
@@ -169,8 +146,48 @@
 
                 </div>
 
+                <!-- IMAGE URL -->
+                <div class="form-group full-width">
 
-                <!-- CORPS -->
+                    <label for="imageUrl">
+                        Image de l’actualité
+                        <span class="optional-label">(facultatif)</span>
+                    </label>
+
+                    <input id="imageUrl" type="url" formControlName="imageUrl"
+                        placeholder="https://... URL publique de l'image Supabase"
+                        [class.invalid]="isInvalid('imageUrl')" />
+
+                    <small class="field-hint">
+                        Téléversez d'abord votre image dans Supabase Storage, puis collez ici son URL publique.
+                    </small>
+
+                    @if (isInvalid('imageUrl')) {
+                    <small class="field-error">
+                        Veuillez saisir une URL d'image valide commençant par http:// ou https://.
+                    </small>
+                    }
+
+                    <!-- APERÇU DE L'IMAGE -->
+                    @if (actualiteForm.get('imageUrl')?.value?.trim()) {
+
+                    <div class="image-preview-container">
+
+                        <span class="image-preview-label">
+                            Aperçu de l'image
+                        </span>
+
+                        <img [src]="actualiteForm.get('imageUrl')?.value"
+                            [alt]="'Aperçu de ' + (actualiteForm.get('titre')?.value || 'l’actualité')"
+                            class="image-preview" (error)="onImagePreviewError()" />
+
+                    </div>
+
+                    }
+
+                </div>
+
+                <!-- CORPS DU TEXTE -->
                 <div class="form-group full-width">
 
                     <label for="corpsTexte">
@@ -184,7 +201,6 @@
                         </textarea>
 
                     @if (isInvalid('corpsTexte')) {
-
                     <small class="field-error">
 
                         @if (actualiteForm.get('corpsTexte')?.hasError('required')) {
@@ -196,7 +212,6 @@
                         }
 
                     </small>
-
                     }
 
                 </div>
@@ -204,7 +219,6 @@
             </div>
 
         </section>
-
 
         <!-- PUBLICATION -->
         <section class="form-section">
@@ -217,14 +231,12 @@
 
                 <div>
                     <h2>Publication</h2>
-
                     <p>
                         L'auteur est automatiquement associé à l'administrateur actuellement connecté.
                     </p>
                 </div>
 
             </div>
-
 
             <div class="info-box">
 
@@ -233,19 +245,16 @@
                 </div>
 
                 <div class="info-content">
-
                     <strong>Administrateur connecté</strong>
 
                     <p>
                         Cette actualité sera automatiquement publiée au nom de votre compte administrateur.
                     </p>
-
                 </div>
 
             </div>
 
         </section>
-
 
         <!-- FOOTER -->
         <div class="form-footer">
@@ -256,13 +265,14 @@
 
             </button>
 
-
             <button type="submit" class="btn btn-primary" [disabled]="isSubmitting">
 
                 @if (isSubmitting) {
 
                 <i class="bi bi-arrow-repeat loading-icon"></i>
-                <span>Publication en cours...</span>
+                <span>
+                    {{ isEditMode ? 'Modification en cours...' : 'Publication en cours...' }}
+                </span>
 
                 } @else {
 
@@ -283,6 +293,45 @@
         </div>
 
     </form>
+
+    }
+
+    <!-- ==========================================
+         POPUP DE SUCCÈS
+    =========================================== -->
+    @if (notificationVisible) {
+
+    <div class="success-modal-overlay" role="presentation">
+
+        <div class="success-modal" role="dialog" aria-modal="true" aria-labelledby="success-modal-title"
+            aria-describedby="success-modal-message">
+
+            <!-- ICÔNE DE CONFIRMATION -->
+            <div class="success-icon">
+                <i class="bi bi-check-lg"></i>
+            </div>
+
+            <!-- TITRE -->
+            <h2 id="success-modal-title">
+                {{ notificationTitre }}
+            </h2>
+
+            <!-- MESSAGE -->
+            <p id="success-modal-message">
+                {{ notificationMessage }}
+            </p>
+
+            <!-- ACTION -->
+            <button type="button" class="success-button" (click)="fermerNotification()">
+
+                <span>Continuer</span>
+                <i class="bi bi-arrow-right"></i>
+
+            </button>
+
+        </div>
+
+    </div>
 
     }
 

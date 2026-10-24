@@ -1,3 +1,4 @@
+
 import {
     AfterViewInit,
     Component,
@@ -23,7 +24,6 @@ import {
 } from '@angular/router';
 
 import * as L from 'leaflet';
-
 import 'leaflet-draw';
 
 import { StructureService } from '../../../core/services/structure.service';
@@ -72,11 +72,19 @@ export class StructureFormComponent
     errorMessage = '';
     successMessage = '';
 
-    /*
-     * ================================
-     * CARTE
-     * ================================
-     */
+    // ==========================================
+    // NOTIFICATION DE SUCCÈS
+    // ==========================================
+
+    notificationVisible = false;
+
+    notificationTitre = '';
+
+    notificationMessage = '';
+
+    // ==========================================
+    // CARTE LEAFLET
+    // ==========================================
 
     private map!: L.Map;
 
@@ -86,6 +94,9 @@ export class StructureFormComponent
 
     private mapInitialized = false;
 
+    // ==========================================
+    // TYPES DE STRUCTURES
+    // ==========================================
 
     readonly typesStructures = [
 
@@ -121,21 +132,20 @@ export class StructureFormComponent
 
     ];
 
+    // ==========================================
+    // INITIALISATION
+    // ==========================================
 
     ngOnInit(): void {
-
         this.initialiserForm();
-
         this.detecterMode();
-
     }
-
 
     ngAfterViewInit(): void {
 
         /*
-         * La carte est initialisée après que
-         * le conteneur HTML soit disponible.
+         * Initialisation de la carte après
+         * le rendu du conteneur HTML.
          */
         setTimeout(() => {
 
@@ -145,71 +155,56 @@ export class StructureFormComponent
 
     }
 
-
     ngOnDestroy(): void {
 
         if (this.map) {
-
             this.map.remove();
-
         }
 
     }
 
-
-    // ============================================================
-    // FORMULAIRE
-    // ============================================================
+    // ==========================================
+    // INITIALISATION DU FORMULAIRE
+    // ==========================================
 
     initialiserForm(): void {
 
         this.structureForm = this.fb.group({
 
             nomStructure: [
-
                 '',
-
                 [
                     Validators.required,
                     Validators.minLength(2)
                 ]
-
             ],
 
             quartier: [
-
                 '',
-
                 Validators.required
-
             ],
 
             typeStructure: [
-
                 EnumTypeStructure.MAIRIE,
-
                 Validators.required
-
             ],
 
             telephoneUrgence: [
-
                 ''
-
             ],
 
             zoneCouvertureGPS: [
-
                 '',
-
                 Validators.required
-
             ]
 
         });
 
     }
 
+    // ==========================================
+    // DÉTECTION CRÉATION / MODIFICATION
+    // ==========================================
 
     detecterMode(): void {
 
@@ -217,8 +212,18 @@ export class StructureFormComponent
 
         if (id) {
 
-            this.structureId = Number(id);
+            const idNumerique = Number(id);
 
+            if (!Number.isInteger(idNumerique) || idNumerique <= 0) {
+
+                this.errorMessage =
+                    'Identifiant de structure invalide.';
+
+                return;
+
+            }
+
+            this.structureId = idNumerique;
             this.isEditMode = true;
 
             this.chargerStructure(this.structureId);
@@ -231,15 +236,13 @@ export class StructureFormComponent
 
     }
 
-
-    // ============================================================
-    // CHARGEMENT STRUCTURE
-    // ============================================================
+    // ==========================================
+    // CHARGEMENT DE LA STRUCTURE
+    // ==========================================
 
     chargerStructure(idStructure: number): void {
 
         this.isLoading = true;
-
         this.errorMessage = '';
 
         this.structureService
@@ -253,10 +256,15 @@ export class StructureFormComponent
                     this.isLoading = false;
 
                     /*
-                     * Si la carte est déjà prête,
-                     * on affiche immédiatement le polygone.
+                     * On attend que le rendu HTML soit actualisé.
+                     * La carte est initialisée si elle ne l'est pas
+                     * encore, puis la zone existante est affichée.
                      */
                     setTimeout(() => {
+
+                        if (!this.mapInitialized) {
+                            this.initialiserCarte();
+                        }
 
                         this.afficherZoneExistante(
                             structure.zoneCouvertureGPS
@@ -287,6 +295,9 @@ export class StructureFormComponent
 
     }
 
+    // ==========================================
+    // REMPLIR LE FORMULAIRE
+    // ==========================================
 
     remplirFormulaire(
         structure: StructureCompetenteResponseDto
@@ -313,26 +324,23 @@ export class StructureFormComponent
 
     }
 
-
-    // ============================================================
-    // CARTE LEAFLET
-    // ============================================================
+    // ==========================================
+    // INITIALISATION DE LA CARTE LEAFLET
+    // ==========================================
 
     private initialiserCarte(): void {
 
         if (
             this.mapInitialized ||
-            !this.mapContainer
+            !this.mapContainer?.nativeElement
         ) {
-
             return;
-
         }
 
         this.mapInitialized = true;
 
         /*
-         * Centre de Bamako
+         * Centre initial : Bamako.
          */
         this.map = L.map(
             this.mapContainer.nativeElement,
@@ -348,9 +356,8 @@ export class StructureFormComponent
             }
         );
 
-
         /*
-         * Fond OpenStreetMap
+         * Fond OpenStreetMap.
          */
         L.tileLayer(
             'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -362,88 +369,75 @@ export class StructureFormComponent
             }
         ).addTo(this.map);
 
-
         /*
          * Groupe contenant les éléments dessinés.
          */
-        this.drawnItems =
-            new L.FeatureGroup();
+        this.drawnItems = new L.FeatureGroup();
 
-        this.map.addLayer(
-            this.drawnItems
-        );
-
+        this.map.addLayer(this.drawnItems);
 
         /*
          * Outils de dessin.
-         *
-         * On autorise uniquement le polygone.
+         * Seuls les polygones sont autorisés.
          */
-        const drawControl =
-            new L.Control.Draw({
+        const drawControl = new L.Control.Draw({
 
-                position: 'topright',
+            position: 'topright',
 
-                edit: {
+            edit: {
 
-                    featureGroup:
-                        this.drawnItems,
+                featureGroup: this.drawnItems,
 
-                    remove: true
+                remove: true
+
+            },
+
+            draw: {
+
+                polygon: {
+
+                    allowIntersection: false,
+
+                    showArea: true,
+
+                    shapeOptions: {
+
+                        color: '#2563EB',
+
+                        fillColor: '#3B82F6',
+
+                        fillOpacity: 0.20,
+
+                        weight: 2
+
+                    }
 
                 },
 
-                draw: {
+                polyline: false,
 
-                    polygon: {
+                rectangle: false,
 
-                        allowIntersection: false,
+                circle: false,
 
-                        showArea: true,
+                circlemarker: false,
 
-                        shapeOptions: {
+                marker: false
 
-                            color: '#2563EB',
+            }
 
-                            fillColor: '#3B82F6',
+        });
 
-                            fillOpacity: 0.20,
-
-                            weight: 2
-
-                        }
-
-                    },
-
-                    polyline: false,
-
-                    rectangle: false,
-
-                    circle: false,
-
-                    circlemarker: false,
-
-                    marker: false
-
-                }
-
-            });
-
-
-        this.map.addControl(
-            drawControl
-        );
-
+        this.map.addControl(drawControl);
 
         /*
-         * Lorsqu'un nouveau polygone est créé.
+         * Création d'un nouveau polygone.
          */
         this.map.on(
             L.Draw.Event.CREATED,
             (event: any) => {
 
-                const layer =
-                    event.layer as L.Polygon;
+                const layer = event.layer as L.Polygon;
 
                 /*
                  * Une seule zone de couverture
@@ -451,21 +445,19 @@ export class StructureFormComponent
                  */
                 this.drawnItems.clearLayers();
 
-                this.drawnItems.addLayer(
-                    layer
-                );
+                this.drawnItems.addLayer(layer);
 
-                this.currentPolygon =
-                    layer;
+                this.currentPolygon = layer;
 
                 this.mettreAJourWkt();
+
+                this.errorMessage = '';
 
             }
         );
 
-
         /*
-         * Lorsqu'un polygone existant est modifié.
+         * Modification du polygone existant.
          */
         this.map.on(
             L.Draw.Event.EDITED,
@@ -478,9 +470,8 @@ export class StructureFormComponent
             }
         );
 
-
         /*
-         * Lorsqu'un polygone est supprimé.
+         * Suppression du polygone.
          */
         this.map.on(
             L.Draw.Event.DELETED,
@@ -488,34 +479,34 @@ export class StructureFormComponent
 
                 this.currentPolygon = null;
 
-                this.structureForm
-                    .get('zoneCouvertureGPS')
-                    ?.setValue('');
+                const control =
+                    this.structureForm.get('zoneCouvertureGPS');
 
-                this.structureForm
-                    .get('zoneCouvertureGPS')
-                    ?.markAsTouched();
+                control?.setValue('');
+
+                control?.markAsTouched();
+
+                control?.markAsDirty();
 
             }
         );
 
-
         /*
-         * Petit délai pour éviter le problème
-         * classique Leaflet avec les dimensions.
+         * Actualisation des dimensions de la carte.
          */
         setTimeout(() => {
 
-            this.map.invalidateSize();
+            if (this.mapInitialized && this.map) {
+                this.map.invalidateSize();
+            }
 
         }, 100);
 
     }
 
-
-    // ============================================================
-    // POLYGONE EXISTANT
-    // ============================================================
+    // ==========================================
+    // AFFICHER UNE ZONE EXISTANTE
+    // ==========================================
 
     private afficherZoneExistante(
         wkt: string | undefined
@@ -526,20 +517,14 @@ export class StructureFormComponent
             !this.drawnItems ||
             !wkt
         ) {
-
             return;
-
         }
 
         try {
 
-            const coordinates =
-                this.wktVersLatLngs(wkt);
+            const coordinates = this.wktVersLatLngs(wkt);
 
-            if (
-                !coordinates ||
-                coordinates.length < 3
-            ) {
+            if (coordinates.length < 4) {
 
                 console.warn(
                     'Zone WKT invalide ou non compatible :',
@@ -550,45 +535,35 @@ export class StructureFormComponent
 
             }
 
-
             /*
-             * Nettoyage d'une éventuelle
-             * ancienne zone.
+             * Suppression d'une éventuelle ancienne zone.
              */
             this.drawnItems.clearLayers();
-
 
             /*
              * Création du polygone Leaflet.
              */
-            const polygon =
-                L.polygon(
-                    coordinates,
-                    {
+            const polygon = L.polygon(
+                coordinates,
+                {
 
-                        color: '#2563EB',
+                    color: '#2563EB',
 
-                        fillColor: '#3B82F6',
+                    fillColor: '#3B82F6',
 
-                        fillOpacity: 0.20,
+                    fillOpacity: 0.20,
 
-                        weight: 2
+                    weight: 2
 
-                    }
-                );
-
-
-            this.drawnItems.addLayer(
-                polygon
+                }
             );
 
+            this.drawnItems.addLayer(polygon);
 
-            this.currentPolygon =
-                polygon;
-
+            this.currentPolygon = polygon;
 
             /*
-             * Ajustement de la vue.
+             * Ajustement de la vue sur la zone.
              */
             this.map.fitBounds(
                 polygon.getBounds(),
@@ -597,11 +572,18 @@ export class StructureFormComponent
                 }
             );
 
+            setTimeout(() => {
+
+                if (this.mapInitialized && this.map) {
+                    this.map.invalidateSize();
+                }
+
+            });
 
         } catch (error) {
 
             console.error(
-                'Impossible d afficher la zone WKT :',
+                'Impossible d’afficher la zone WKT :',
                 error
             );
 
@@ -612,21 +594,18 @@ export class StructureFormComponent
 
     }
 
-
-    // ============================================================
-    // WKT → LEAFLET
-    // ============================================================
+    // ==========================================
+    // CONVERSION WKT → LEAFLET
+    // ==========================================
 
     private wktVersLatLngs(
         wkt: string
     ): L.LatLngExpression[] {
 
-        const wktNormalise =
-            wkt
-                .trim()
-                .replace(/^SRID=\d+;/i, '')
-                .trim();
-
+        const wktNormalise = wkt
+            .trim()
+            .replace(/^SRID=\d+;/i, '')
+            .trim();
 
         if (
             !wktNormalise
@@ -640,13 +619,9 @@ export class StructureFormComponent
 
         }
 
+        const debut = wktNormalise.indexOf('((');
 
-        const debut =
-            wktNormalise.indexOf('((');
-
-        const fin =
-            wktNormalise.lastIndexOf('))');
-
+        const fin = wktNormalise.lastIndexOf('))');
 
         if (
             debut === -1 ||
@@ -660,115 +635,85 @@ export class StructureFormComponent
 
         }
 
+        /*
+         * Récupération du premier anneau du polygone.
+         */
+        const contenu = wktNormalise.substring(
+            debut + 2,
+            fin
+        );
 
         /*
-         * On récupère le premier anneau du polygone.
-         *
-         * Exemple :
-         *
-         * POLYGON((
-         * -8.02 12.63,
-         * -8.01 12.63,
-         * -8.01 12.64,
-         * -8.02 12.64,
-         * -8.02 12.63
-         * ))
+         * Si le polygone contient des anneaux intérieurs,
+         * on conserve le premier anneau extérieur.
          */
-        const contenu =
-            wktNormalise.substring(
-                debut + 2,
-                fin
-            );
+        const premierAnneau = contenu.split('),(')[0];
 
+        const points = premierAnneau
+            .split(',')
+            .map((point) => {
 
-        /*
-         * Si le polygone possède plusieurs anneaux,
-         * on garde uniquement le premier.
-         */
-        const premierAnneau =
-            contenu.split('),(')[0];
+                const valeurs = point
+                    .trim()
+                    .split(/\s+/);
 
+                if (valeurs.length < 2) {
 
-        const points =
-            premierAnneau
-                .split(',')
-                .map(
-                    (point) => {
+                    throw new Error(
+                        'Coordonnée WKT invalide.'
+                    );
 
-                        const valeurs =
-                            point
-                                .trim()
-                                .split(/\s+/);
+                }
 
-                        if (
-                            valeurs.length < 2
-                        ) {
+                /*
+                 * WKT : longitude latitude.
+                 * Leaflet : latitude longitude.
+                 */
+                const longitude = Number(valeurs[0]);
 
-                            throw new Error(
-                                'Coordonnée WKT invalide.'
-                            );
+                const latitude = Number(valeurs[1]);
 
-                        }
+                if (
+                    !Number.isFinite(latitude) ||
+                    !Number.isFinite(longitude) ||
+                    latitude < -90 ||
+                    latitude > 90 ||
+                    longitude < -180 ||
+                    longitude > 180
+                ) {
 
-                        /*
-                         * WKT :
-                         * longitude latitude
-                         *
-                         * Leaflet :
-                         * latitude longitude
-                         */
-                        const longitude =
-                            Number(valeurs[0]);
+                    throw new Error(
+                        'Coordonnée GPS invalide.'
+                    );
 
-                        const latitude =
-                            Number(valeurs[1]);
+                }
 
+                return [
+                    latitude,
+                    longitude
+                ] as L.LatLngExpression;
 
-                        if (
-                            !Number.isFinite(latitude) ||
-                            !Number.isFinite(longitude)
-                        ) {
-
-                            throw new Error(
-                                'Coordonnée GPS invalide.'
-                            );
-
-                        }
-
-
-                        return [
-                            latitude,
-                            longitude
-                        ] as L.LatLngExpression;
-
-                    }
-                );
-
+            });
 
         return points;
 
     }
 
-
-    // ============================================================
-    // LEAFLET → WKT
-    // ============================================================
+    // ==========================================
+    // CONVERSION LEAFLET → WKT
+    // ==========================================
 
     private polygonVersWkt(
         polygon: L.Polygon
     ): string {
 
-        const latLngs =
-            polygon.getLatLngs();
-
+        const latLngs = polygon.getLatLngs();
 
         /*
-         * Pour un Polygon simple,
-         * Leaflet renvoie un tableau de LatLng.
+         * Pour un polygone simple, le premier élément
+         * contient la liste des points de l'anneau extérieur.
          */
-        const premierAnneau =
-            latLngs[0] as L.LatLng[];
-
+        const premierAnneau = latLngs[0] as L.LatLng[];
 
         if (
             !premierAnneau ||
@@ -781,25 +726,18 @@ export class StructureFormComponent
 
         }
 
-
-        const points =
-            premierAnneau.map(
-                (latLng) =>
-                    `${latLng.lng} ${latLng.lat}`
-            );
-
+        const points = premierAnneau.map(
+            (latLng) =>
+                `${latLng.lng} ${latLng.lat}`
+        );
 
         /*
-         * Fermeture du polygone.
+         * Fermeture du polygone si nécessaire.
          */
-        const premierPoint =
-            premierAnneau[0];
+        const premierPoint = premierAnneau[0];
 
         const dernierPoint =
-            premierAnneau[
-            premierAnneau.length - 1
-            ];
-
+            premierAnneau[premierAnneau.length - 1];
 
         if (
             premierPoint.lat !== dernierPoint.lat ||
@@ -812,109 +750,88 @@ export class StructureFormComponent
 
         }
 
-
         return `POLYGON((${points.join(', ')}))`;
 
     }
 
-
-    // ============================================================
-    // RÉCUPÉRER POLYGONE
-    // ============================================================
+    // ==========================================
+    // RÉCUPÉRER LE POLYGONE ACTUEL
+    // ==========================================
 
     private recupererPolygoneActuel(): void {
 
+        if (!this.drawnItems) {
+            this.currentPolygon = null;
+            return;
+        }
+
         let polygon: L.Polygon | null = null;
 
-        this.drawnItems.eachLayer(
-            (layer) => {
+        this.drawnItems.eachLayer((layer) => {
 
-                if (
-                    layer instanceof L.Polygon
-                ) {
-
-                    polygon =
-                        layer;
-
-                }
-
+            if (layer instanceof L.Polygon) {
+                polygon = layer;
             }
-        );
 
+        });
 
-        this.currentPolygon =
-            polygon;
+        this.currentPolygon = polygon;
 
     }
 
-
-    // ============================================================
+    // ==========================================
     // METTRE À JOUR LE WKT DU FORMULAIRE
-    // ============================================================
+    // ==========================================
 
     private mettreAJourWkt(): void {
 
         this.recupererPolygoneActuel();
 
+        const control =
+            this.structureForm.get('zoneCouvertureGPS');
 
         if (!this.currentPolygon) {
 
-            this.structureForm
-                .get('zoneCouvertureGPS')
-                ?.setValue('');
+            control?.setValue('');
 
             return;
 
         }
 
-
         try {
 
-            const wkt =
-                this.polygonVersWkt(
-                    this.currentPolygon
-                );
+            const wkt = this.polygonVersWkt(
+                this.currentPolygon
+            );
 
+            control?.setValue(wkt);
 
-            this.structureForm
-                .get('zoneCouvertureGPS')
-                ?.setValue(wkt);
+            control?.markAsDirty();
 
-
-            this.structureForm
-                .get('zoneCouvertureGPS')
-                ?.markAsDirty();
-
+            control?.updateValueAndValidity();
 
         } catch (error) {
 
             console.error(
-                'Erreur conversion polygone → WKT :',
+                'Erreur de conversion du polygone vers WKT :',
                 error
             );
 
-            this.structureForm
-                .get('zoneCouvertureGPS')
-                ?.setValue('');
+            control?.setValue('');
+
+            control?.updateValueAndValidity();
 
         }
 
     }
 
+    // ==========================================
+    // VALIDATION DES CHAMPS
+    // ==========================================
 
-    // ============================================================
-    // VALIDATION
-    // ============================================================
+    isInvalid(controlName: string): boolean {
 
-    isInvalid(
-        controlName: string
-    ): boolean {
-
-        const control =
-            this.structureForm.get(
-                controlName
-            );
-
+        const control = this.structureForm.get(controlName);
 
         return !!(
             control &&
@@ -927,38 +844,31 @@ export class StructureFormComponent
 
     }
 
-
-    // ============================================================
+    // ==========================================
     // ENREGISTREMENT
-    // ============================================================
+    // ==========================================
 
     enregistrer(): void {
 
         this.errorMessage = '';
-
         this.successMessage = '';
 
-
         /*
-         * Avant validation, on récupère
-         * une dernière fois le polygone.
+         * Récupération de la dernière version du polygone
+         * avant de valider et d'envoyer le formulaire.
          */
         this.recupererPolygoneActuel();
 
         if (this.currentPolygon) {
-
             this.mettreAJourWkt();
-
         }
 
+        /*
+         * Validation des champs.
+         */
+        if (this.structureForm.invalid) {
 
-        if (
-            this.structureForm.invalid
-        ) {
-
-            this.structureForm
-                .markAllAsTouched();
-
+            this.structureForm.markAllAsTouched();
 
             if (
                 !this.structureForm
@@ -971,29 +881,25 @@ export class StructureFormComponent
 
             }
 
-
             return;
 
         }
 
+        if (this.isSubmitting) {
+            return;
+        }
 
         this.isSubmitting = true;
 
+        const formValue = this.structureForm.getRawValue();
 
-        const formValue =
-            this.structureForm.value;
-
-
-        const dto:
-            StructureCompetenteRequestDto = {
+        const dto: StructureCompetenteRequestDto = {
 
             nomStructure:
-                formValue.nomStructure
-                    .trim(),
+                formValue.nomStructure.trim(),
 
             quartier:
-                formValue.quartier
-                    ?.trim(),
+                formValue.quartier?.trim(),
 
             typeStructure:
                 formValue.typeStructure,
@@ -1008,9 +914,8 @@ export class StructureFormComponent
 
         };
 
-
         /*
-         * MODIFICATION
+         * MODIFICATION D'UNE STRUCTURE
          */
         if (
             this.isEditMode &&
@@ -1026,21 +931,17 @@ export class StructureFormComponent
 
                     next: () => {
 
-                        this.isSubmitting =
-                            false;
+                        this.isSubmitting = false;
 
                         this.successMessage =
                             'Structure modifiée avec succès.';
 
-
-                        setTimeout(() => {
-
-                            this.retourListe();
-
-                        }, 700);
+                        this.afficherNotification(
+                            'Modification réussie !',
+                            'Les informations de la structure ont été modifiées avec succès.'
+                        );
 
                     },
-
 
                     error: (error) => {
 
@@ -1049,16 +950,13 @@ export class StructureFormComponent
                             error
                         );
 
-
                         this.errorMessage =
                             this.extraireMessageErreur(
                                 error,
                                 'Impossible de modifier cette structure.'
                             );
 
-
-                        this.isSubmitting =
-                            false;
+                        this.isSubmitting = false;
 
                     }
 
@@ -1068,9 +966,8 @@ export class StructureFormComponent
 
         }
 
-
         /*
-         * CRÉATION
+         * CRÉATION D'UNE STRUCTURE
          */
         this.structureService
             .creerStructure(dto)
@@ -1078,21 +975,17 @@ export class StructureFormComponent
 
                 next: () => {
 
-                    this.isSubmitting =
-                        false;
+                    this.isSubmitting = false;
 
                     this.successMessage =
                         'Structure créée avec succès.';
 
-
-                    setTimeout(() => {
-
-                        this.retourListe();
-
-                    }, 700);
+                    this.afficherNotification(
+                        'Création réussie !',
+                        'La nouvelle structure a été enregistrée avec succès.'
+                    );
 
                 },
-
 
                 error: (error) => {
 
@@ -1101,16 +994,13 @@ export class StructureFormComponent
                         error
                     );
 
-
                     this.errorMessage =
                         this.extraireMessageErreur(
                             error,
                             'Impossible de créer cette structure.'
                         );
 
-
-                    this.isSubmitting =
-                        false;
+                    this.isSubmitting = false;
 
                 }
 
@@ -1118,10 +1008,42 @@ export class StructureFormComponent
 
     }
 
+    // ==========================================
+    // AFFICHER LA POPUP DE SUCCÈS
+    // ==========================================
 
-    // ============================================================
-    // UTILITAIRES
-    // ============================================================
+    private afficherNotification(
+        titre: string,
+        message: string
+    ): void {
+
+        this.notificationTitre = titre;
+
+        this.notificationMessage = message;
+
+        this.notificationVisible = true;
+
+    }
+
+    // ==========================================
+    // FERMER LA POPUP ET RETOURNER À LA LISTE
+    // ==========================================
+
+    fermerNotification(): void {
+
+        if (!this.notificationVisible) {
+            return;
+        }
+
+        this.notificationVisible = false;
+
+        this.retourListe();
+
+    }
+
+    // ==========================================
+    // NORMALISATION DES VALEURS
+    // ==========================================
 
     private normaliserValeur(
         valeur: string | null | undefined
@@ -1136,48 +1058,38 @@ export class StructureFormComponent
 
         }
 
-
         return valeur.trim();
 
     }
 
+    // ==========================================
+    // EXTRACTION DU MESSAGE D'ERREUR
+    // ==========================================
 
     private extraireMessageErreur(
         error: any,
         messageParDefaut: string
     ): string {
 
-        if (
-            error?.error?.message
-        ) {
-
+        if (error?.error?.message) {
             return error.error.message;
-
         }
 
-
-        if (
-            error?.error?.error
-        ) {
-
+        if (error?.error?.error) {
             return error.error.error;
-
         }
 
-
-        if (
-            typeof error?.error === 'string'
-        ) {
-
+        if (typeof error?.error === 'string') {
             return error.error;
-
         }
-
 
         return messageParDefaut;
 
     }
 
+    // ==========================================
+    // RETOUR À LA LISTE DES STRUCTURES
+    // ==========================================
 
     retourListe(): void {
 

@@ -1,11 +1,9 @@
-<div class="contenus-page">
+<div class="page-container">
 
     <!-- EN-TÊTE -->
     <div class="page-header">
-
         <div class="page-heading">
             <h1 class="page-title">Contenus éducatifs</h1>
-
             <p class="page-subtitle">
                 Gérez les contenus éducatifs destinés aux citoyens.
             </p>
@@ -13,376 +11,289 @@
 
         <div class="header-actions">
             <button type="button" class="btn btn-primary" (click)="nouveauContenu()">
-
                 <i class="bi bi-plus-lg"></i>
                 <span>Nouveau contenu</span>
-
             </button>
         </div>
-
     </div>
-
 
     <!-- MESSAGE D'ERREUR -->
-    <div *ngIf="erreur" class="alert alert-error">
-
+    <div *ngIf="erreur" class="alert alert-error" role="alert">
         <i class="bi bi-exclamation-circle"></i>
-
         <span>{{ erreur }}</span>
-
     </div>
 
-
-    <!-- FILTRES -->
-    <div class="filters-card">
-
-        <div class="filter-item search-field">
-
-            <label for="recherche">
-                Recherche
-            </label>
-
-            <div class="search-wrapper">
-
-                <i class="bi bi-search search-icon"></i>
-
-                <input id="recherche" type="text" placeholder="Rechercher un titre, auteur..." [(ngModel)]="recherche"
-                    (ngModelChange)="appliquerFiltres()" />
-
-            </div>
-
-        </div>
-
-
-        <div class="filter-item">
-
-            <label for="theme">
-                Thématique
-            </label>
-
-            <select id="theme" [(ngModel)]="themeSelectionne" (ngModelChange)="appliquerFiltres()">
-
-                <option value="">
-                    Toutes les thématiques
-                </option>
-
-                <option *ngFor="let theme of themes" [value]="theme">
-
-                    {{ getLibelleTheme(theme) }}
-
-                </option>
-
-            </select>
-
-        </div>
-
-
-        <div class="filter-item">
-
-            <label for="format">
-                Format
-            </label>
-
-            <select id="format" [(ngModel)]="formatSelectionne" (ngModelChange)="appliquerFiltres()">
-
-                <option value="">
-                    Tous les formats
-                </option>
-
-                <option *ngFor="let format of formats" [value]="format">
-
-                    {{ getLibelleFormat(format) }}
-
-                </option>
-
-            </select>
-
-        </div>
-
-
-        <div class="filter-actions">
-
-            <button type="button" class="btn btn-secondary" (click)="reinitialiserFiltres()">
-
-                <i class="bi bi-arrow-counterclockwise"></i>
-                <span>Réinitialiser</span>
-
-            </button>
-
-        </div>
-
-    </div>
-
-
-    <!-- CHARGEMENT -->
-    <div *ngIf="chargement" class="loading-container">
-
-        <i class="bi bi-arrow-repeat loading-icon"></i>
-
-        <span>
-            Chargement des contenus...
-        </span>
-
-    </div>
-
-
-    <!-- TABLEAU -->
-    <div *ngIf="!chargement" class="table-card">
-
-        <div class="table-header">
-
-            <div>
-
-                <h2>Liste des contenus</h2>
-
-                <span class="result-count">
-
-                    @if (contenusFiltres.length > 0) {
-
-                    Affichage de
-                    {{ premierElement }}
-                    à
-                    {{ dernierElement }}
-                    sur
-                    {{ contenusFiltres.length }}
-                    contenu(s)
-
-                    } @else {
-
-                    0 contenu
-
-                    }
-
-                </span>
-
-            </div>
-
-        </div>
-
-
-        <!-- ÉTAT VIDE -->
-        <div *ngIf="contenusFiltres.length === 0" class="empty-state">
-
-            <div class="empty-state-icon">
-                <i class="bi bi-mortarboard"></i>
-            </div>
-
-            <h3>
-                Aucun contenu trouvé
-            </h3>
-
-            <p>
-                Aucun contenu éducatif ne correspond aux critères sélectionnés.
-            </p>
-
-            <button type="button" class="btn btn-primary" (click)="nouveauContenu()">
-
-                <i class="bi bi-plus-lg"></i>
-                <span>Ajouter un contenu</span>
-
-            </button>
-
-        </div>
-
-
-        <!-- TABLEAU -->
-        <div *ngIf="contenusFiltres.length > 0" class="table-responsive">
-
-            <table>
-
-                <thead>
-
-                    <tr>
-                        <th>Titre</th>
-                        <th>Thématique</th>
-                        <th>Format</th>
-                        <th>Média</th>
-                        <th>Auteur</th>
-                        <th>Date</th>
-                        <th class="actions-column">
-                            Actions
-                        </th>
-                    </tr>
-
-                </thead>
-
-
-                <tbody>
-
-                    <tr *ngFor="let contenu of contenusPagines">
-
-                        <!-- TITRE -->
-                        <td>
-
-                            <div class="title-cell">
-
-                                <div class="content-icon">
-
-                                    <i [class]="getIconeFormat(contenu.format)">
-                                    </i>
-
-                                </div>
-
-                                <div class="content-title">
-                                    {{ contenu.titre }}
-                                </div>
-
-                            </div>
-
-                        </td>
-
-
-                        <!-- THÉMATIQUE -->
-                        <td>
-
-                            <span class="theme-badge">
-                                {{ getLibelleTheme(contenu.theme) }}
-                            </span>
-
-                        </td>
-
-
-                        <!-- FORMAT -->
-                        <td>
-
-                            <span class="format-badge">
-
-                                <i [class]="getIconeFormat(contenu.format)">
-                                </i>
-
-                                {{ getLibelleFormat(contenu.format) }}
-
-                            </span>
-
-                        </td>
-
-
-                        <!-- MÉDIA -->
-                        <td>
-
-                            <a [href]="contenu.mediaUrl" target="_blank" rel="noopener noreferrer" class="media-link">
-
-                                <i class="bi bi-box-arrow-up-right"></i>
-
-                                <span>Ouvrir</span>
-
-                            </a>
-
-                        </td>
-
-
-                        <!-- AUTEUR -->
-                        <td>
-
-                            <span class="author-name">
-                                {{ contenu.nomAuteur || '—' }}
-                            </span>
-
-                        </td>
-
-
-                        <!-- DATE -->
-                        <td>
-
-                            <span class="date-cell">
-                                {{ contenu.datePublication | date:'dd/MM/yyyy HH:mm' }}
-                            </span>
-
-                        </td>
-
-
-                        <!-- ACTIONS -->
-                        <td class="actions-column">
-
-                            <div class="actions">
-
-                                <button type="button" class="action-button" title="Modifier"
-                                    aria-label="Modifier le contenu" (click)="modifierContenu(contenu.idContenu)">
-
-                                    <i class="bi bi-pencil"></i>
-
-                                </button>
-
-
-                                <button type="button" class="action-button action-danger" title="Supprimer"
-                                    aria-label="Supprimer le contenu" (click)="supprimerContenu(contenu)">
-
-                                    <i class="bi bi-trash3"></i>
-
-                                </button>
-
-                            </div>
-
-                        </td>
-
-                    </tr>
-
-                </tbody>
-
-            </table>
-
-        </div>
-
-
-        <!-- PAGINATION -->
-        <div *ngIf="contenusFiltres.length > 0" class="pagination-footer">
-
-            <div class="pagination-info">
-
-                Affichage de
-                <strong>{{ premierElement }}</strong>
-                à
-                <strong>{{ dernierElement }}</strong>
-                sur
-                <strong>{{ contenusFiltres.length }}</strong>
-                contenu(s)
-
-            </div>
-
-
-            <nav *ngIf="nombrePages > 1" class="pagination" aria-label="Pagination des contenus éducatifs">
-
-                <!-- PAGE PRÉCÉDENTE -->
-                <button type="button" class="pagination-button pagination-arrow" aria-label="Page précédente"
-                    [disabled]="pageActuelle === 1" (click)="pagePrecedente()">
-
-                    <i class="bi bi-chevron-left"></i>
-
+    <!-- CARTE PRINCIPALE -->
+    <div class="card contenus-card">
+
+        <!-- RECHERCHE ET FILTRES -->
+        <div class="card-header filters-header">
+            <div class="filters-bar">
+
+                <div class="search-wrapper">
+                    <i class="bi bi-search search-icon"></i>
+                    <input id="recherche" type="text" placeholder="Rechercher un titre, auteur..."
+                        [(ngModel)]="recherche" (ngModelChange)="appliquerFiltres()"
+                        aria-label="Rechercher un contenu éducatif">
+                </div>
+
+                <div class="filter-select-wrapper">
+                    <select id="theme" [(ngModel)]="themeSelectionne" (ngModelChange)="appliquerFiltres()"
+                        aria-label="Filtrer par thématique">
+                        <option value="">Toutes les thématiques</option>
+                        <option *ngFor="let theme of themes" [value]="theme">
+                            {{ getLibelleTheme(theme) }}
+                        </option>
+                    </select>
+                </div>
+
+                <div class="filter-select-wrapper">
+                    <select id="format" [(ngModel)]="formatSelectionne" (ngModelChange)="appliquerFiltres()"
+                        aria-label="Filtrer par format">
+                        <option value="">Tous les formats</option>
+                        <option *ngFor="let format of formats" [value]="format">
+                            {{ getLibelleFormat(format) }}
+                        </option>
+                    </select>
+                </div>
+
+                <button type="button" class="btn btn-secondary reset-button" (click)="reinitialiserFiltres()">
+                    <i class="bi bi-arrow-counterclockwise"></i>
+                    <span>Réinitialiser</span>
                 </button>
 
+            </div>
+        </div>
 
-                <!-- NUMÉROS DE PAGE -->
-                <ng-container *ngFor="let page of pagesPagination">
+        <!-- CHARGEMENT -->
+        <div *ngIf="chargement" class="table-state" role="status" aria-live="polite">
+            <i class="bi bi-arrow-repeat loading-icon"></i>
+            <span>Chargement des contenus...</span>
+        </div>
 
-                    <span *ngIf="page === -1" class="pagination-ellipsis">
+        <!-- CONTENU APRÈS CHARGEMENT -->
+        <ng-container *ngIf="!chargement">
 
-                        ...
+            <!-- TABLEAU -->
+            <div *ngIf="contenusFiltres.length > 0" class="table-responsive">
 
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Contenu</th>
+                            <th>Thématique</th>
+                            <th>Format</th>
+                            <th>Média</th>
+                            <th>Auteur</th>
+                            <th>Date</th>
+                            <th class="actions-column">Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr *ngFor="let contenu of contenusPagines">
+
+                            <!-- CONTENU -->
+                            <td>
+                                <div class="content-cell">
+                                    <div class="content-icon">
+                                        <i [class]="getIconeFormat(contenu.format)"></i>
+                                    </div>
+
+                                    <div class="content-title" [title]="contenu.titre">
+                                        {{ contenu.titre }}
+                                    </div>
+                                </div>
+                            </td>
+
+                            <!-- THÉMATIQUE -->
+                            <td>
+                                <span class="theme-badge">
+                                    {{ getLibelleTheme(contenu.theme) }}
+                                </span>
+                            </td>
+
+                            <!-- FORMAT -->
+                            <td>
+                                <span class="format-badge">
+                                    <i [class]="getIconeFormat(contenu.format)"></i>
+                                    {{ getLibelleFormat(contenu.format) }}
+                                </span>
+                            </td>
+
+                            <!-- MÉDIA -->
+                            <td>
+                                <a *ngIf="contenu.mediaUrl" [href]="contenu.mediaUrl" target="_blank"
+                                    rel="noopener noreferrer" class="media-link"
+                                    title="Ouvrir le média dans un nouvel onglet">
+                                    <i class="bi bi-box-arrow-up-right"></i>
+                                    <span>Ouvrir</span>
+                                </a>
+
+                                <span *ngIf="!contenu.mediaUrl" class="text-secondary">
+                                    Indisponible
+                                </span>
+                            </td>
+
+                            <!-- AUTEUR -->
+                            <td>
+                                <span class="author-name">
+                                    {{ contenu.nomAuteur || '—' }}
+                                </span>
+                            </td>
+
+                            <!-- DATE -->
+                            <td>
+                                <div class="date-cell">
+                                    <span>
+                                        {{ contenu.datePublication | date:'dd/MM/yyyy' }}
+                                    </span>
+                                    <small>
+                                        {{ contenu.datePublication | date:'HH:mm' }}
+                                    </small>
+                                </div>
+                            </td>
+
+                            <!-- ACTIONS -->
+                            <td class="actions-column">
+                                <div class="actions">
+                                    <button type="button" class="action-button" title="Modifier"
+                                        aria-label="Modifier le contenu" (click)="modifierContenu(contenu.idContenu)">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+
+                                    <button type="button" class="action-button action-danger" title="Supprimer"
+                                        aria-label="Supprimer le contenu" (click)="ouvrirPopupSuppression(contenu)">
+                                        <i class="bi bi-trash3"></i>
+                                    </button>
+                                </div>
+                            </td>
+
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- ÉTAT VIDE -->
+            <div *ngIf="contenusFiltres.length === 0" class="empty-state">
+
+                <div class="empty-state-content">
+                    <div class="empty-state-icon">
+                        <i class="bi bi-mortarboard"></i>
+                    </div>
+
+                    <p class="empty-state-title">
+                        Aucun contenu trouvé
+                    </p>
+
+                    <span class="empty-state-description">
+                        Aucun contenu éducatif ne correspond aux critères sélectionnés.
                     </span>
 
+                    <button type="button" class="btn btn-primary empty-state-button" (click)="nouveauContenu()">
+                        <i class="bi bi-plus-lg"></i>
+                        <span>Ajouter un contenu</span>
+                    </button>
+                </div>
+            </div>
 
-                    <button *ngIf="page !== -1" type="button" class="pagination-button"
-                        [class.active]="pageActuelle === page" (click)="allerAlaPage(page)">
+            <!-- PIED DU TABLEAU ET PAGINATION -->
+            <div *ngIf="contenusFiltres.length > 0" class="table-footer">
 
-                        {{ page }}
+                <span class="results-count">
+                    Affichage de
+                    <strong>{{ premierElement }}</strong>
+                    à
+                    <strong>{{ dernierElement }}</strong>
+                    sur
+                    <strong>{{ contenusFiltres.length }}</strong>
+                    contenu(s)
+                </span>
 
+                <nav *ngIf="nombrePages > 1" class="pagination" aria-label="Pagination des contenus éducatifs">
+
+                    <button type="button" class="pagination-button" aria-label="Page précédente"
+                        [disabled]="pageActuelle === 1" (click)="pagePrecedente()">
+                        <i class="bi bi-chevron-left"></i>
                     </button>
 
-                </ng-container>
+                    <ng-container *ngFor="let page of pagesPagination">
 
+                        <span *ngIf="page === -1" class="pagination-ellipsis" aria-hidden="true">
+                            ...
+                        </span>
 
-                <!-- PAGE SUIVANTE -->
-                <button type="button" class="pagination-button pagination-arrow" aria-label="Page suivante"
-                    [disabled]="pageActuelle === nombrePages" (click)="pageSuivante()">
+                        <button *ngIf="page !== -1" type="button" class="pagination-button page-number"
+                            [class.active]="pageActuelle === page"
+                            [attr.aria-current]="pageActuelle === page ? 'page' : null"
+                            [attr.aria-label]="'Page ' + page" (click)="allerAlaPage(page)">
+                            {{ page }}
+                        </button>
 
-                    <i class="bi bi-chevron-right"></i>
+                    </ng-container>
 
-                </button>
+                    <button type="button" class="pagination-button" aria-label="Page suivante"
+                        [disabled]="pageActuelle === nombrePages" (click)="pageSuivante()">
+                        <i class="bi bi-chevron-right"></i>
+                    </button>
 
-            </nav>
+                </nav>
+            </div>
 
+        </ng-container>
+    </div>
+</div>
+
+<!-- POPUP DE CONFIRMATION DE SUPPRESSION -->
+<div *ngIf="popupSuppressionVisible" class="delete-modal-overlay" (click)="fermerPopupSuppression()">
+
+    <div class="delete-modal" role="dialog" aria-modal="true" aria-labelledby="delete-modal-title"
+        aria-describedby="delete-modal-description" (click)="$event.stopPropagation()">
+
+        <div class="delete-modal-icon">
+            <i class="bi bi-trash3"></i>
         </div>
 
-    </div>
+        <h2 id="delete-modal-title">
+            Supprimer ce contenu ?
+        </h2>
 
+        <p id="delete-modal-description" class="delete-modal-message">
+
+            Voulez-vous vraiment supprimer
+
+            <strong *ngIf="contenuASupprimer">
+                « {{ contenuASupprimer.titre }} »
+            </strong>
+
+            ? Cette action est définitive.
+        </p>
+
+        <div *ngIf="erreurSuppression" class="delete-modal-error" role="alert">
+            <i class="bi bi-exclamation-circle"></i>
+            <span>{{ erreurSuppression }}</span>
+        </div>
+
+        <div class="delete-modal-actions">
+            <button type="button" class="delete-modal-cancel" [disabled]="suppressionEnCours"
+                (click)="fermerPopupSuppression()">
+                Annuler
+            </button>
+
+            <button type="button" class="delete-modal-confirm" [disabled]="suppressionEnCours || !contenuASupprimer"
+                (click)="confirmerSuppression()">
+
+                <ng-container *ngIf="!suppressionEnCours; else suppressionEnCoursTemplate">
+                    <i class="bi bi-trash3"></i>
+                    <span>Supprimer</span>
+                </ng-container>
+
+                <ng-template #suppressionEnCoursTemplate>
+                    <i class="bi bi-arrow-repeat loading-icon"></i>
+                    <span>Suppression...</span>
+                </ng-template>
+
+            </button>
+        </div>
+    </div>
 </div>

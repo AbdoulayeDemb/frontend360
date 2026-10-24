@@ -1,5 +1,6 @@
 <header class="topbar">
 
+  <!-- BARRE DE RECHERCHE -->
   <div *ngIf="!structureMode" class="topbar-search">
 
     <div class="search-input-wrapper">
@@ -11,20 +12,145 @@
 
       <button *ngIf="searchTerm" type="button" class="search-clear" aria-label="Effacer la recherche"
         (click)="clearSearch()">
+
         <i class="bi bi-x"></i>
+
       </button>
 
     </div>
 
   </div>
 
+  <!-- ACTIONS DU TOPBAR -->
   <div class="topbar-actions">
 
-    <button type="button" class="action-btn" aria-label="Notifications">
-      <i class="bi bi-bell-fill"></i>
-      <span class="notification-badge">3</span>
-    </button>
+    <!-- NOTIFICATIONS -->
+    <div class="notification-wrapper">
 
+      <button type="button" class="action-btn" aria-label="Notifications" [attr.aria-expanded]="notificationsOpen"
+        aria-haspopup="true" (click)="toggleNotifications()">
+
+        <i class="bi bi-bell-fill"></i>
+
+        <!-- Compteur dynamique -->
+        <span *ngIf="nombreNotificationsNonLues > 0" class="notification-badge">
+
+          {{ nombreNotificationsNonLues > 99 ? '99+' : nombreNotificationsNonLues }}
+
+        </span>
+
+      </button>
+
+      <!-- PANNEAU DES NOTIFICATIONS -->
+      <div *ngIf="notificationsOpen" class="notification-panel">
+
+        <!-- EN-TÊTE -->
+        <div class="notification-panel-header">
+
+          <div class="notification-heading">
+            <h3>Notifications</h3>
+
+            <span>
+              {{ nombreNotificationsNonLues }}
+              non lue{{ nombreNotificationsNonLues > 1 ? 's' : '' }}
+            </span>
+          </div>
+
+          <button *ngIf="nombreNotificationsNonLues > 0" type="button" class="mark-all-read"
+            (click)="marquerToutesCommeLues()">
+
+            Tout lire
+
+          </button>
+
+        </div>
+
+        <!-- CHARGEMENT -->
+        <div *ngIf="chargementNotifications" class="notification-state">
+
+          <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true">
+          </span>
+
+          <span>Chargement des notifications...</span>
+
+        </div>
+
+        <!-- ERREUR -->
+        <div *ngIf="!chargementNotifications && erreurNotifications" class="notification-state notification-error"
+          role="alert">
+
+          <i class="bi bi-exclamation-circle"></i>
+
+          <span>{{ erreurNotifications }}</span>
+
+          <button type="button" (click)="chargerNotifications()">
+
+            Réessayer
+
+          </button>
+
+        </div>
+
+        <!-- AUCUNE NOTIFICATION -->
+        <div *ngIf="
+            !chargementNotifications &&
+            !erreurNotifications &&
+            notifications.length === 0
+          " class="notification-state notification-empty">
+
+          <i class="bi bi-bell-slash"></i>
+
+          <p>Aucune notification pour le moment.</p>
+
+        </div>
+
+        <!-- LISTE DES NOTIFICATIONS -->
+        <div *ngIf="
+            !chargementNotifications &&
+            !erreurNotifications &&
+            notifications.length > 0
+          " class="notification-list">
+
+          <button *ngFor="let notification of notifications" type="button" class="notification-item"
+            [class.unread]="!notification.estLue" (click)="cliquerNotification(notification)">
+
+            <!-- ICÔNE SELON LE TYPE -->
+            <span class="notification-icon">
+
+              <i [ngClass]="getNotificationIcon(notification.type)"></i>
+
+            </span>
+
+            <!-- CONTENU -->
+            <span class="notification-content">
+
+              <span class="notification-title">
+                {{ notification.titre }}
+              </span>
+
+              <span class="notification-message">
+                {{ notification.message }}
+              </span>
+
+              <span class="notification-date">
+                {{ formaterDateNotification(notification.dateCreation) }}
+              </span>
+
+            </span>
+
+            <!-- INDICATEUR NON LU -->
+            <span *ngIf="!notification.estLue" class="unread-indicator" aria-label="Non lue">
+            </span>
+
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- PROFIL UTILISATEUR : CONSERVÉ -->
     <div class="user-profile">
 
       <div class="user-avatar">
@@ -40,6 +166,7 @@
         <span class="user-role">
           {{ roleLabel }}
         </span>
+
       </div>
 
     </div>

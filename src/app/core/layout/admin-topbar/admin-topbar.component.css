@@ -1,3 +1,7 @@
+/* ==========================================
+   TOPBAR
+========================================== */
+
 .topbar {
   height: 72px;
   background-color: var(--color-surface);
@@ -8,11 +12,16 @@
   align-items: center;
 
   padding: 0 24px;
-
   gap: 24px;
+
+  position: relative;
+  z-index: 100;
+  box-sizing: border-box;
 }
 
-
+/* ==========================================
+   BARRE DE RECHERCHE
+========================================== */
 
 .topbar-search {
   flex: 1;
@@ -22,37 +31,30 @@
 
 .search-input-wrapper {
   position: relative;
-
   display: flex;
   align-items: center;
-
   width: 100%;
 }
 
 .search-input-wrapper>i {
   position: absolute;
   left: 16px;
-
   color: var(--text-muted);
   font-size: 16px;
-
   pointer-events: none;
   z-index: 1;
 }
 
 .search-input {
   width: 100%;
-
   padding: 10px 42px 10px 40px;
 
   border: 1px solid var(--color-border);
   border-radius: 8px;
 
   background-color: var(--color-background);
-
   font-family: 'Inter', sans-serif;
   font-size: 14px;
-
   color: var(--text-primary);
 
   transition:
@@ -73,18 +75,15 @@
 
 .search-input:focus {
   outline: none;
-
   border-color: var(--color-primary);
   background-color: var(--color-surface);
-
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.08);
 }
 
-/* Bouton X pour effacer la recherche */
+/* Bouton pour effacer la recherche */
 
 .search-clear {
   position: absolute;
-
   right: 8px;
 
   width: 28px;
@@ -95,14 +94,11 @@
   justify-content: center;
 
   padding: 0;
-
   border: none;
   border-radius: 50%;
-
   background: transparent;
 
   color: var(--text-muted);
-
   cursor: pointer;
 
   transition:
@@ -117,21 +113,23 @@
 
 .search-clear i {
   position: static;
-
   font-size: 18px;
 }
 
-
+/* ==========================================
+   ACTIONS DE LA TOPBAR
+========================================== */
 
 .topbar-actions {
   display: flex;
   align-items: center;
   gap: 24px;
-
   flex-shrink: 0;
 }
 
-
+/* ==========================================
+   BOUTONS D'ACTION
+========================================== */
 
 .action-btn {
   position: relative;
@@ -142,7 +140,6 @@
 
   width: 40px;
   height: 40px;
-
   padding: 8px;
 
   background: none;
@@ -150,9 +147,7 @@
   border-radius: 50%;
 
   color: var(--text-secondary);
-
   font-size: 1.25rem;
-
   cursor: pointer;
 
   transition:
@@ -170,50 +165,389 @@
   outline-offset: 2px;
 }
 
+/* ==========================================
+   BADGE DES NOTIFICATIONS NON LUES
+========================================== */
+
 .notification-badge {
   position: absolute;
+  top: 0;
+  right: 0;
 
-  top: 2px;
-  right: 2px;
-
-  width: 16px;
-  height: 16px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
   background-color: var(--color-error);
-
-  color: white;
+  color: #fff;
 
   font-size: 10px;
-  font-weight: 600;
+  font-weight: 700;
+  line-height: 1;
 
-  border-radius: 50%;
-
+  border-radius: 10px;
   border: 2px solid var(--color-surface);
+  box-sizing: border-box;
 
-  box-sizing: content-box;
+  white-space: nowrap;
+  pointer-events: none;
 }
 
+/* ==========================================
+   CONTENEUR DE LA CLOCHE
+========================================== */
 
+.notification-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* ==========================================
+   PANNEAU DES NOTIFICATIONS
+========================================== */
+
+.notification-panel {
+  position: absolute;
+  top: calc(100% + 14px);
+  right: -8px;
+
+  width: 390px;
+  max-width: calc(100vw - 32px);
+  max-height: min(540px, calc(100vh - 110px));
+
+  display: flex;
+  flex-direction: column;
+
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+
+  box-shadow:
+    0 12px 35px rgba(15, 23, 42, 0.13),
+    0 3px 8px rgba(15, 23, 42, 0.05);
+
+  overflow: hidden;
+  z-index: 1000;
+
+  animation: notification-panel-appear 160ms ease-out;
+}
+
+@keyframes notification-panel-appear {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==========================================
+   EN-TÊTE DU PANNEAU
+========================================== */
+
+.notification-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  padding: 18px 18px 15px;
+
+  border-bottom: 1px solid var(--color-border);
+  background-color: var(--color-surface);
+}
+
+.notification-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.notification-heading h3 {
+  margin: 0;
+
+  color: var(--text-primary);
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.notification-heading>span {
+  color: var(--text-secondary);
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+}
+
+/* Bouton Tout lire */
+
+.mark-all-read {
+  flex-shrink: 0;
+
+  padding: 7px 10px;
+
+  border: none;
+  border-radius: 7px;
+  background: transparent;
+
+  color: var(--color-primary);
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition:
+    background-color 150ms ease,
+    color 150ms ease;
+}
+
+.mark-all-read:hover {
+  background-color: var(--color-background);
+  color: var(--text-primary);
+}
+
+.mark-all-read:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* ==========================================
+   LISTE DES NOTIFICATIONS
+========================================== */
+
+.notification-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.notification-list::-webkit-scrollbar {
+  width: 5px;
+}
+
+.notification-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.notification-list::-webkit-scrollbar-thumb {
+  background-color: var(--color-border);
+  border-radius: 10px;
+}
+
+/* ==========================================
+   UNE NOTIFICATION
+========================================== */
+
+.notification-item {
+  position: relative;
+  width: 100%;
+
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+
+  padding: 15px 18px;
+
+  border: none;
+  border-bottom: 1px solid var(--color-border);
+  background-color: var(--color-surface);
+
+  text-align: left;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+
+  transition: background-color 150ms ease;
+}
+
+.notification-item:last-child {
+  border-bottom: none;
+}
+
+.notification-item:hover {
+  background-color: var(--color-background);
+}
+
+.notification-item:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: -2px;
+}
+
+/* Notification non lue */
+
+.notification-item.unread {
+  background-color: rgba(59, 130, 246, 0.045);
+}
+
+.notification-item.unread:hover {
+  background-color: rgba(59, 130, 246, 0.09);
+}
+
+/* Icône de la notification */
+
+.notification-icon {
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 11px;
+  background-color: var(--color-background);
+
+  color: var(--color-primary);
+  font-size: 17px;
+}
+
+.notification-item.unread .notification-icon {
+  background-color: rgba(59, 130, 246, 0.11);
+}
+
+/* Contenu textuel */
+
+.notification-content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 5px;
+
+  min-width: 0;
+  padding-top: 1px;
+}
+
+.notification-title {
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.45;
+
+  overflow-wrap: anywhere;
+}
+
+.notification-message {
+  color: var(--text-secondary);
+  font-size: 12px;
+  line-height: 1.55;
+
+  overflow-wrap: anywhere;
+  white-space: normal;
+
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
+}
+
+.notification-date {
+  margin-top: 3px;
+
+  color: var(--text-muted);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+/* Petit indicateur de notification non lue */
+
+.unread-indicator {
+  width: 8px;
+  height: 8px;
+  min-width: 8px;
+
+  margin-top: 5px;
+
+  border-radius: 50%;
+  background-color: var(--color-primary);
+}
+
+/* ==========================================
+   CHARGEMENT, ERREUR ET ÉTAT VIDE
+========================================== */
+
+.notification-state {
+  min-height: 130px;
+  padding: 24px 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 12px;
+
+  color: var(--text-secondary);
+  text-align: center;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+}
+
+.notification-state p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.notification-state>i {
+  font-size: 27px;
+  color: var(--text-muted);
+}
+
+.notification-state .spinner-border {
+  color: var(--color-primary);
+}
+
+.notification-error {
+  color: var(--color-error);
+}
+
+.notification-error>i {
+  color: var(--color-error);
+}
+
+.notification-error button {
+  padding: 7px 12px;
+
+  border: 1px solid var(--color-border);
+  border-radius: 7px;
+  background-color: var(--color-surface);
+
+  color: var(--text-primary);
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.notification-error button:hover {
+  background-color: var(--color-background);
+}
+
+/* ==========================================
+   PROFIL UTILISATEUR
+========================================== */
 
 .user-profile {
   display: flex;
   align-items: center;
-
   gap: 12px;
 
   cursor: pointer;
-
   min-width: 0;
 }
 
 .user-avatar {
   width: 40px;
   height: 40px;
-
   min-width: 40px;
 
   display: flex;
@@ -221,21 +555,18 @@
   justify-content: center;
 
   background-color: var(--color-accent-cyan);
-
-  color: white;
+  color: #fff;
 
   border-radius: 50%;
 
   font-weight: 600;
   font-family: 'Poppins', sans-serif;
-
   text-transform: uppercase;
 }
 
 .user-info {
   display: flex;
   flex-direction: column;
-
   min-width: 0;
 }
 
@@ -248,21 +579,20 @@
 
   font-weight: 600;
   font-size: 14px;
-
   color: var(--text-primary);
 }
 
 .user-role {
   font-size: 12px;
-
   color: var(--text-secondary);
-
   white-space: nowrap;
 }
 
+/* ==========================================
+   RESPONSIVE : TABLETTES
+========================================== */
 
 @media (max-width: 900px) {
-
   .topbar {
     padding: 0 16px;
     gap: 16px;
@@ -281,13 +611,14 @@
   }
 }
 
-@media (max-width: 600px) {
+/* ==========================================
+   RESPONSIVE : MOBILES
+========================================== */
 
+@media (max-width: 600px) {
   .topbar {
     height: 64px;
-
     padding: 0 12px;
-
     gap: 12px;
   }
 
@@ -297,7 +628,6 @@
 
   .search-input {
     font-size: 13px;
-
     padding-top: 9px;
     padding-bottom: 9px;
   }
@@ -318,10 +648,33 @@
     width: 36px;
     height: 36px;
   }
+
+  .notification-panel {
+    position: fixed;
+
+    top: 72px;
+    right: 10px;
+    left: 10px;
+
+    width: auto;
+    max-width: none;
+    max-height: calc(100dvh - 88px);
+  }
+
+  .notification-panel-header {
+    padding: 15px;
+  }
+
+  .notification-item {
+    padding: 13px 15px;
+  }
 }
 
-@media (max-width: 400px) {
+/* ==========================================
+   PETITS ÉCRANS
+========================================== */
 
+@media (max-width: 400px) {
   .topbar {
     padding: 0 8px;
   }
@@ -334,7 +687,30 @@
   .search-input-wrapper>i {
     left: 13px;
   }
+
+  .notification-panel {
+    top: 68px;
+    right: 8px;
+    left: 8px;
+    max-height: calc(100dvh - 80px);
+    border-radius: 12px;
+  }
+
+  .notification-heading h3 {
+    font-size: 15px;
+  }
+
+  .notification-icon {
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+    font-size: 15px;
+  }
 }
+
+/* ==========================================
+   MODE STRUCTURE
+========================================== */
 
 :host(.structure-mode) .topbar {
   justify-content: flex-end;
