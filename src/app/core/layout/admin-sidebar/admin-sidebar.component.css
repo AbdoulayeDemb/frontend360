@@ -4,7 +4,10 @@
   height: 100%;
   min-height: 0;
   font-family: 'Inter', sans-serif;
+
 }
+
+
 
 .sidebar-header {
   display: flex;
@@ -45,7 +48,7 @@
 }
 
 .sidebar-nav::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(79, 64, 64, 0.12);
   border-radius: 4px;
 }
 
