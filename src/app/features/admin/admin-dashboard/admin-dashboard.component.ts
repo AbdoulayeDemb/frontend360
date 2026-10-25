@@ -1,3 +1,4 @@
+
 import {
   Component,
   OnInit,
@@ -18,24 +19,20 @@ import {
   EnumStatut,
   EnumTypeUrgence
 } from '../../../core/models/enums.model';
-import { SignalementsMapComponent } from '../signalements-map/signalements-map.component';
 
+import { SignalementsMapComponent } from '../signalements-map/signalements-map.component';
 
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-
   imports: [
     CommonModule,
     SignalementsMapComponent
   ],
-
   templateUrl: './admin-dashboard.component.html',
   styleUrl: './admin-dashboard.component.css'
 })
-export class AdminDashboardComponent
-  implements OnInit, OnDestroy {
-
+export class AdminDashboardComponent implements OnInit, OnDestroy {
 
   // =========================================================
   // SERVICES
@@ -50,13 +47,11 @@ export class AdminDashboardComponent
   private readonly router =
     inject(Router);
 
-
   // =========================================================
   // ABONNEMENT RECHERCHE
   // =========================================================
 
   private searchSubscription?: Subscription;
-
 
   // =========================================================
   // DONNÉES
@@ -71,13 +66,11 @@ export class AdminDashboardComponent
    */
   filteredSignalements: Signalement[] = [];
 
-
   // =========================================================
   // RECHERCHE
   // =========================================================
 
   searchTerm = '';
-
 
   // =========================================================
   // STATISTIQUES
@@ -91,7 +84,6 @@ export class AdminDashboardComponent
     rejetes: 0
   };
 
-
   // =========================================================
   // ÉTAT
   // =========================================================
@@ -100,278 +92,222 @@ export class AdminDashboardComponent
 
   errorMessage = '';
 
-
   // =========================================================
   // ENUMS ACCESSIBLES AU TEMPLATE
   // =========================================================
 
-  readonly EnumStatut =
-    EnumStatut;
+  readonly EnumStatut = EnumStatut;
 
-  readonly EnumTypeUrgence =
-    EnumTypeUrgence;
-
+  readonly EnumTypeUrgence = EnumTypeUrgence;
 
   // =========================================================
   // INITIALISATION
   // =========================================================
 
   ngOnInit(): void {
-
     this.loadDashboard();
 
     this.searchSubscription =
-      this.adminSearchService.search$
-        .subscribe(searchTerm => {
-
-          this.searchTerm =
-            searchTerm;
-
+      this.adminSearchService.search$.subscribe({
+        next: (searchTerm) => {
+          this.searchTerm = searchTerm ?? '';
           this.applySearch();
-        });
+        },
+        error: (error) => {
+          console.error(
+            'Erreur lors de la réception de la recherche :',
+            error
+          );
+        }
+      });
   }
-
 
   // =========================================================
   // DESTRUCTION
   // =========================================================
 
   ngOnDestroy(): void {
-
     this.searchSubscription?.unsubscribe();
   }
 
-
   // =========================================================
-  // CHARGEMENT
+  // CHARGEMENT DU DASHBOARD
   // =========================================================
 
   loadDashboard(): void {
-
     this.isLoading = true;
-
     this.errorMessage = '';
 
-    this.signalementService
-      .getAll()
-      .subscribe({
+    this.signalementService.getAll().subscribe({
+      next: (signalements: Signalement[]) => {
+        this.signalements = signalements ?? [];
 
-        next: (signalements) => {
+        // Les statistiques portent sur tous les signalements,
+        // indépendamment du terme de recherche.
+        this.calculateStats();
 
-          this.signalements =
-            signalements;
+        // La recherche ne filtre que les éléments affichés.
+        this.applySearch();
 
-          this.calculateStats();
+        this.isLoading = false;
+      },
 
-          this.applySearch();
+      error: (error) => {
+        console.error(
+          'Erreur lors du chargement du dashboard :',
+          error
+        );
 
-          this.isLoading = false;
-        },
+        this.errorMessage =
+          'Impossible de charger les données du dashboard.';
 
-        error: (error) => {
+        this.signalements = [];
+        this.filteredSignalements = [];
+        this.recentSignalements = [];
 
-          console.error(
-            'Erreur lors du chargement du dashboard :',
-            error
-          );
+        this.stats = {
+          total: 0,
+          declares: 0,
+          enCours: 0,
+          resolus: 0,
+          rejetes: 0
+        };
 
-          this.errorMessage =
-            'Impossible de charger les données du dashboard.';
-
-          this.isLoading = false;
-        }
-
-      });
+        this.isLoading = false;
+      }
+    });
   }
-
 
   // =========================================================
   // RECHERCHE
   // =========================================================
 
   /**
-   * Filtre les signalements selon
-   * le terme provenant du Topbar.
+   * Filtre les signalements selon le terme provenant du Topbar.
    */
   private applySearch(): void {
+    const search = this.searchTerm.trim().toLowerCase();
 
-    const search =
-      this.searchTerm
-        .trim()
-        .toLowerCase();
-
-
-    // ---------------------------------------------------------
-    // Aucune recherche
-    // ---------------------------------------------------------
-
+    // Aucune recherche : afficher tous les signalements.
     if (!search) {
-
       this.filteredSignalements = [
         ...this.signalements
       ];
-
-    }
-
-    // ---------------------------------------------------------
-    // Recherche active
-    // ---------------------------------------------------------
-
-    else {
-
+    } else {
+      // Recherche par code, catégorie, citoyen,
+      // structure, description ou repère visuel.
       this.filteredSignalements =
-        this.signalements.filter(
-          signalement => {
+        this.signalements.filter((signalement) => {
+          const code =
+            signalement.codeTrackingUnique?.toLowerCase() ?? '';
 
-            const code =
-              signalement.codeTrackingUnique
-                ?.toLowerCase() || '';
+          const categorie =
+            signalement.nomCategorie?.toLowerCase() ?? '';
 
-            const categorie =
-              signalement.nomCategorie
-                ?.toLowerCase() || '';
+          const citoyen =
+            signalement.citoyenNomComplet?.toLowerCase() ?? '';
 
-            const citoyen =
-              signalement.citoyenNomComplet
-                ?.toLowerCase() || '';
+          const structure =
+            signalement.nomStructureAssignee?.toLowerCase() ?? '';
 
-            const structure =
-              signalement.nomStructureAssignee
-                ?.toLowerCase() || '';
+          const description =
+            signalement.description?.toLowerCase() ?? '';
 
-            const description =
-              signalement.description
-                ?.toLowerCase() || '';
+          const repere =
+            signalement.repereVisuel?.toLowerCase() ?? '';
 
-            const repere =
-              signalement.repereVisuel
-                ?.toLowerCase() || '';
-
-
-            return (
-
-              code.includes(search) ||
-
-              categorie.includes(search) ||
-
-              citoyen.includes(search) ||
-
-              structure.includes(search) ||
-
-              description.includes(search) ||
-
-              repere.includes(search)
-
-            );
-          }
-        );
+          return (
+            code.includes(search) ||
+            categorie.includes(search) ||
+            citoyen.includes(search) ||
+            structure.includes(search) ||
+            description.includes(search) ||
+            repere.includes(search)
+          );
+        });
     }
 
-
-    // ---------------------------------------------------------
-    // Mise à jour des signalements récents
-    // ---------------------------------------------------------
-
+    // Actualiser les cinq signalements les plus récents.
     this.loadRecentSignalements();
   }
-
 
   // =========================================================
   // CALCUL DES STATISTIQUES
   // =========================================================
 
   private calculateStats(): void {
-
-    this.stats.total =
-      this.signalements.length;
+    this.stats.total = this.signalements.length;
 
     this.stats.declares =
-      this.countByStatut(
-        EnumStatut.DECLARE
-      );
+      this.countByStatut(EnumStatut.DECLARE);
 
     this.stats.enCours =
-      this.countByStatut(
-        EnumStatut.EN_COURS
-      );
+      this.countByStatut(EnumStatut.EN_COURS);
 
     this.stats.resolus =
-      this.countByStatut(
-        EnumStatut.RESOLU
-      );
+      this.countByStatut(EnumStatut.RESOLU);
 
     this.stats.rejetes =
-      this.countByStatut(
-        EnumStatut.REJETE
-      );
+      this.countByStatut(EnumStatut.REJETE);
   }
 
-
-  private countByStatut(
-    statut: EnumStatut
-  ): number {
-
+  private countByStatut(statut: EnumStatut): number {
     return this.signalements.filter(
-      signalement =>
-        signalement.statut === statut
+      signalement => signalement.statut === statut
     ).length;
   }
-
 
   // =========================================================
   // SIGNALEMENTS RÉCENTS
   // =========================================================
 
   private loadRecentSignalements(): void {
-
     this.recentSignalements =
       [...this.filteredSignalements]
-        .sort(
-          (a, b) =>
-            new Date(
-              b.dateHeureAlerte
-            ).getTime() -
-            new Date(
-              a.dateHeureAlerte
-            ).getTime()
-        )
+        .sort((a, b) => {
+          const dateA =
+            new Date(a.dateHeureAlerte).getTime();
+
+          const dateB =
+            new Date(b.dateHeureAlerte).getTime();
+
+          // Les dates invalides sont placées après les dates valides.
+          if (Number.isNaN(dateA)) {
+            return Number.isNaN(dateB) ? 0 : 1;
+          }
+
+          if (Number.isNaN(dateB)) {
+            return -1;
+          }
+
+          return dateB - dateA;
+        })
         .slice(0, 5);
   }
-
 
   // =========================================================
   // NAVIGATION
   // =========================================================
 
-  voirDetail(
-    idSignalement: number
-  ): void {
-
+  voirDetail(idSignalement: number): void {
     this.router.navigate([
       '/admin/signalements',
       idSignalement
     ]);
   }
 
-
   voirTousLesSignalements(): void {
-
     this.router.navigate([
       '/admin/signalements'
     ]);
   }
 
-
   // =========================================================
   // LABELS STATUT
   // =========================================================
 
-  getStatutLabel(
-    statut: EnumStatut
-  ): string {
-
+  getStatutLabel(statut: EnumStatut): string {
     switch (statut) {
-
       case EnumStatut.DECLARE:
         return 'Déclaré';
 
@@ -389,11 +325,8 @@ export class AdminDashboardComponent
     }
   }
 
-
   getStatutClass(statut: EnumStatut): string {
-
     switch (statut) {
-
       case EnumStatut.DECLARE:
         return 'badge-blue';
 
@@ -411,17 +344,12 @@ export class AdminDashboardComponent
     }
   }
 
-
   // =========================================================
   // LABELS URGENCE
   // =========================================================
 
-  getUrgenceLabel(
-    urgence: EnumTypeUrgence
-  ): string {
-
+  getUrgenceLabel(urgence: EnumTypeUrgence): string {
     switch (urgence) {
-
       case EnumTypeUrgence.FAIBLE:
         return 'Faible';
 
@@ -439,13 +367,8 @@ export class AdminDashboardComponent
     }
   }
 
-
-  getUrgenceClass(
-    urgence: EnumTypeUrgence
-  ): string {
-
+  getUrgenceClass(urgence: EnumTypeUrgence): string {
     switch (urgence) {
-
       case EnumTypeUrgence.CRITIQUE:
       case EnumTypeUrgence.ELEVEE:
         return 'badge-danger';
@@ -461,111 +384,63 @@ export class AdminDashboardComponent
     }
   }
 
-
   // =========================================================
-  // DATE
+  // FORMATAGE DES DATES
   // =========================================================
 
-  formatDate(
-    date: string
-  ): string {
-
+  formatDate(date: string): string {
     if (!date) {
       return '-';
     }
 
-    const parsedDate =
-      new Date(date);
+    const parsedDate = new Date(date);
 
-    if (
-      isNaN(
-        parsedDate.getTime()
-      )
-    ) {
+    if (Number.isNaN(parsedDate.getTime())) {
       return date;
     }
 
-    return parsedDate.toLocaleDateString(
-      'fr-FR',
-      {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-      }
-    );
+    return parsedDate.toLocaleDateString('fr-FR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
   }
 
-
-  formatDateRelative(
-    date: string
-  ): string {
-
+  formatDateRelative(date: string): string {
     if (!date) {
       return '-';
     }
 
-    const parsedDate =
-      new Date(date);
+    const parsedDate = new Date(date);
 
-    if (
-      isNaN(
-        parsedDate.getTime()
-      )
-    ) {
+    if (Number.isNaN(parsedDate.getTime())) {
       return date;
     }
 
-    const now =
-      new Date().getTime();
-
-    const timestamp =
-      parsedDate.getTime();
-
     const difference =
-      now - timestamp;
+      Date.now() - parsedDate.getTime();
 
-
-    const minute =
-      60 * 1000;
-
-    const hour =
-      60 * minute;
-
-    const day =
-      24 * hour;
-
+    const minute = 60 * 1000;
+    const hour = 60 * minute;
+    const day = 24 * hour;
 
     if (difference < minute) {
       return 'À l’instant';
     }
 
-
     if (difference < hour) {
-
-      const minutes =
-        Math.floor(
-          difference / minute
-        );
-
+      const minutes = Math.floor(difference / minute);
       return `Il y a ${minutes} min`;
     }
 
-
     if (difference < day) {
-
-      const hours =
-        Math.floor(
-          difference / hour
-        );
-
+      const hours = Math.floor(difference / hour);
       return `Il y a ${hours}h`;
     }
-
 
     if (difference < 2 * day) {
       return 'Hier';
     }
-
 
     return this.formatDate(date);
   }

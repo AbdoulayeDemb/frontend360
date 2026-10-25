@@ -43,6 +43,15 @@ export class ActualitesManagementComponent implements OnInit {
 
 
     // ==========================================
+    // POPUP DE CONFIRMATION DE SUPPRESSION
+    // ==========================================
+
+    showDeletePopup = false;
+
+    actualiteASupprimer: ActualiteResponseDto | null = null;
+
+
+    // ==========================================
     // PAGINATION
     // ==========================================
 
@@ -118,21 +127,6 @@ export class ActualitesManagementComponent implements OnInit {
 
     /**
      * Génère les numéros de pages visibles.
-     *
-     * Exemple :
-     *
-     * 1 2 3 4 5
-     *
-     * ou :
-     *
-     * 1 2 3 4 ... 10
-     *
-     * ou :
-     *
-     * 1 ... 5 6 7 ... 10
-     *
-     * Cela permet d'éviter une longue liste
-     * de boutons lorsque beaucoup d'actualités existent.
      */
     get visiblePages(): number[] {
 
@@ -203,10 +197,6 @@ export class ActualitesManagementComponent implements OnInit {
         }
 
 
-        // Dernière page
-        pages.push(total);
-
-
         // Suppression des éventuels doublons
         return [
             ...new Set(pages)
@@ -268,9 +258,6 @@ export class ActualitesManagementComponent implements OnInit {
 
     /**
      * Réinitialiser la pagination.
-     *
-     * Utilisé après une recherche,
-     * un filtre ou une suppression.
      */
     resetPagination(): void {
 
@@ -458,40 +445,74 @@ export class ActualitesManagementComponent implements OnInit {
     // SUPPRESSION
     // ==========================================
 
-    supprimerActualite(
+    /**
+     * Ouvrir la popup de confirmation.
+     * Aucune suppression n'est effectuée ici.
+     */
+    confirmerSuppression(
         actualite: ActualiteResponseDto
     ): void {
 
-        const confirmation =
-            window.confirm(
-                `Voulez - vous vraiment supprimer l'actualité "${actualite.titre}" ?`
-            );
+        this.actualiteASupprimer = actualite;
+
+        this.showDeletePopup = true;
+
+    }
 
 
-        if (!confirmation) {
+    /**
+     * Fermer la popup sans supprimer l'actualité.
+     */
+    annulerSuppression(): void {
+
+        this.showDeletePopup = false;
+
+        this.actualiteASupprimer = null;
+
+    }
+
+
+    /**
+     * Supprimer l'actualité après confirmation.
+     */
+    supprimerActualite(): void {
+
+        if (
+            !this.actualiteASupprimer ||
+            this.isLoading
+        ) {
 
             return;
 
         }
 
 
+        const idActualite =
+            this.actualiteASupprimer.idActualite;
+
+
         this.actualiteService
-            .supprimerActualite(
-                actualite.idActualite
-            )
+            .supprimerActualite(idActualite)
             .subscribe({
 
                 next: () => {
 
+                    // Retirer l'actualité supprimée
+                    // de la liste complète.
                     this.actualites =
                         this.actualites.filter(
-                            a =>
-                                a.idActualite !==
-                                actualite.idActualite
+                            actualite =>
+                                actualite.idActualite !== idActualite
                         );
 
 
+                    // Réappliquer les filtres
+                    // et réinitialiser la pagination.
                     this.applyFilters();
+
+
+                    // Fermer la popup.
+                    this.annulerSuppression();
 
                 },
 
@@ -505,6 +526,8 @@ export class ActualitesManagementComponent implements OnInit {
 
                     this.errorMessage =
                         'Impossible de supprimer cette actualité.';
+
+                    this.annulerSuppression();
 
                 }
 

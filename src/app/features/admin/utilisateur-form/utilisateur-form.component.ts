@@ -1,3 +1,4 @@
+
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
@@ -53,6 +54,14 @@ export class UtilisateurFormComponent implements OnInit {
 
     errorMessage = '';
     successMessage = '';
+
+    // ==========================================
+    // POPUP DE SUCCÈS
+    // ==========================================
+
+    notificationVisible = false;
+    notificationTitre = '';
+    notificationMessage = '';
 
     readonly roles = [
         {
@@ -387,9 +396,11 @@ export class UtilisateurFormComponent implements OnInit {
                         this.successMessage =
                             'Utilisateur modifié avec succès.';
 
-                        setTimeout(() => {
-                            this.retourListe();
-                        }, 700);
+                        // AJOUT : afficher le popup après la modification
+                        this.afficherNotification(
+                            'Modification réussie !',
+                            'Les informations de l’utilisateur ont été modifiées avec succès.'
+                        );
                     },
 
                     error: (error) => {
@@ -425,9 +436,11 @@ export class UtilisateurFormComponent implements OnInit {
                         this.successMessage =
                             'Utilisateur créé avec succès.';
 
-                        setTimeout(() => {
-                            this.retourListe();
-                        }, 700);
+                        // AJOUT : afficher le popup après la création
+                        this.afficherNotification(
+                            'Création réussie !',
+                            'Le nouvel utilisateur a été enregistré avec succès.'
+                        );
                     },
 
                     error: (error) => {
@@ -447,6 +460,33 @@ export class UtilisateurFormComponent implements OnInit {
                     }
                 });
         }
+    }
+
+    /**
+     * Affiche le popup de succès.
+     */
+    private afficherNotification(
+        titre: string,
+        message: string
+    ): void {
+
+        this.notificationTitre = titre;
+        this.notificationMessage = message;
+        this.notificationVisible = true;
+    }
+
+    /**
+     * Ferme le popup et retourne à la liste des utilisateurs.
+     */
+    fermerNotification(): void {
+
+        if (!this.notificationVisible) {
+            return;
+        }
+
+        this.notificationVisible = false;
+
+        this.retourListe();
     }
 
     /**

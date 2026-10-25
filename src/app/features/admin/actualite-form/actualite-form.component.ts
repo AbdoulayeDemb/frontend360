@@ -32,14 +32,11 @@ export class ActualiteFormComponent implements OnInit {
 
     private readonly fb = inject(FormBuilder);
 
-    private readonly actualiteService =
-        inject(ActualiteService);
+    private readonly actualiteService = inject(ActualiteService);
 
-    private readonly route =
-        inject(ActivatedRoute);
+    private readonly route = inject(ActivatedRoute);
 
-    private readonly router =
-        inject(Router);
+    private readonly router = inject(Router);
 
     actualiteForm!: FormGroup;
 
@@ -55,10 +52,22 @@ export class ActualiteFormComponent implements OnInit {
 
     successMessage = '';
 
+    // ==========================================
+    // NOTIFICATION DE SUCCÈS
+    // ==========================================
+
+    notificationVisible = false;
+
+    notificationTitre = '';
+
+    notificationMessage = '';
+
+    // ==========================================
+    // INITIALISATION
+    // ==========================================
+
     ngOnInit(): void {
-
         this.initialiserForm();
-
         this.detecterMode();
     }
 
@@ -67,75 +76,60 @@ export class ActualiteFormComponent implements OnInit {
     // ==========================================
 
     initialiserForm(): void {
+        this.actualiteForm = this.fb.group({
 
-        this.actualiteForm =
-            this.fb.group({
-
-                titre: [
-                    '',
-                    [
-                        Validators.required,
-                        Validators.minLength(3),
-                        Validators.maxLength(200)
-                    ]
-                ],
-
-                communeCible: [
-                    ''
-                ],
-
-                corpsTexte: [
-                    '',
-                    [
-                        Validators.required,
-                        Validators.minLength(10)
-                    ]
-                ],
-
-                estUrgent: [
-                    false,
-                    Validators.required
+            titre: [
+                '',
+                [
+                    Validators.required,
+                    Validators.minLength(3),
+                    Validators.maxLength(200)
                 ]
+            ],
 
-            });
+            communeCible: [''],
+
+            corpsTexte: [
+                '',
+                [
+                    Validators.required,
+                    Validators.minLength(10)
+                ]
+            ],
+
+            estUrgent: [false],
+
+            imageUrl: [
+                '',
+                [Validators.pattern(/^https?:\/\/.+/i)]
+            ]
+
+        });
     }
 
     // ==========================================
-    // DETECTION CREATION / MODIFICATION
+    // DÉTECTION CRÉATION / MODIFICATION
     // ==========================================
 
     detecterMode(): void {
-
-        const id =
-            this.route.snapshot.paramMap.get('id');
+        const id = this.route.snapshot.paramMap.get('id');
 
         if (id) {
-
             this.actualiteId = Number(id);
-
             this.isEditMode = true;
 
-            this.chargerActualite(
-                this.actualiteId
-            );
-
+            this.chargerActualite(this.actualiteId);
         } else {
-
             this.isEditMode = false;
-
         }
     }
 
     // ==========================================
-    // CHARGER ACTUALITE
+    // CHARGEMENT D'UNE ACTUALITÉ
     // ==========================================
 
-    chargerActualite(
-        idActualite: number
-    ): void {
-
+    chargerActualite(idActualite: number): void {
         this.isLoading = true;
-
         this.errorMessage = '';
 
         this.actualiteService
@@ -143,16 +137,11 @@ export class ActualiteFormComponent implements OnInit {
             .subscribe({
 
                 next: (actualite) => {
-
-                    this.remplirFormulaire(
-                        actualite
-                    );
-
+                    this.remplirFormulaire(actualite);
                     this.isLoading = false;
                 },
 
                 error: (error) => {
-
                     console.error(
                         'Erreur lors du chargement de l’actualité :',
                         error
@@ -171,23 +160,18 @@ export class ActualiteFormComponent implements OnInit {
     // REMPLIR LE FORMULAIRE
     // ==========================================
 
-    remplirFormulaire(
-        actualite: ActualiteResponseDto
-    ): void {
-
+    remplirFormulaire(actualite: ActualiteResponseDto): void {
         this.actualiteForm.patchValue({
 
-            titre:
-                actualite.titre,
+            titre: actualite.titre,
 
-            communeCible:
-                actualite.communeCible || '',
+            communeCible: actualite.communeCible || '',
 
-            corpsTexte:
-                actualite.corpsTexte,
+            corpsTexte: actualite.corpsTexte,
 
-            estUrgent:
-                actualite.estUrgent
+            estUrgent: actualite.estUrgent,
+
+            imageUrl: actualite.imageUrl || ''
 
         });
     }
@@ -196,23 +180,23 @@ export class ActualiteFormComponent implements OnInit {
     // VALIDATION DES CHAMPS
     // ==========================================
 
-    isInvalid(
-        controlName: string
-    ): boolean {
-
-        const control =
-            this.actualiteForm.get(
-                controlName
-            );
+    isInvalid(controlName: string): boolean {
+        const control = this.actualiteForm.get(controlName);
 
         return !!(
             control &&
             control.invalid &&
-            (
-                control.dirty ||
-                control.touched
-            )
+            (control.dirty || control.touched)
         );
+    }
+
+    // ==========================================
+    // APERÇU DE L'IMAGE
+    // ==========================================
+
+    onImagePreviewError(): void {
+        this.errorMessage =
+            'Impossible de charger l’aperçu. Vérifiez que l’URL de l’image est publique et correcte.';
     }
 
     // ==========================================
@@ -220,38 +204,33 @@ export class ActualiteFormComponent implements OnInit {
     // ==========================================
 
     enregistrer(): void {
-
         this.errorMessage = '';
-
         this.successMessage = '';
 
         if (this.actualiteForm.invalid) {
-
             this.actualiteForm.markAllAsTouched();
-
             return;
         }
 
         this.isSubmitting = true;
 
-        const formValue =
-            this.actualiteForm.value;
+        const formValue = this.actualiteForm.getRawValue();
 
         const dto: ActualiteRequestDto = {
 
-            titre:
-                formValue.titre.trim(),
+            titre: formValue.titre.trim(),
 
-            corpsTexte:
-                formValue.corpsTexte.trim(),
+            corpsTexte: formValue.corpsTexte.trim(),
 
-            communeCible:
-                this.normaliserValeur(
-                    formValue.communeCible
-                ),
+            communeCible: this.normaliserValeur(
+                formValue.communeCible
+            ),
 
-            estUrgent:
-                Boolean(formValue.estUrgent)
+            estUrgent: Boolean(formValue.estUrgent),
+
+            imageUrl: this.normaliserValeur(
+                formValue.imageUrl
+            ) ?? null
 
         };
 
@@ -259,94 +238,105 @@ export class ActualiteFormComponent implements OnInit {
         // MODIFICATION
         // ======================================
 
-        if (
-            this.isEditMode &&
-            this.actualiteId !== null
-        ) {
+        if (this.isEditMode && this.actualiteId !== null) {
 
             this.actualiteService
-                .modifierActualite(
-                    this.actualiteId,
-                    dto
-                )
+                .modifierActualite(this.actualiteId, dto)
                 .subscribe({
 
                     next: () => {
-
                         this.isSubmitting = false;
 
                         this.successMessage =
                             'Actualité modifiée avec succès.';
 
-                        setTimeout(() => {
-
-                            this.retourListe();
-
-                        }, 700);
+                        this.afficherNotification(
+                            'Modification réussie !',
+                            'Les modifications de cette actualité ont été enregistrées avec succès.'
+                        );
                     },
 
                     error: (error) => {
-
                         console.error(
                             'Erreur lors de la modification :',
                             error
                         );
 
-                        this.errorMessage =
-                            this.extraireMessageErreur(
-                                error,
-                                'Impossible de modifier cette actualité.'
-                            );
+                        this.errorMessage = this.extraireMessageErreur(
+                            error,
+                            'Impossible de modifier cette actualité.'
+                        );
 
                         this.isSubmitting = false;
                     }
 
                 });
 
-        }
+        } else {
 
-        // ======================================
-        // CREATION
-        // ======================================
-
-        else {
+            // ======================================
+            // CRÉATION
+            // ======================================
 
             this.actualiteService
                 .creerActualite(dto)
                 .subscribe({
 
                     next: () => {
-
                         this.isSubmitting = false;
 
                         this.successMessage =
                             'Actualité publiée avec succès.';
 
-                        setTimeout(() => {
-
-                            this.retourListe();
-
-                        }, 700);
+                        this.afficherNotification(
+                            'Publication réussie !',
+                            'Votre actualité a été publiée avec succès.'
+                        );
                     },
 
                     error: (error) => {
-
                         console.error(
                             'Erreur lors de la création :',
                             error
                         );
 
-                        this.errorMessage =
-                            this.extraireMessageErreur(
-                                error,
-                                'Impossible de publier cette actualité.'
-                            );
+                        this.errorMessage = this.extraireMessageErreur(
+                            error,
+                            'Impossible de publier cette actualité.'
+                        );
 
                         this.isSubmitting = false;
                     }
 
                 });
+
         }
+    }
+
+    // ==========================================
+    // AFFICHER LA NOTIFICATION DE SUCCÈS
+    // ==========================================
+
+    private afficherNotification(
+        titre: string,
+        message: string
+    ): void {
+        this.notificationTitre = titre;
+        this.notificationMessage = message;
+        this.notificationVisible = true;
+    }
+
+    // ==========================================
+    // FERMER LA POPUP ET RETOURNER À LA LISTE
+    // ==========================================
+
+    fermerNotification(): void {
+        if (!this.notificationVisible) {
+            return;
+        }
+
+        this.notificationVisible = false;
+        this.retourListe();
     }
 
     // ==========================================
@@ -357,10 +347,7 @@ export class ActualiteFormComponent implements OnInit {
         valeur: string | null | undefined
     ): string | undefined {
 
-        if (
-            !valeur ||
-            !valeur.trim()
-        ) {
+        if (!valeur || !valeur.trim()) {
             return undefined;
         }
 
@@ -368,7 +355,7 @@ export class ActualiteFormComponent implements OnInit {
     }
 
     // ==========================================
-    // MESSAGE ERREUR
+    // MESSAGE D'ERREUR
     // ==========================================
 
     private extraireMessageErreur(
@@ -377,19 +364,14 @@ export class ActualiteFormComponent implements OnInit {
     ): string {
 
         if (error?.error?.message) {
-
             return error.error.message;
         }
 
         if (error?.error?.error) {
-
             return error.error.error;
         }
 
-        if (
-            typeof error?.error === 'string'
-        ) {
-
+        if (typeof error?.error === 'string') {
             return error.error;
         }
 
@@ -397,13 +379,11 @@ export class ActualiteFormComponent implements OnInit {
     }
 
     // ==========================================
-    // RETOUR LISTE
+    // RETOUR À LA LISTE
     // ==========================================
 
     retourListe(): void {
-
-        this.router.navigate([
-            '/admin/actualites'
-        ]);
+        this.router.navigate(['/admin/actualites']);
     }
+
 }

@@ -1,10 +1,9 @@
 <div class="page-container">
 
-
+    <!-- En-tête de la page -->
     <div class="page-header">
 
         <div class="page-heading">
-
             <h1 class="page-title">
                 Actualités
             </h1>
@@ -12,46 +11,37 @@
             <p class="page-subtitle">
                 Gérez les actualités et informations publiées par Alert360
             </p>
-
         </div>
 
         <div class="header-actions">
-
             <button type="button" class="btn btn-primary" (click)="ajouterActualite()">
-
                 <i class="bi bi-megaphone"></i>
 
                 <span>
                     Publier une actualité
                 </span>
-
             </button>
-
         </div>
 
     </div>
 
-
+    <!-- Carte principale -->
     <div class="card actualites-card">
 
+        <!-- Recherche et filtres -->
         <div class="card-header filters-header">
 
             <div class="filters-bar">
 
                 <div class="search-wrapper">
-
                     <i class="bi bi-search search-icon"></i>
 
                     <input type="text" placeholder="Rechercher une actualité..." [value]="searchTerm"
                         (input)="onSearch($event)" />
-
                 </div>
 
-
                 <div class="filter-select-wrapper">
-
                     <select [value]="selectedUrgence" (change)="onUrgenceChange($event)">
-
                         <option value="">
                             Toutes les actualités
                         </option>
@@ -63,20 +53,18 @@
                         <option value="normal">
                             Non urgentes
                         </option>
-
                     </select>
-
                 </div>
 
             </div>
 
         </div>
 
-
+        <!-- Contenu du tableau -->
         <div class="table-section">
 
+            <!-- Chargement -->
             @if (isLoading) {
-
             <div class="table-state">
 
                 <i class="bi bi-arrow-repeat loading-icon"></i>
@@ -86,18 +74,14 @@
                 </span>
 
             </div>
-
             }
 
-
+            <!-- Erreur -->
             @if (!isLoading && errorMessage) {
-
             <div class="table-state table-state-error">
 
                 <div class="state-icon">
-
                     <i class="bi bi-exclamation-circle"></i>
-
                 </div>
 
                 <p>
@@ -105,10 +89,9 @@
                 </p>
 
             </div>
-
             }
 
-
+            <!-- Tableau des actualités -->
             @if (!isLoading && !errorMessage) {
 
             <div class="table-responsive">
@@ -116,37 +99,16 @@
                 <table>
 
                     <thead>
-
                         <tr>
-
-                            <th>
-                                Actualité
-                            </th>
-
-                            <th>
-                                Commune cible
-                            </th>
-
-                            <th>
-                                Urgence
-                            </th>
-
-                            <th>
-                                Auteur
-                            </th>
-
-                            <th>
-                                Date
-                            </th>
-
-                            <th class="actions-column">
-                                Actions
-                            </th>
-
+                            <th>Image</th>
+                            <th>Actualité</th>
+                            <th>Commune cible</th>
+                            <th>Urgence</th>
+                            <th>Auteur</th>
+                            <th>Date</th>
+                            <th class="actions-column">Actions</th>
                         </tr>
-
                     </thead>
-
 
                     <tbody>
 
@@ -157,8 +119,28 @@
 
                         <tr>
 
+                            <!-- Image de l'actualité -->
                             <td>
+                                <div class="actualite-image-wrapper">
 
+                                    @if (actualite.imageUrl) {
+
+                                    <img [src]="actualite.imageUrl" [alt]="'Image de ' + actualite.titre"
+                                        class="actualite-thumbnail" loading="lazy" />
+
+                                    } @else {
+
+                                    <div class="actualite-image-placeholder" title="Aucune image disponible">
+                                        <i class="bi bi-image"></i>
+                                    </div>
+
+                                    }
+
+                                </div>
+                            </td>
+
+                            <!-- Titre et aperçu -->
+                            <td>
                                 <div class="actualite-content">
 
                                     <div class="actualite-title">
@@ -170,17 +152,14 @@
                                     </div>
 
                                 </div>
-
                             </td>
 
-
+                            <!-- Commune cible -->
                             <td class="text-secondary">
-
                                 {{ actualite.communeCible || '-' }}
-
                             </td>
 
-
+                            <!-- Niveau d'urgence -->
                             <td>
 
                                 @if (actualite.estUrgent) {
@@ -199,18 +178,15 @@
 
                             </td>
 
-
+                            <!-- Auteur -->
                             <td>
-
                                 <span class="author-name">
                                     {{ getAuteur(actualite) }}
                                 </span>
-
                             </td>
 
-
+                            <!-- Date et heure de publication -->
                             <td>
-
                                 <div class="date-cell">
 
                                     <span>
@@ -222,28 +198,24 @@
                                     </small>
 
                                 </div>
-
                             </td>
 
-
+                            <!-- Actions -->
                             <td class="actions-column">
 
                                 <div class="actions">
 
+                                    <!-- Modifier -->
                                     <button type="button" class="action-button" title="Modifier"
                                         aria-label="Modifier l'actualité"
                                         (click)="modifierActualite(actualite.idActualite)">
-
                                         <i class="bi bi-pencil"></i>
-
                                     </button>
 
-
+                                    <!-- Ouvrir la popup de suppression -->
                                     <button type="button" class="action-button action-danger" title="Supprimer"
-                                        aria-label="Supprimer l'actualité" (click)="supprimerActualite(actualite)">
-
+                                        aria-label="Supprimer l'actualité" (click)="confirmerSuppression(actualite)">
                                         <i class="bi bi-trash3"></i>
-
                                     </button>
 
                                 </div>
@@ -254,19 +226,16 @@
 
                         }
 
-
+                        <!-- Aucun résultat -->
                         @if (filteredActualites.length === 0) {
 
                         <tr>
-
-                            <td colspan="6" class="empty-state">
+                            <td colspan="7" class="empty-state">
 
                                 <div class="empty-state-content">
 
                                     <div class="empty-state-icon">
-
                                         <i class="bi bi-newspaper"></i>
-
                                     </div>
 
                                     <p>
@@ -276,7 +245,6 @@
                                 </div>
 
                             </td>
-
                         </tr>
 
                         }
@@ -287,15 +255,10 @@
 
             </div>
 
-
-            <!-- =========================
-                     FOOTER + PAGINATION
-                ========================= -->
-
+            <!-- Pied du tableau et pagination -->
             <div class="table-footer">
 
                 <span class="results-count">
-
                     Affichage de
 
                     <strong>
@@ -315,26 +278,19 @@
                     </strong>
 
                     actualité(s)
-
                 </span>
-
 
                 @if (totalPages > 1) {
 
                 <div class="pagination">
 
                     <!-- Page précédente -->
-
                     <button type="button" class="pagination-button" [disabled]="currentPage === 1"
                         (click)="goToPreviousPage()" aria-label="Page précédente">
-
                         <i class="bi bi-chevron-left"></i>
-
                     </button>
 
-
                     <!-- Numéros de pages -->
-
                     @for (
                     page of visiblePages;
                     track page
@@ -342,21 +298,15 @@
 
                     <button type="button" class="pagination-button page-number" [class.active]="page === currentPage"
                         (click)="goToPage(page)">
-
                         {{ page }}
-
                     </button>
 
                     }
 
-
                     <!-- Page suivante -->
-
                     <button type="button" class="pagination-button" [disabled]="currentPage === totalPages"
                         (click)="goToNextPage()" aria-label="Page suivante">
-
                         <i class="bi bi-chevron-right"></i>
-
                     </button>
 
                 </div>
@@ -371,5 +321,58 @@
 
     </div>
 
+</div>
+
+
+<!-- ==========================================
+     POPUP DE CONFIRMATION DE SUPPRESSION
+========================================== -->
+
+@if (showDeletePopup && actualiteASupprimer) {
+
+<div class="delete-modal-overlay" (click)="annulerSuppression()">
+
+    <div class="delete-modal" role="dialog" aria-modal="true" aria-labelledby="delete-modal-title"
+        (click)="$event.stopPropagation()">
+
+        <!-- Icône -->
+        <div class="delete-modal-icon">
+            <i class="bi bi-trash3"></i>
+        </div>
+
+        <!-- Titre -->
+        <h2 id="delete-modal-title">
+            Supprimer cette actualité ?
+        </h2>
+
+        <!-- Message de confirmation -->
+        <p class="delete-modal-message">
+            Voulez-vous vraiment supprimer
+
+            <strong>
+                « {{ actualiteASupprimer.titre }} »
+            </strong>
+
+            ? Cette action est définitive.
+        </p>
+
+        <!-- Boutons -->
+        <div class="delete-modal-actions">
+
+            <button type="button" class="delete-modal-cancel" (click)="annulerSuppression()">
+                Annuler
+            </button>
+
+            <button type="button" class="delete-modal-confirm" (click)="supprimerActualite()">
+
+
+                Supprimer
+            </button>
+
+        </div>
+
+    </div>
 
 </div>
+
+}

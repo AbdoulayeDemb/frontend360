@@ -34,7 +34,6 @@
 
     border: 0;
     background: transparent;
-
     color: #64748B;
 
     font-family: 'Inter', sans-serif;
@@ -42,7 +41,6 @@
     font-weight: 500;
 
     cursor: pointer;
-
     transition: color 160ms ease;
 }
 
@@ -52,6 +50,12 @@
 
 .back-button:hover {
     color: #2563EB;
+}
+
+.back-button:focus-visible {
+    outline: 2px solid #3B82F6;
+    outline-offset: 4px;
+    border-radius: 3px;
 }
 
 .page-title {
@@ -139,7 +143,6 @@
 .loading-icon {
     color: #2563EB;
     font-size: 15px;
-
     animation: spin 1s linear infinite;
 }
 
@@ -156,6 +159,7 @@
     border-radius: 10px;
 
     background-color: #FFFFFF;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.025);
 }
 
 
@@ -165,7 +169,6 @@
 
 .form-section {
     padding: 26px 28px 30px;
-
     border-bottom: 1px solid #EEF2F6;
 }
 
@@ -217,7 +220,7 @@
 
     font-family: 'Inter', sans-serif;
     font-size: 11px;
-    line-height: 1.4;
+    line-height: 1.5;
 }
 
 
@@ -227,9 +230,7 @@
 
 .form-grid {
     display: grid;
-
     grid-template-columns: repeat(2, minmax(0, 1fr));
-
     gap: 20px 22px;
 }
 
@@ -245,7 +246,6 @@
 .form-group {
     display: flex;
     flex-direction: column;
-
     min-width: 0;
 }
 
@@ -267,9 +267,10 @@
 
 .form-group input,
 .form-group select {
+    display: block;
+
     width: 100%;
     height: 40px;
-
     box-sizing: border-box;
 
     padding: 0 12px;
@@ -287,7 +288,8 @@
 
     transition:
         border-color 160ms ease,
-        box-shadow 160ms ease;
+        box-shadow 160ms ease,
+        background-color 160ms ease;
 }
 
 .form-group input::placeholder {
@@ -302,13 +304,18 @@
 .form-group input:focus,
 .form-group select:focus {
     border-color: #2563EB;
-
-    box-shadow:
-        0 0 0 3px rgba(37, 99, 235, 0.08);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
 }
 
 .form-group select {
     cursor: pointer;
+}
+
+.form-group input:disabled,
+.form-group select:disabled {
+    background-color: #F8FAFC;
+    color: #94A3B8;
+    cursor: not-allowed;
 }
 
 
@@ -324,9 +331,7 @@
 .form-group input.invalid:focus,
 .form-group select.invalid:focus {
     border-color: #DC2626;
-
-    box-shadow:
-        0 0 0 3px rgba(220, 38, 38, 0.08);
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.08);
 }
 
 .field-error {
@@ -336,7 +341,7 @@
 
     font-family: 'Inter', sans-serif;
     font-size: 10px;
-    line-height: 1.4;
+    line-height: 1.5;
 }
 
 
@@ -346,7 +351,7 @@
 
 .field-hint {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 5px;
 
     margin-top: 7px;
@@ -359,6 +364,9 @@
 }
 
 .field-hint i {
+    flex-shrink: 0;
+    margin-top: 1px;
+
     color: #94A3B8;
     font-size: 11px;
 }
@@ -374,7 +382,6 @@
     gap: 12px;
 
     margin: 22px 28px;
-
     padding: 14px 16px;
 
     border: 1px solid rgba(16, 185, 129, 0.16);
@@ -407,7 +414,6 @@
 
 .author-content strong {
     display: block;
-
     margin-bottom: 3px;
 
     color: #334155;
@@ -424,12 +430,12 @@
 
     font-family: 'Inter', sans-serif;
     font-size: 11px;
-    line-height: 1.5;
+    line-height: 1.6;
 }
 
 
 /* =========================================================
-   ACTIONS
+   ACTIONS DU FORMULAIRE
 ========================================================= */
 
 .form-actions {
@@ -441,7 +447,6 @@
     padding: 16px 28px;
 
     border-top: 1px solid #EEF2F6;
-
     background-color: #FAFBFC;
 }
 
@@ -452,7 +457,6 @@
     gap: 7px;
 
     min-height: 38px;
-
     padding: 8px 14px;
 
     border: 1px solid transparent;
@@ -461,14 +465,15 @@
     font-family: 'Inter', sans-serif;
     font-size: 12px;
     font-weight: 600;
-    line-height: 1;
+    line-height: 1.4;
 
     cursor: pointer;
 
     transition:
         background-color 160ms ease,
         border-color 160ms ease,
-        color 160ms ease;
+        color 160ms ease,
+        box-shadow 160ms ease;
 }
 
 .btn i {
@@ -486,6 +491,12 @@
 
 .btn-primary:active:not(:disabled) {
     background-color: #1D4ED8;
+}
+
+.btn-primary:focus-visible,
+.btn-secondary:focus-visible {
+    outline: 2px solid #3B82F6;
+    outline-offset: 3px;
 }
 
 .btn-secondary {
@@ -507,7 +518,151 @@
 
 
 /* =========================================================
-   ANIMATION
+   POPUP DE SUCCÈS
+========================================================= */
+
+.success-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    box-sizing: border-box;
+    padding: 20px;
+
+    background-color: rgba(15, 23, 42, 0.55);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+
+    animation: successFadeIn 180ms ease-out;
+}
+
+.success-modal {
+    position: relative;
+
+    width: 100%;
+    max-width: 410px;
+    box-sizing: border-box;
+
+    padding: 32px 30px 28px;
+
+    border: 1px solid #E8EDF3;
+    border-radius: 12px;
+
+    background-color: #FFFFFF;
+
+    text-align: center;
+
+    box-shadow: 0 20px 60px rgba(15, 23, 42, 0.18);
+
+    animation: successSlideUp 220ms ease-out;
+}
+
+
+/* Icône de confirmation */
+
+.success-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 64px;
+    height: 64px;
+
+    margin: 0 auto 19px;
+
+    border: 1px solid rgba(16, 185, 129, 0.15);
+    border-radius: 50%;
+
+    background-color: rgba(16, 185, 129, 0.10);
+    color: #059669;
+
+    font-size: 30px;
+}
+
+
+/* Titre de la popup */
+
+.success-modal h2 {
+    margin: 0 0 10px;
+
+    color: #1E293B;
+
+    font-family: 'Poppins', sans-serif;
+    font-size: 19px;
+    font-weight: 600;
+    line-height: 1.45;
+}
+
+
+/* Message de la popup */
+
+.success-modal p {
+    margin: 0 0 24px;
+
+    color: #64748B;
+
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+
+/* Bouton de confirmation */
+
+.success-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    width: 100%;
+    min-height: 40px;
+    padding: 10px 16px;
+
+    border: 1px solid #3B82F6;
+    border-radius: 7px;
+
+    background-color: #3B82F6;
+    color: #FFFFFF;
+
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background-color 160ms ease,
+        border-color 160ms ease,
+        box-shadow 160ms ease;
+}
+
+.success-button i {
+    font-size: 14px;
+}
+
+.success-button:hover {
+    border-color: #2563EB;
+    background-color: #2563EB;
+}
+
+.success-button:active {
+    border-color: #1D4ED8;
+    background-color: #1D4ED8;
+}
+
+.success-button:focus-visible {
+    outline: 2px solid #3B82F6;
+    outline-offset: 3px;
+}
+
+
+/* =========================================================
+   ANIMATIONS
 ========================================================= */
 
 @keyframes spin {
@@ -516,9 +671,53 @@
     }
 }
 
+@keyframes successFadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes successSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 
 /* =========================================================
-   RESPONSIVE
+   ACCESSIBILITÉ : MOUVEMENTS RÉDUITS
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .loading-icon,
+    .success-modal-overlay,
+    .success-modal {
+        animation: none;
+    }
+
+    .back-button,
+    .form-group input,
+    .form-group select,
+    .btn,
+    .success-button {
+        transition: none;
+    }
+}
+
+
+/* =========================================================
+   RESPONSIVE : TABLETTES
 ========================================================= */
 
 @media (max-width: 800px) {
@@ -536,9 +735,12 @@
     .full-width {
         grid-column: auto;
     }
-
 }
 
+
+/* =========================================================
+   RESPONSIVE : MOBILES
+========================================================= */
 
 @media (max-width: 600px) {
 
@@ -575,7 +777,6 @@
     .form-actions {
         flex-direction: column-reverse;
         align-items: stretch;
-
         padding: 14px 16px;
     }
 
@@ -583,4 +784,23 @@
         width: 100%;
     }
 
+    .success-modal {
+        max-width: 360px;
+        padding: 27px 22px 23px;
+    }
+
+    .success-icon {
+        width: 58px;
+        height: 58px;
+        margin-bottom: 16px;
+        font-size: 27px;
+    }
+
+    .success-modal h2 {
+        font-size: 17px;
+    }
+
+    .success-modal p {
+        font-size: 12px;
+    }
 }

@@ -56,6 +56,11 @@ export class ContenuEducatifFormComponent implements OnInit {
 
     erreur = '';
 
+    // Notification de succès
+    notificationVisible = false;
+    notificationTitre = '';
+    notificationMessage = '';
+
     readonly themes = Object.values(EnumThematique);
     readonly formats = Object.values(EnumFormat);
 
@@ -294,9 +299,11 @@ export class ContenuEducatifFormComponent implements OnInit {
 
                     this.enregistrement = false;
 
-                    this.router.navigate([
-                        '/admin/contenus-educatifs'
-                    ]);
+                    // Afficher la popup après la réussite du backend
+                    this.afficherNotification(
+                        'Création réussie !',
+                        'Le contenu éducatif a été créé avec succès.'
+                    );
                 },
 
                 error: (error) => {
@@ -395,9 +402,11 @@ export class ContenuEducatifFormComponent implements OnInit {
 
                     this.enregistrement = false;
 
-                    this.router.navigate([
-                        '/admin/contenus-educatifs'
-                    ]);
+                    // Afficher la popup après la réussite du backend
+                    this.afficherNotification(
+                        'Modification réussie !',
+                        'Les modifications du contenu éducatif ont été enregistrées avec succès.'
+                    );
                 },
 
                 error: (error) => {
@@ -463,6 +472,31 @@ export class ContenuEducatifFormComponent implements OnInit {
                     this.enregistrement = false;
                 }
             });
+    }
+
+    /**
+     * Afficher une notification de succès
+     */
+    private afficherNotification(
+        titre: string,
+        message: string
+    ): void {
+
+        this.notificationTitre = titre;
+        this.notificationMessage = message;
+        this.notificationVisible = true;
+    }
+
+    /**
+     * Fermer la notification et retourner à la liste
+     */
+    fermerNotification(): void {
+
+        this.notificationVisible = false;
+
+        this.router.navigate([
+            '/admin/contenus-educatifs'
+        ]);
     }
 
     /**
