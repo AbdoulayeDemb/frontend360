@@ -60,7 +60,8 @@ export class StructureDashboardComponent implements OnInit {
 		total: 0,
 		declares: 0,
 		enCours: 0,
-		resolus: 0
+		resolus: 0,
+		rejetes: 0
 	};
 
 	urgencyChartBackground = 'conic-gradient(#e8eef7 0% 100%)';
@@ -100,7 +101,8 @@ export class StructureDashboardComponent implements OnInit {
 					total: signalements.length,
 					declares: signalements.filter(signalement => signalement.statut === EnumStatut.DECLARE).length,
 					enCours: signalements.filter(signalement => signalement.statut === EnumStatut.EN_COURS).length,
-					resolus: signalements.filter(signalement => signalement.statut === EnumStatut.RESOLU).length
+					resolus: signalements.filter(signalement => signalement.statut === EnumStatut.RESOLU).length,
+					rejetes: signalements.filter(signalement => signalement.statut === EnumStatut.REJETE).length
 				};
 				this.calculateUrgencies(signalements);
 				this.isLoading = false;
